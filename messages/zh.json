@@ -1,0 +1,28 @@
+{
+  "AuthLayout": {
+    "Register": {
+      "signUp": "注册",
+      "description": "输入您的信息以创建一个新帐户。",
+      "username": "用户名",
+      "email": "电子邮件",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "profileImage": "个人资料图片",
+      "createAccount": "创建帐户",
+      "haveAccount": "已经有一个帐户？",
+      "signIn": "登录"
+    },
+    "Login": {
+      "signIn": "登录",
+      "description": "在下方输入您的电子邮件以登录您的帐户",
+      "email": "电子邮件",
+      "password": "密码",
+      "forgotPassword": "忘记密码？",
+      "login": "登录",
+      "signInGithub": "使用 Github 登录",
+      "noAccount": "还没有帐户？",
+      "signUp": "注册",
+      "githubError": "Github OAuth 错误："
+    }
+  }
+}

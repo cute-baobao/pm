@@ -1,0 +1,28 @@
+{
+  "AuthLayout": {
+    "Register": {
+      "signUp": "Sign Up",
+      "description": "Enter your information to create a new account.",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "profileImage": "Profile Image",
+      "createAccount": "Create Account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign In"
+    },
+    "Login": {
+      "signIn": "Sign In",
+      "description": "Enter your email below to login to your account",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot your password?",
+      "login": "Login",
+      "signInGithub": "Sign in with Github",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "githubError": "Github OAuth error: "
+    }
+  }
+}
