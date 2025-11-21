@@ -14,13 +14,21 @@ export const auth = betterAuth({
   },
   advanced: {
     crossSubDomainCookies: {
-      enabled: true,
-      domain: `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+      enabled: env.NODE_ENV === 'production',
+      domain:
+        env.NODE_ENV === 'production'
+          ? `.${env.NEXT_PUBLIC_ROOT_DOMAIN}`
+          : undefined,
     },
     useSecureCookies: env.NODE_ENV === 'production',
+    defaultCookieAttributes: {
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: env.NODE_ENV === 'production',
+    },
   },
   trustedOrigins: [
-    `*.${env.NEXT_PUBLIC_ROOT_DOMAIN}`, // For development
+    `https://*.${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
     `https://${env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+    ...(env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
   ],
 });
