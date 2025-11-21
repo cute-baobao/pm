@@ -41,10 +41,11 @@ function extractSubdomain(request: NextRequest): string | null {
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
   const subdomain = extractSubdomain(request);
   if (subdomain) {
     return NextResponse.rewrite(
-      new URL(`/s/${subdomain}.app${pathname}`, request.url),
+      new URL(`/s/${subdomain}${pathname}`, request.url),
     );
   }
   return NextResponse.next();
