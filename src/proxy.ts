@@ -43,7 +43,6 @@ export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const subdomain = extractSubdomain(request);
-  console.log('Extracted subdomain:', subdomain, 'url:', request.nextUrl);
   if (subdomain) {
     return NextResponse.rewrite(
       new URL(`/s/${subdomain}${pathname}`, request.url),
