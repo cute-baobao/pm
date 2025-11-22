@@ -9,13 +9,19 @@ export async function requireAuth() {
     headers: await headers(),
   });
 
-  console.log('Auth check, session:', session);
-
   if (!session) {
     redirect(`${protocol}://${rootDomain}/login`);
   }
 
-  return session;
+  const user = {
+    ...session.user,
+    image: session.user.image ?? null,
+  };
+
+  return {
+    ...session,
+    user,
+  };
 }
 
 export async function requireNoAuth() {
@@ -23,9 +29,27 @@ export async function requireNoAuth() {
     headers: await headers(),
   });
 
-  console.log('No-auth check, session:', session);
-
   if (session) {
     redirect(`${protocol}://${rootDomain}`);
   }
+}
+
+export async function getSession() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return null;
+  }
+
+  const user = {
+    ...session.user,
+    image: session.user.image ?? null,
+  };
+
+  return {
+    ...session,
+    user,
+  };
 }

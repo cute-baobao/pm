@@ -1,5 +1,5 @@
 {
-  "AuthLayout": {
+  "Auth": {
     "Register": {
       "signUp": "注册",
       "description": "输入您的信息以创建一个新帐户。",
@@ -20,9 +20,23 @@
       "forgotPassword": "忘记密码？",
       "login": "登录",
       "signInGithub": "使用 Github 登录",
+      "securedBy": "安全支持",
       "noAccount": "还没有帐户？",
       "signUp": "注册",
       "githubError": "Github OAuth 错误："
+    },
+    "UserButton": {
+      "logOut": "退出登录"
     }
+  },
+  "Error": {
+    "unauthorized": "用户未登录或身份验证失败"
+  },
+  "AppSidebar": {
+    "home": "首页",
+    "dashboard": "仪表盘",
+    "members": "成员",
+    "settings": "设置",
+    "signOut": "退出登录"
   }
 }

@@ -1,6 +1,6 @@
 {
-  "id": "bdc948d3-5308-4edf-875e-c48adfef8dc5",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "da0c7211-1c1e-49de-ae25-96108159a213",
+  "prevId": "bdc948d3-5308-4edf-875e-c48adfef8dc5",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -244,7 +244,8 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},

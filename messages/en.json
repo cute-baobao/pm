@@ -1,5 +1,5 @@
 {
-  "AuthLayout": {
+  "Auth": {
     "Register": {
       "signUp": "Sign Up",
       "description": "Enter your information to create a new account.",
@@ -20,9 +20,23 @@
       "forgotPassword": "Forgot your password?",
       "login": "Login",
       "signInGithub": "Sign in with Github",
+      "securedBy": "Secured by",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
       "githubError": "Github OAuth error: "
+    },
+    "UserButton": {
+      "logOut": "Log out"
     }
+  },
+  "Error": {
+    "unauthorized": "User is not logged in or authentication failed"
+  },
+  "AppSidebar": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "members": "Members",
+    "settings": "Settings",
+    "signOut": "Sign Out"
   }
 }

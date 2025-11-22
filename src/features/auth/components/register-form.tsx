@@ -34,7 +34,7 @@ import { toast } from 'sonner';
 export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const t = useTranslations('AuthLayout.Register');
+  const t = useTranslations('Auth.Register');
 
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
@@ -67,7 +67,6 @@ export default function RegisterForm() {
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    console.log('Submitting form with data:', data);
     await signUp.email({
       email: data.email,
       password: data.password,

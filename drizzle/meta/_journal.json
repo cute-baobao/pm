@@ -5,8 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763632021428,
+      "when": 1763796211708,
       "tag": "0000_add-better-auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763796544683,
+      "tag": "0001_member-createAt-defaultNow",
       "breakpoints": true
     }
   ]

@@ -32,7 +32,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 export default function LoginForm() {
-  const t = useTranslations('AuthLayout.Login');
+  const t = useTranslations('Auth.Login');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
