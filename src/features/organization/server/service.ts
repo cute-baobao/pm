@@ -1,5 +1,6 @@
 import db from '@/db';
 import { member, organization, User } from '@/db/schemas';
+import { eq, getTableColumns } from 'drizzle-orm';
 import { CreateOrganizationData } from '../schema';
 
 export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
@@ -32,4 +33,14 @@ export const createOrganiztion = async (
   });
 
   return result;
+};
+
+export const getOrganizations = async (userId: string) => {
+  const orgs = await db
+    .select({ ...getTableColumns(organization) })
+    .from(organization)
+    .leftJoin(member, eq(organization.id, member.organizationId))
+    .where(eq(member.userId, userId));
+
+  return orgs;
 };

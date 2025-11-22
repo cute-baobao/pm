@@ -32,11 +32,32 @@
   "Error": {
     "unauthorized": "用户未登录或身份验证失败"
   },
-  "AppSidebar": {
+  "Navigation": {
     "home": "首页",
     "dashboard": "仪表盘",
     "members": "成员",
     "settings": "设置",
     "signOut": "退出登录"
+  },
+  "Organization": {
+    "createSuccess": "组织 {name} 创建成功",
+    "createError": "创建组织失败: {message}",
+    "slugConflict": "组织标识符已被占用",
+    "CreateForm": {
+      "title": "创建组织",
+      "joinButton": "加入工作区",
+      "nameLabel": "组织名称",
+      "namePlaceholder": "例如：Acme Corp",
+      "logoLabel": "组织 Logo",
+      "metadataLabel": "元数据",
+      "metadataPlaceholder": "关于组织的附加信息",
+      "cancelButton": "取消",
+      "createButton": "创建组织"
+    },
+    "Switcher": {
+      "title": "组织",
+      "placeholder": "选择组织",
+      "createOrganization": "创建组织"
+    }
   }
 }

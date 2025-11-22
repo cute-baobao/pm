@@ -1,7 +1,11 @@
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import { createOrganizationSchema } from '../schema';
-import { checkSlugAvailability, createOrganiztion } from './service';
+import {
+  checkSlugAvailability,
+  createOrganiztion,
+  getOrganizations,
+} from './service';
 
 export const organizationRouter = createTRPCRouter({
   create: protectedProcedure
@@ -10,7 +14,7 @@ export const organizationRouter = createTRPCRouter({
       const check = await checkSlugAvailability(input.slug);
       if (!check) {
         throw new TRPCError({
-          message: 'Slug is already taken',
+          message: 'slugConflict',
           code: 'CONFLICT',
         });
       }
@@ -18,4 +22,7 @@ export const organizationRouter = createTRPCRouter({
       const organization = await createOrganiztion(input, ctx.auth.user!);
       return organization;
     }),
+  getList: protectedProcedure.query(async ({ ctx }) => {
+    return await getOrganizations(ctx.auth.user.id);
+  }),
 });

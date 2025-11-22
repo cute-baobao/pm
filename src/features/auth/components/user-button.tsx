@@ -13,14 +13,31 @@ import { cn, protocol, rootDomain } from '@/lib/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { LogOut } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { userAtom } from '../store/atom';
 
-const UserAvatar = ({ avatarFallback }: { avatarFallback: string }) => {
+const UserAvatar = ({
+  avatarFallback,
+  image,
+}: {
+  avatarFallback: string;
+  image?: string;
+}) => {
   return (
     <Avatar className="size-10 border border-neutral-300 transition hover:opacity-75">
       <AvatarFallback className="flex items-center justify-center bg-neutral-200 font-medium text-neutral-500">
-        {avatarFallback}
+        {image ? (
+          <Image
+            src={image}
+            width={40}
+            height={40}
+            alt="User Avatar"
+            objectFit="cover"
+          />
+        ) : (
+          avatarFallback
+        )}
       </AvatarFallback>
     </Avatar>
   );
@@ -49,7 +66,7 @@ const UserButton = ({ className }: { className?: string }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className={cn('relative outline-none', className)}>
-        <UserAvatar avatarFallback={avatarFallback} />
+        <UserAvatar avatarFallback={avatarFallback} image={user.image || ''} />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -58,7 +75,7 @@ const UserButton = ({ className }: { className?: string }) => {
         sideOffset={10}
       >
         <div className="flex flex-col items-center justify-center gap-2 px-2.5 py-4">
-          <UserAvatar avatarFallback={avatarFallback} />
+          <UserAvatar avatarFallback={avatarFallback} image={user.image || ''} />
           <div className="flex flex-col items-center justify-center">
             <p className="text-sm font-medium text-neutral-900">{name}</p>
             <p className="text-xs text-neutral-500">{email}</p>
@@ -67,7 +84,7 @@ const UserButton = ({ className }: { className?: string }) => {
         <DottedSeparator className="mb-1" />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="flex h-10 cursor-pointer items-center justify-center font-medium "
+          className="flex h-10 cursor-pointer items-center justify-center font-medium"
         >
           <LogOut className="mr-2 size-4" />
           {t('logOut')}

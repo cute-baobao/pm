@@ -21,9 +21,7 @@ export const user = pgTable('user', {
     .notNull(),
 });
 
-export type User = InferSelectModel<typeof user> & {
-  image: string | null | undefined;
-};
+export type User = InferSelectModel<typeof user>
 
 export const session = pgTable(
   'session',

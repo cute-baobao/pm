@@ -1,11 +1,11 @@
 # Organization Feature Checklist
 
 ## 1. Organization Management (组织管理)
-- [ ] **Create Organization**: User can create new org (name, slug, logo, metadata)
+- [x] **Create Organization**: User can create new org (name, slug, logo, metadata)
 - [ ] **Update Organization**: Modify organization info
 - [ ] **Delete Organization**: Delete entire organization
 - [ ] **Active Organization**: Track current working organization in session
-- [ ] **List Organizations**: Get all organizations user belongs to
+- [x] **List Organizations**: Get all organizations user belongs to
 - [ ] **Check Slug**: Verify if organization slug is available
 
 ## 2. Member Management (成员管理)

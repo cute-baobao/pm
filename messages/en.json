@@ -32,11 +32,32 @@
   "Error": {
     "unauthorized": "User is not logged in or authentication failed"
   },
-  "AppSidebar": {
+  "Navigation": {
     "home": "Home",
     "dashboard": "Dashboard",
     "members": "Members",
     "settings": "Settings",
     "signOut": "Sign Out"
+  },
+  "Organization": {
+    "createSuccess": "Organization {name} created successfully",
+    "createError": "Error creating organization: {message}",
+    "slugConflict": "Slug is already taken",
+    "CreateForm": {
+      "title": "Create Organization",
+      "joinButton": "Join Workspace",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "e.g. Acme Corp",
+      "logoLabel": "Organization Logo",
+      "metadataLabel": "Metadata",
+      "metadataPlaceholder": "Additional information about the organization",
+      "cancelButton": "Cancel",
+      "createButton": "Create Organization"
+    },
+    "Switcher": {
+      "title": "Organizations",
+      "placeholder": "Select organization",
+      "createOrganization": "Create Organization"
+    }
   }
 }

@@ -1,8 +1,8 @@
 'use client';
 
 // import { useHasActiveSubscription } from "@/features/subsctiptions/hooks/use-subscription";
+import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
 import { signOut } from '@/lib/auth-client';
-import { protocol, rootDomain } from '@/lib/utils';
 import {
   CircleGaugeIcon,
   HomeIcon,
@@ -27,7 +27,7 @@ import {
 } from './ui/sidebar';
 
 export function AppSidebar() {
-  const t = useTranslations('AppSidebar');
+  const t = useTranslations('Navigation');
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -83,12 +83,17 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <SidebarMenu>
+          <SidebarMenuItem  className="px-2">
+            <OrganizationSwitcher />
+          </SidebarMenuItem>
+        </SidebarMenu>
         {menuItems.map((group) => (
           <SidebarGroup key={group.title} title={group.title}>
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => {
-                  const fullUrl = `${protocol}://${params.subdomain}.${rootDomain}${item.url}`;
+                  const fullUrl = `/organization/${params.slug}${item.url}`;
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
