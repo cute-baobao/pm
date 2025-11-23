@@ -38,6 +38,8 @@ export const CreateOrganizationForm = ({
   const t = useTranslations('Organization.CreateForm');
   const form = useForm<CreateOrganizationData>({
     resolver: zodResolver(createOrganizationSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       name: '',
       slug: 'abc',
@@ -69,26 +71,22 @@ export const CreateOrganizationForm = ({
 
   const onSubmit = (data: CreateOrganizationData) => {
     data.slug = data.name.toLowerCase().replace(/\s+/g, '-');
-    console.log('Create organization data:', data);
-    createOrganization.mutate(data);
-  };
-
-  const handleJoinWorkspace = () => {
-    router.push('/workspaces/join');
+    createOrganization.mutate(data, {
+      onSuccess: (organization) => {
+        router.push(`/organization/${organization.slug}`);
+      },
+    });
   };
 
   return (
-    <Card className="h-full w-full gap-0 border-none shadow-none">
-      <CardHeader className="flex items-center justify-between p-7">
+    <Card className="h-full w-full border-none shadow-none">
+      <CardHeader className="flex items-center justify-between">
         <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
-        <Button variant="secondary" onClick={handleJoinWorkspace} size="sm">
-          {t('joinButton')}
-        </Button>
       </CardHeader>
       <div className="px-7">
         <DottedSeparator />
       </div>
-      <CardContent className="p-7">
+      <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
@@ -165,6 +163,7 @@ export const CreateOrganizationForm = ({
                       <FormLabel>{t('metadataLabel')} (Optional)</FormLabel>
                       <FormControl>
                         <Textarea
+                          className="max-h-[500px] overflow-auto"
                           {...field}
                           placeholder={t('metadataPlaceholder')}
                         />

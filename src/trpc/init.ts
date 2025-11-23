@@ -1,4 +1,6 @@
+import db from '@/db';
 import { auth } from '@/lib/auth';
+import { PERMSSION } from '@/lib/configs/permission';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
 import { cache } from 'react';
@@ -43,3 +45,39 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 
   return next({ ctx: { ...ctx, auth: { ...session, user } } });
 });
+
+// check user permission procedure
+export const permissionedProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
+    const { session, user } = ctx.auth;
+    if (!session.activeOrganizationSlug) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Error.forbidden_no_active_organization',
+      });
+    }
+
+    const member = await db.query.member.findFirst({
+      where: (m, { eq, and }) =>
+        and(
+          eq(m.userId, user.id),
+          eq(m.organizationSlug, session.activeOrganizationSlug!),
+        ),
+    });
+
+    if (!member) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Error.forbidden_no_membership',
+      });
+    }
+
+    const userWithRole: typeof user & { role: keyof typeof PERMSSION } = {
+      ...user,
+      role: member.role as keyof typeof PERMSSION,
+    };
+    return next({
+      ctx: { ...ctx, auth: { session, user: userWithRole } },
+    });
+  },
+);

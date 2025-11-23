@@ -1,6 +1,6 @@
 {
-  "id": "da0c7211-1c1e-49de-ae25-96108159a213",
-  "prevId": "bdc948d3-5308-4edf-875e-c48adfef8dc5",
+  "id": "351681cd-6ed2-48b3-8303-26230ed3c4c8",
+  "prevId": "6235ab03-045f-4a70-871b-65bca5c4a674",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -221,9 +221,9 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "uuid",
+        "organization_slug": {
+          "name": "organization_slug",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -235,7 +235,8 @@
         },
         "role": {
           "name": "role",
-          "type": "text",
+          "type": "organization_role",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'member'"
@@ -250,15 +251,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "member_organization_id_organization_id_fk": {
-          "name": "member_organization_id_organization_id_fk",
+        "member_organization_slug_organization_slug_fk": {
+          "name": "member_organization_slug_organization_slug_fk",
           "tableFrom": "member",
           "tableTo": "organization",
           "columnsFrom": [
-            "organization_id"
+            "organization_slug"
           ],
           "columnsTo": [
-            "id"
+            "slug"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -395,9 +396,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "active_organization_id": {
-          "name": "active_organization_id",
-          "type": "uuid",
+        "active_organization_slug": {
+          "name": "active_organization_slug",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -582,7 +583,17 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.organization_role": {
+      "name": "organization_role",
+      "schema": "public",
+      "values": [
+        "owner",
+        "admin",
+        "member"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

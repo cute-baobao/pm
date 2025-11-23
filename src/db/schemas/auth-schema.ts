@@ -2,6 +2,7 @@ import { InferSelectModel, relations } from 'drizzle-orm';
 import {
   boolean,
   index,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -21,7 +22,7 @@ export const user = pgTable('user', {
     .notNull(),
 });
 
-export type User = InferSelectModel<typeof user>
+export type User = InferSelectModel<typeof user>;
 
 export const session = pgTable(
   'session',
@@ -38,7 +39,7 @@ export const session = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    activeOrganizationId: uuid('active_organization_id'),
+    activeOrganizationSlug: text('active_organization_slug'),
   },
   (table) => [index('session_userId_idx').on(table.userId)],
 );
@@ -92,17 +93,31 @@ export const organization = pgTable('organization', {
   metadata: text('metadata'),
 });
 
+export type Organization = InferSelectModel<typeof organization>;
+
+export const organizationRole = pgEnum('organization_role', [
+  'owner',
+  'admin',
+  'member',
+]);
+
+export const organizationRoleValues = organizationRole.enumValues;
+
+export type OrganizationRole = (typeof organizationRoleValues)[number];
+
 export const member = pgTable('member', {
   id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
+  organizationSlug: text('organization_slug')
     .notNull()
-    .references(() => organization.id, { onDelete: 'cascade' }),
+    .references(() => organization.slug, { onDelete: 'cascade' }),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  role: text('role').default('member').notNull(),
+  role: organizationRole().default('member').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export type Member = InferSelectModel<typeof member>;
 
 export const invitation = pgTable('invitation', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -146,8 +161,8 @@ export const organizationRelations = relations(organization, ({ many }) => ({
 
 export const memberRelations = relations(member, ({ one }) => ({
   organization: one(organization, {
-    fields: [member.organizationId],
-    references: [organization.id],
+    fields: [member.organizationSlug],
+    references: [organization.slug],
   }),
   user: one(user, {
     fields: [member.userId],

@@ -20,13 +20,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { RegisterFormData, registerFormSchema } from '@/features/auth/schema';
 import { signUp } from '@/lib/auth-client';
-import { cn } from '@/lib/utils';
+import { cn, safeRedirect } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -35,6 +35,8 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const t = useTranslations('Auth.Register');
+  const searchParams = useSearchParams();
+  const nextUrl = safeRedirect(searchParams.get('next'));
 
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
@@ -84,7 +86,7 @@ export default function RegisterForm() {
           toast.error(ctx.error.message);
         },
         onSuccess: async () => {
-          router.push('/');
+          router.push(nextUrl || '/organization/create');
         },
       },
     });
@@ -192,7 +194,6 @@ export default function RegisterForm() {
                         src={imagePreview}
                         alt="Profile preview"
                         layout="fill"
-                        objectFit="cover"
                       />
                     </div>
                   )}

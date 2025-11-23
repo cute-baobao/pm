@@ -1,7 +1,7 @@
 import db from '@/db';
-import { member, organization, User } from '@/db/schemas';
+import { member, organization, session, User } from '@/db/schemas';
 import { eq, getTableColumns } from 'drizzle-orm';
-import { CreateOrganizationData } from '../schema';
+import { CreateOrganizationData, UpdateOrganizationData } from '../schema';
 
 export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
   const existingSlug = await db.query.organization.findFirst({
@@ -25,7 +25,7 @@ export const createOrganiztion = async (
       })
       .returning();
     await tx.insert(member).values({
-      organizationId: o.id,
+      organizationSlug: o.slug,
       userId: user.id,
       role: 'owner',
     });
@@ -39,8 +39,59 @@ export const getOrganizations = async (userId: string) => {
   const orgs = await db
     .select({ ...getTableColumns(organization) })
     .from(organization)
-    .leftJoin(member, eq(organization.id, member.organizationId))
+    .leftJoin(member, eq(organization.slug, member.organizationSlug))
     .where(eq(member.userId, userId));
 
   return orgs;
+};
+
+export const setActiveOrganization = async (
+  token: string,
+  slug: string | null,
+) => {
+  const [reuslt] = await db
+    .update(session)
+    .set({ activeOrganizationSlug: slug })
+    .where(eq(session.token, token))
+    .returning();
+
+  return reuslt;
+};
+
+export const updateOrganization = async (data: UpdateOrganizationData) => {
+  const [result] = await db
+    .update(organization)
+    .set({
+      name: data.name,
+      logo: data.logo,
+      metadata: data.metadata,
+    })
+    .where(eq(organization.id, data.id))
+    .returning();
+
+  return result;
+};
+
+export const deleteOrganization = async (id: string) => {
+  const [result] = await db
+    .delete(organization)
+    .where(eq(organization.id, id))
+    .returning();
+
+  return result;
+};
+
+export const getOrganization = async (slug: string) => {
+  const [org] = await db
+    .select()
+    .from(organization)
+    .where(eq(organization.slug, slug));
+  return org;
+};
+
+export const getUserMembers = async (userId: string) => {
+  const members = await db.query.member.findMany({
+    where: (m, { eq }) => eq(m.userId, userId),
+  });
+  return members;
 };

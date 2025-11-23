@@ -84,7 +84,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          <SidebarMenuItem  className="px-2">
+          <SidebarMenuItem className="px-2">
             <OrganizationSwitcher />
           </SidebarMenuItem>
         </SidebarMenu>
@@ -147,10 +147,12 @@ export function AppSidebar() {
             <SidebarMenuButton
               tooltip={t('settings')}
               className="h-10 gap-x-4 px-4"
-              //   onClick={() => authClient.customer.portal()}
+              asChild
             >
-              <SettingsIcon className="size-4" />
-              <span>{t('settings')}</span>
+              <Link href={`/organization/${params.slug}/setting`}>
+                <SettingsIcon className="size-4" />
+                <span>{t('settings')}</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

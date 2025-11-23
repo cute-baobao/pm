@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+export * from "./safe-redirect"
 
 export const protocol =
   process.env.NODE_ENV === "production" ? "https" : "http";

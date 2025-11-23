@@ -26,7 +26,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // 获取用户会话信息
-  const session = await getSession();
+  const session = await getSession({});
 
   return (
     <html lang="zh-CN">

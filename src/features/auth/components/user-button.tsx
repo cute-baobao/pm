@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { signOut } from '@/lib/auth-client';
-import { cn, protocol, rootDomain } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { LogOut } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -28,13 +28,7 @@ const UserAvatar = ({
     <Avatar className="size-10 border border-neutral-300 transition hover:opacity-75">
       <AvatarFallback className="flex items-center justify-center bg-neutral-200 font-medium text-neutral-500">
         {image ? (
-          <Image
-            src={image}
-            width={40}
-            height={40}
-            alt="User Avatar"
-            objectFit="cover"
-          />
+          <Image src={image} width={40} height={40} alt="User Avatar" />
         ) : (
           avatarFallback
         )}
@@ -57,7 +51,7 @@ const UserButton = ({ className }: { className?: string }) => {
       fetchOptions: {
         onSuccess: () => {
           setUserAtom(null);
-          router.push(`${protocol}://${rootDomain}/login`);
+          router.push(`/login`);
         },
       },
     });
@@ -75,7 +69,10 @@ const UserButton = ({ className }: { className?: string }) => {
         sideOffset={10}
       >
         <div className="flex flex-col items-center justify-center gap-2 px-2.5 py-4">
-          <UserAvatar avatarFallback={avatarFallback} image={user.image || ''} />
+          <UserAvatar
+            avatarFallback={avatarFallback}
+            image={user.image || ''}
+          />
           <div className="flex flex-col items-center justify-center">
             <p className="text-sm font-medium text-neutral-900">{name}</p>
             <p className="text-xs text-neutral-500">{email}</p>

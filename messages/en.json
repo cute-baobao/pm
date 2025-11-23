@@ -30,7 +30,10 @@
     }
   },
   "Error": {
-    "unauthorized": "User is not logged in or authentication failed"
+    "unauthorized": "User is not logged in or authentication failed",
+    "forbidden_no_permission": "You do not have permission to perform this action",
+    "forbidden_no_active_organization": "No active organization found",
+    "forbidden_no_membership": "You are not a member of this organization"
   },
   "Navigation": {
     "home": "Home",
@@ -39,10 +42,19 @@
     "settings": "Settings",
     "signOut": "Sign Out"
   },
+  "Confirm": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "Organization": {
     "createSuccess": "Organization {name} created successfully",
     "createError": "Error creating organization: {message}",
+    "updateSuccess": "Organization {name} updated successfully",
+    "updateError": "Error updating organization: {message}",
+    "deleteSuccess": "Organization {name} deleted successfully",
+    "deleteError": "Error deleting organization: {message}",
     "slugConflict": "Slug is already taken",
+    "notFound": "Organization not found",
     "CreateForm": {
       "title": "Create Organization",
       "joinButton": "Join Workspace",
@@ -58,6 +70,21 @@
       "title": "Organizations",
       "placeholder": "Select organization",
       "createOrganization": "Create Organization"
+    },
+    "EditForm": {
+      "deleteConfirmTitle": "Are you sure?",
+      "deleteConfirmMessage": "This action cannot be undone.",
+      "backButton": "Back",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "Enter organization name",
+      "logoLabel": "Organization Logo",
+      "metadataLabel": "Metadata",
+      "metadataPlaceholder": "Enter metadata",
+      "cancelButton": "Cancel",
+      "updateButton": "Save Changes",
+      "dangerZone": "Danger Zone",
+      "dangerZoneDescription": "Deleting an organization is irreversible and will remove all associated data.",
+      "deleteButton": "Delete Organization"
     }
   }
 }

@@ -1,4 +1,9 @@
 'use server';
+import { Member, Organization } from '@/db/schemas';
+import {
+  getOrganizations,
+  getUserMembers,
+} from '@/features/organization/server/service';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { protocol, rootDomain } from '.';
@@ -34,7 +39,15 @@ export async function requireNoAuth() {
   }
 }
 
-export async function getSession() {
+interface getSessionPayload {
+  withOrganizations?: boolean;
+  withMembers?: boolean;
+}
+
+export async function getSession({
+  withMembers = false,
+  withOrganizations = false,
+}: getSessionPayload) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -43,9 +56,22 @@ export async function getSession() {
     return null;
   }
 
+  let organizations: Organization[] = [];
+  let members: Member[] = [];
+
+  if (withOrganizations) {
+    organizations = await getOrganizations(session.user.id);
+  }
+
+  if (withMembers) {
+    members = await getUserMembers(session.user.id);
+  }
+
   const user = {
     ...session.user,
     image: session.user.image ?? null,
+    organizations,
+    members,
   };
 
   return {

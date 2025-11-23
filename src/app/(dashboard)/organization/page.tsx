@@ -3,7 +3,7 @@ import { getSession } from '@/lib/utils/auth-action';
 import { redirect } from 'next/navigation';
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await getSession({});
   if (!session) {
     redirect('/login');
   }
