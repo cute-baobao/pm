@@ -56,7 +56,7 @@ export default function LoginForm() {
     const result = await signIn.email({
       email: data.email,
       password: data.password,
-      callbackURL: '/organization',
+      callbackURL: nextUrl ? nextUrl : '/organization',
       fetchOptions: {
         onResponse: () => {
           setLoading(false);
@@ -214,7 +214,11 @@ export default function LoginForm() {
             {t('noAccount')}{' '}
             <Link
               prefetch
-              href={nextUrl ? `/register?next=${nextUrl}` : '/register'}
+              href={
+                nextUrl
+                  ? `/register?next=${encodeURIComponent(nextUrl)}`
+                  : '/register'
+              }
               className="underline hover:text-blue-500"
             >
               {t('signUp')}

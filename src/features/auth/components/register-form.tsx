@@ -22,6 +22,7 @@ import { RegisterFormData, registerFormSchema } from '@/features/auth/schema';
 import { signUp } from '@/lib/auth-client';
 import { cn, safeRedirect } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSetAtom } from 'jotai';
 import { Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -30,13 +31,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
+import { userAtom } from '../store/atom';
 
 export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const setUserAtom = useSetAtom(userAtom);
   const t = useTranslations('Auth.Register');
   const searchParams = useSearchParams();
   const nextUrl = safeRedirect(searchParams.get('next'));
+  const router = useRouter();
 
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
@@ -69,12 +72,11 @@ export default function RegisterForm() {
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    await signUp.email({
+    const result = await signUp.email({
       email: data.email,
       password: data.password,
       name: data.username,
       image: data.image,
-      callbackURL: '/',
       fetchOptions: {
         onResponse: () => {
           setLoading(false);
@@ -85,11 +87,23 @@ export default function RegisterForm() {
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-        onSuccess: async () => {
-          router.push(nextUrl || '/organization/create');
+        onSuccess: () => {
+          router.push(nextUrl ? nextUrl : '/organization');
         },
       },
     });
+
+    if (result) {
+      // normalize user.image to be string | null (no undefined) before updating atom
+      const user = result.data?.user
+        ? {
+            ...result.data.user,
+            image: result.data.user.image ?? null,
+          }
+        : null;
+
+      setUserAtom(user);
+    }
   };
 
   return (

@@ -1,0 +1,2 @@
+ALTER TABLE "invitation" ALTER COLUMN "role" SET DATA TYPE "public"."organization_role" USING "role"::"public"."organization_role";--> statement-breakpoint
+ALTER TABLE "invitation" ALTER COLUMN "role" SET NOT NULL;

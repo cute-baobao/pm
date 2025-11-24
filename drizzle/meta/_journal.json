@@ -15,6 +15,13 @@
       "when": 1763974003788,
       "tag": "0001_add-invitation-status",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763998881350,
+      "tag": "0002_update-invitation",
+      "breakpoints": true
     }
   ]
 }

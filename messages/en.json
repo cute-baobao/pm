@@ -88,6 +88,8 @@
     }
   },
   "OrganizationMember": {
+    "inviteSuccess": "Member invited successfully",
+    "inviteError": "Error inviting member: {message}",
     "InviteMemberForm": {
       "generateConfirmTitle": "Invite Member",
       "generateConfirmMessage": "This will send an invitation to the user.",

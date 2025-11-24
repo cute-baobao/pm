@@ -29,9 +29,10 @@ import { useConfirm } from '@/lib/hooks/use-confirm';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CopyIcon, LinkIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOrganizationSlug } from '../../organization/hooks/use-organization';
+import { useInviteOrganizationMember } from '../hooks/use-organization-member';
 import { InviteMemberData, inviteMemberSchema } from '../schema';
 
 interface InviteMemberFormProps {
@@ -49,7 +50,7 @@ const CopyInviteLink = ({ inviteLink }: { inviteLink: string }) => {
     <div className="mt-4">
       <div className="flex items-center gap-x-2">
         <Input disabled value={inviteLink} />
-        <Button onClick={handleCopy} variant="secondary" className="size-9">
+        <Button onClick={handleCopy} variant={"ghost"} className="size-9">
           <CopyIcon className="size-5" />
         </Button>
       </div>
@@ -63,7 +64,6 @@ export function InviteMemberForm({
 }: InviteMemberFormProps) {
   const t = useTranslations('OrganizationMember.InviteMemberForm');
   const slug = useOrganizationSlug();
-  const inviteButton = useRef<HTMLButtonElement>(null);
   const [inviteLink, setInviteLink] = useState<string>('');
   const form = useForm<InviteMemberData>({
     resolver: zodResolver(inviteMemberSchema),
@@ -80,7 +80,18 @@ export function InviteMemberForm({
     t('generateConfirmMessage'),
   );
 
-  const onSubmit = (data: InviteMemberData) => {};
+  const inviteOrganizationMember = useInviteOrganizationMember();
+
+  const onSubmit = (data: InviteMemberData) => {
+    inviteOrganizationMember.mutate(data, {
+      onSuccess: async (invitation) => {
+        const link = `${window.location.protocol}//${window.location.host}/organization/invite?token=${invitation.id}`;
+        setInviteLink(link);
+        await confirm();
+        form.reset();
+      },
+    });
+  };
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -96,10 +107,9 @@ export function InviteMemberForm({
             </CardDescription>
           </div>
           <Button
-            onClick={() => inviteButton.current?.click()}
-            disabled={!form.formState.isValid}
+            onClick={() => form.handleSubmit(onSubmit)()}
+            disabled={inviteOrganizationMember.isPending}
             size="sm"
-            variant="secondary"
           >
             <LinkIcon className="mr-2 size-4" />
             {t('inviteLinkButton')}
@@ -108,7 +118,7 @@ export function InviteMemberForm({
         <DottedSeparator className="px-7 py-2" />
         <CardContent className="px-7 py-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form>
               <div className="flex flex-col gap-4 lg:flex-row">
                 <FormField
                   control={form.control}
@@ -162,7 +172,6 @@ export function InviteMemberForm({
                     );
                   }}
                 />
-                <button type="submit" ref={inviteButton} className="hidden" />
               </div>
             </form>
           </Form>

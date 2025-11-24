@@ -88,6 +88,8 @@
     }
   },
   "OrganizationMember": {
+    "inviteSuccess": "成员邀请成功",
+    "inviteError": "邀请成员失败: {message}",
     "InviteMemberForm": {
       "generateConfirmTitle": "邀请成员",
       "generateConfirmMessage": "这将向用户发送邀请。",
