@@ -6,7 +6,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 export const auth = betterAuth({
   session: {
     additionalFields: {
-      activeOrganizationSlug: {
+      activeOrganizationId: {
         type: 'string',
         required: false,
       },

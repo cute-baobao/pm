@@ -1,5 +1,5 @@
 {
-  "id": "6235ab03-045f-4a70-871b-65bca5c4a674",
+  "id": "fcfe1cf7-0f2d-43bd-a8b2-383fe50b5a28",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -221,9 +221,9 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "organization_slug": {
-          "name": "organization_slug",
-          "type": "text",
+        "organization_id": {
+          "name": "organization_id",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -235,7 +235,8 @@
         },
         "role": {
           "name": "role",
-          "type": "text",
+          "type": "organization_role",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'member'"
@@ -250,15 +251,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "member_organization_slug_organization_slug_fk": {
-          "name": "member_organization_slug_organization_slug_fk",
+        "member_organization_id_organization_id_fk": {
+          "name": "member_organization_id_organization_id_fk",
           "tableFrom": "member",
           "tableTo": "organization",
           "columnsFrom": [
-            "organization_slug"
+            "organization_id"
           ],
           "columnsTo": [
-            "slug"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -395,8 +396,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "active_organization_slug": {
-          "name": "active_organization_slug",
+        "active_organization_id": {
+          "name": "active_organization_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -582,7 +583,17 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.organization_role": {
+      "name": "organization_role",
+      "schema": "public",
+      "values": [
+        "owner",
+        "admin",
+        "member"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

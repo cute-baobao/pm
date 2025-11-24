@@ -1,6 +1,4 @@
-import { setActiveOrganization } from '@/features/organization/server/service';
-import { getSession } from '@/lib/utils/auth-action';
-import { notFound, redirect } from 'next/navigation';
+import { requireOrganizationAccess } from '@/lib/utils/auth-action';
 
 interface SubdomainPageProps {
   params: Promise<{ slug: string }>;
@@ -9,17 +7,6 @@ interface SubdomainPageProps {
 export default async function SlugPage({ params }: SubdomainPageProps) {
   //Check user session and access permission
   const { slug } = await params;
-  const session = await getSession({ withOrganizations: true });
-  if (!session) {
-    redirect('/login');
-  } else {
-    const hasAcess = session.user.organizations.some(
-      (org) => org.slug === slug,
-    );
-    if (!hasAcess) {
-      notFound();
-    }
-    await setActiveOrganization(session.session.token, hasAcess ? slug : null);
-  }
+  await requireOrganizationAccess(slug);
   return <div>123</div>;
 }

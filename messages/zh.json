@@ -86,5 +86,26 @@
       "dangerZoneDescription": "删除组织是不可逆的，将删除所有相关数据。",
       "deleteButton": "删除组织"
     }
+  },
+  "OrganizationMember": {
+    "InviteMemberForm": {
+      "generateConfirmTitle": "邀请成员",
+      "generateConfirmMessage": "这将向用户发送邀请。",
+      "title": "邀请成员",
+      "description": "邀请新成员加入您的组织",
+      "inviteLinkButton": "通过链接邀请",
+      "emailLabel": "电子邮件",
+      "emailPlaceholder": "name@example.com",
+      "roleLabel": "角色",
+      "rolePlaceholder": "选择角色"
+    },
+    "MemberList": {
+      "title": "成员列表",
+      "removeConfirmTitle": "移除成员",
+      "removeConfirmMessage": "您确定要将此成员从组织中移除吗？",
+      "setAdmin": "设为管理员",
+      "setMember": "设为成员",
+      "removeMember": "移除 {name}"
+    }
   }
 }

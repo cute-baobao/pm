@@ -5,15 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763907860292,
+      "when": 1763954119349,
       "tag": "0000_add-better-auth",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1763909714705,
-      "tag": "0001_add-organization-role",
+      "when": 1763974003788,
+      "tag": "0001_add-invitation-status",
       "breakpoints": true
     }
   ]

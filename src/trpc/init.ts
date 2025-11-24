@@ -50,7 +50,7 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 export const permissionedProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
     const { session, user } = ctx.auth;
-    if (!session.activeOrganizationSlug) {
+    if (!session.activeOrganizationId) {
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'Error.forbidden_no_active_organization',
@@ -61,7 +61,7 @@ export const permissionedProcedure = protectedProcedure.use(
       where: (m, { eq, and }) =>
         and(
           eq(m.userId, user.id),
-          eq(m.organizationSlug, session.activeOrganizationSlug!),
+          eq(m.organizationId, session.activeOrganizationId!),
         ),
     });
 

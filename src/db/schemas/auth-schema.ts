@@ -39,7 +39,7 @@ export const session = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    activeOrganizationSlug: text('active_organization_slug'),
+    activeOrganizationId: text('active_organization_id'),
   },
   (table) => [index('session_userId_idx').on(table.userId)],
 );
@@ -107,9 +107,9 @@ export type OrganizationRole = (typeof organizationRoleValues)[number];
 
 export const member = pgTable('member', {
   id: uuid('id').defaultRandom().primaryKey(),
-  organizationSlug: text('organization_slug')
+  organizationId: uuid('organization_id')
     .notNull()
-    .references(() => organization.slug, { onDelete: 'cascade' }),
+    .references(() => organization.id, { onDelete: 'cascade' }),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
@@ -119,6 +119,17 @@ export const member = pgTable('member', {
 
 export type Member = InferSelectModel<typeof member>;
 
+export const invitationStatus = pgEnum('invitation_status', [
+  'pending',
+  'accepted',
+  'revoked',
+  'expired',
+]);
+
+export const invitationStatusValues = invitationStatus.enumValues;
+
+export type InvitationStatus = (typeof invitationStatusValues)[number];
+
 export const invitation = pgTable('invitation', {
   id: uuid('id').defaultRandom().primaryKey(),
   organizationId: uuid('organization_id')
@@ -126,7 +137,7 @@ export const invitation = pgTable('invitation', {
     .references(() => organization.id, { onDelete: 'cascade' }),
   email: text('email').notNull(),
   role: text('role'),
-  status: text('status').default('pending').notNull(),
+  status: invitationStatus().default('pending').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   inviterId: text('inviter_id')
     .notNull()
@@ -161,8 +172,8 @@ export const organizationRelations = relations(organization, ({ many }) => ({
 
 export const memberRelations = relations(member, ({ one }) => ({
   organization: one(organization, {
-    fields: [member.organizationSlug],
-    references: [organization.slug],
+    fields: [member.organizationId],
+    references: [organization.id],
   }),
   user: one(user, {
     fields: [member.userId],

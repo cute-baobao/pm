@@ -4,7 +4,7 @@ import {
   OrganizationLoading,
 } from '@/features/organization/components/organization';
 import { prefetchOrganization } from '@/features/organization/server/prefetch';
-import { getSession } from '@/lib/utils/auth-action';
+import { requireOrganizationAccess } from '@/lib/utils/auth-action';
 import { HydrateClient } from '@/trpc/server';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -16,11 +16,10 @@ interface SubdomainPageProps {
 
 export default async function SlugPage({ params }: SubdomainPageProps) {
   const { slug } = await params;
-  const session = await getSession({ withMembers: true });
-  if (!session) {
-    redirect(`/login?next=/organization/${slug}/setting`);
-  }
-  const member = session.user.members.find((m) => m.organizationSlug === slug);
+  const session = await requireOrganizationAccess(slug, true);
+  const member = session.user.members.find(
+    (m) => m.organizationId === session.session.activeOrganizationId,
+  );
   if (!member) {
     redirect(`/organization`);
   }

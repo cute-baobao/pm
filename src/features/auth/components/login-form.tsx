@@ -22,6 +22,7 @@ import { LoginFormData, loginFormSchema } from '@/features/auth/schema';
 import { signIn } from '@/lib/auth-client';
 import { cn, safeRedirect } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSetAtom } from 'jotai';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -30,6 +31,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { userAtom } from '../store/atom';
 
 export default function LoginForm() {
   const t = useTranslations('Auth.Login');
@@ -37,6 +39,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const nextUrl = safeRedirect(searchParams.get('next'));
+  const setUserAtom = useSetAtom(userAtom);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
@@ -50,10 +53,10 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
-    await signIn.email({
+    const result = await signIn.email({
       email: data.email,
       password: data.password,
-      callbackURL: '/',
+      callbackURL: '/organization',
       fetchOptions: {
         onResponse: () => {
           setLoading(false);
@@ -64,11 +67,19 @@ export default function LoginForm() {
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-        onSuccess: async () => {
-          router.push('/');
-        },
       },
     });
+    if (result) {
+      // normalize user.image to be string | null (no undefined) before updating atom
+      const user = result.data?.user
+        ? {
+            ...result.data.user,
+            image: result.data.user.image ?? null,
+          }
+        : null;
+
+      setUserAtom(user);
+    }
   };
 
   const signInGithub = async () => {

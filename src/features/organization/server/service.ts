@@ -25,7 +25,7 @@ export const createOrganiztion = async (
       })
       .returning();
     await tx.insert(member).values({
-      organizationSlug: o.slug,
+      organizationId: o.id,
       userId: user.id,
       role: 'owner',
     });
@@ -39,7 +39,7 @@ export const getOrganizations = async (userId: string) => {
   const orgs = await db
     .select({ ...getTableColumns(organization) })
     .from(organization)
-    .leftJoin(member, eq(organization.slug, member.organizationSlug))
+    .leftJoin(member, eq(organization.id, member.organizationId))
     .where(eq(member.userId, userId));
 
   return orgs;
@@ -47,11 +47,11 @@ export const getOrganizations = async (userId: string) => {
 
 export const setActiveOrganization = async (
   token: string,
-  slug: string | null,
+  id: string | null,
 ) => {
   const [reuslt] = await db
     .update(session)
-    .set({ activeOrganizationSlug: slug })
+    .set({ activeOrganizationId: id })
     .where(eq(session.token, token))
     .returning();
 
@@ -65,6 +65,7 @@ export const updateOrganization = async (data: UpdateOrganizationData) => {
       name: data.name,
       logo: data.logo,
       metadata: data.metadata,
+      slug: data.slug,
     })
     .where(eq(organization.id, data.id))
     .returning();
@@ -95,3 +96,5 @@ export const getUserMembers = async (userId: string) => {
   });
   return members;
 };
+
+export const inviteToUserOrganization = async () => {};

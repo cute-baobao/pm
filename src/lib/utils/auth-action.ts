@@ -3,9 +3,10 @@ import { Member, Organization } from '@/db/schemas';
 import {
   getOrganizations,
   getUserMembers,
+  setActiveOrganization,
 } from '@/features/organization/server/service';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { protocol, rootDomain } from '.';
 import { auth } from '../auth';
 
@@ -78,4 +79,27 @@ export async function getSession({
     ...session,
     user,
   };
+}
+
+export async function requireOrganizationAccess(
+  slug: string,
+  withMembers = false,
+) {
+  const session = await getSession({
+    withOrganizations: true,
+    withMembers,
+  });
+  if (!session) {
+    redirect('/login');
+  }
+
+  const hasAccess = session.user.organizations.find((org) => org.slug === slug);
+
+  if (!hasAccess) {
+    await setActiveOrganization(session.session.token, null);
+    notFound();
+  }
+
+  await setActiveOrganization(session.session.token, hasAccess.id);
+  return session;
 }

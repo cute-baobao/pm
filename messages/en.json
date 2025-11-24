@@ -86,5 +86,26 @@
       "dangerZoneDescription": "Deleting an organization is irreversible and will remove all associated data.",
       "deleteButton": "Delete Organization"
     }
+  },
+  "OrganizationMember": {
+    "InviteMemberForm": {
+      "generateConfirmTitle": "Invite Member",
+      "generateConfirmMessage": "This will send an invitation to the user.",
+      "title": "Invite Member",
+      "description": "Invite new members to your organization",
+      "inviteLinkButton": "Invite via Link",
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "roleLabel": "Role",
+      "rolePlaceholder": "Select Role"
+    },
+    "MemberList": {
+      "title": "Members",
+      "removeConfirmTitle": "Remove Member",
+      "removeConfirmMessage": "Are you sure you want to remove this member from the organization?",
+      "setAdmin": "Set as Admin",
+      "setMember": "Set as Member",
+      "removeMember": "Remove {name}"
+    }
   }
 }
