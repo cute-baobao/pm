@@ -17,7 +17,6 @@ export default async function WorkspaceMembersPage({
 }: WorkspaceMembersPageProps) {
   const { slug } = await params;
   const session = await requireOrganizationAccess(slug, true);
-  console.log('member', session);
   const member = session.user.members.find(
     (m) => m.organizationId === session.session.activeOrganizationId,
   );
@@ -26,7 +25,7 @@ export default async function WorkspaceMembersPage({
     redirect('/organization');
   }
 
-  await prefetchOrganizationMembers();
+  await prefetchOrganizationMembers(session.session.activeOrganizationId!);
 
   return (
     <HydrateClient>
@@ -36,7 +35,7 @@ export default async function WorkspaceMembersPage({
             organizationId={member.organizationId}
             role={member.role}
           />
-          <MemberList />
+          <MemberList organizationId={member.organizationId} />
         </Suspense>
       </div>
     </HydrateClient>

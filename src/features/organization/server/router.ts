@@ -51,7 +51,7 @@ export const organizationRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { user } = ctx.auth;
       const permission = hasPermission(user.role, 'update');
-      if (!permission) {
+      if (!permission || ctx.auth.session.activeOrganizationId !== input.id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Error.forbidden_no_permission',
@@ -65,7 +65,7 @@ export const organizationRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { user } = ctx.auth;
       const permission = hasPermission(user.role, 'delete');
-      if (!permission) {
+      if (!permission || ctx.auth.session.activeOrganizationId !== input.id) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Error.forbidden_no_permission',

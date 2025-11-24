@@ -94,15 +94,17 @@ export function AppSidebar() {
               <SidebarMenu>
                 {group.items.map((item) => {
                   const fullUrl = `/organization/${params.slug}${item.url}`;
+                  const isActive =
+                    item.url === ''
+                      ? pathname === fullUrl
+                      : pathname === fullUrl ||
+                        pathname.startsWith(`${fullUrl}/`);
+
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         tooltip={item.title}
-                        isActive={
-                          item.url === '/'
-                            ? pathname === '/'
-                            : pathname.startsWith(item.url)
-                        }
+                        isActive={isActive}
                         asChild
                         className="h-10 gap-x-4 px-4"
                       >

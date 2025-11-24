@@ -18,9 +18,13 @@ import { Fragment } from 'react';
 import { useSuspenseOrganizationMembers } from '../hooks/use-organization-member';
 import { MemberAvatar } from './member-avatar';
 
-export const MemberList = () => {
+interface MemberListProps {
+  organizationId: string;
+}
+
+export const MemberList = ({ organizationId }: MemberListProps) => {
   const t = useTranslations('OrganizationMember.MemberList');
-  const { data: members } = useSuspenseOrganizationMembers();
+  const { data: members } = useSuspenseOrganizationMembers(organizationId);
   // const { mutate: deleteMember, isPending: isDeletingMember } =
   //   useDeleteMember();
 
@@ -36,7 +40,7 @@ export const MemberList = () => {
     // deleteMember({ param: { memberId } });
   };
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-none">
+    <Card className="mx-auto w-full max-w-4xl shadow-none">
       <ConfirmDialog />
       <CardHeader className="flex flex-row items-center space-y-0 gap-x-4">
         <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
