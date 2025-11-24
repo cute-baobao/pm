@@ -10,7 +10,7 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
   return !existingSlug;
 };
 
-export const createOrganiztion = async (
+export const createOrganization = async (
   input: CreateOrganizationData,
   user: User,
 ) => {
@@ -49,13 +49,13 @@ export const setActiveOrganization = async (
   token: string,
   id: string | null,
 ) => {
-  const [reuslt] = await db
+  const [result] = await db
     .update(session)
     .set({ activeOrganizationId: id })
     .where(eq(session.token, token))
     .returning();
 
-  return reuslt;
+  return result;
 };
 
 export const updateOrganization = async (data: UpdateOrganizationData) => {

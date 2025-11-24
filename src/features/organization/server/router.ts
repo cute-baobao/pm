@@ -9,7 +9,7 @@ import z from 'zod';
 import { createOrganizationSchema, updateOrganizationSchema } from '../schema';
 import {
   checkSlugAvailability,
-  createOrganiztion,
+  createOrganization,
   deleteOrganization,
   getOrganization,
   getOrganizations,
@@ -28,7 +28,7 @@ export const organizationRouter = createTRPCRouter({
         });
       }
       ctx.auth.user;
-      const organization = await createOrganiztion(input, ctx.auth.user!);
+      const organization = await createOrganization(input, ctx.auth.user!);
       return organization;
     }),
   getList: protectedProcedure.query(async ({ ctx }) => {
