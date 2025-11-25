@@ -20,25 +20,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { RegisterFormData, registerFormSchema } from '@/features/auth/schema';
 import { signUp } from '@/lib/auth-client';
-import { cn, safeRedirect } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSetAtom } from 'jotai';
 import { Loader2, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { userAtom } from '../store/atom';
 
 export default function RegisterForm() {
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const setUserAtom = useSetAtom(userAtom);
-  const t = useTranslations('Auth.Register');
-  const searchParams = useSearchParams();
-  const nextUrl = safeRedirect(searchParams.get('next'));
   const router = useRouter();
 
   const registerForm = useForm<RegisterFormData>({
@@ -48,35 +42,30 @@ export default function RegisterForm() {
       email: '',
       password: '',
       confirmPassword: '',
-      image: '',
     },
   });
 
-  const imagePreview = useWatch({
-    control: registerForm.control,
-    name: 'image',
-  });
-
-  const handleImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    fieldChange: (value: string) => void,
-  ) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        fieldChange(reader.result as string);
+        registerForm.setValue('image', reader.result as string);
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    const result = await signUp.email({
+    console.log('Submitting form with data:', data);
+    await signUp.email({
       email: data.email,
       password: data.password,
       name: data.username,
-      image: data.image,
+      image: image ? await convertImageToBase64(image) : '',
+      callbackURL: '/',
       fetchOptions: {
         onResponse: () => {
           setLoading(false);
@@ -87,31 +76,19 @@ export default function RegisterForm() {
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-        onSuccess: () => {
-          router.push(nextUrl ? nextUrl : '/organization');
+        onSuccess: async () => {
+          router.push('/');
         },
       },
     });
-
-    if (result) {
-      // normalize user.image to be string | null (no undefined) before updating atom
-      const user = result.data?.user
-        ? {
-            ...result.data.user,
-            image: result.data.user.image ?? null,
-          }
-        : null;
-
-      setUserAtom(user);
-    }
   };
 
   return (
     <Card className="z-50 max-w-md rounded-md">
       <CardHeader>
-        <CardTitle className="text-lg md:text-xl">{t('signUp')}</CardTitle>
+        <CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
         <CardDescription className="text-xs md:text-sm">
-          {t('description')}
+          Enter your information to create an account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -123,7 +100,7 @@ export default function RegisterForm() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="username">{t('username')}</FormLabel>
+                    <FormLabel htmlFor="username">Username</FormLabel>
                     <FormControl>
                       <Input
                         id="username"
@@ -142,7 +119,7 @@ export default function RegisterForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="email">{t('email')}</FormLabel>
+                    <FormLabel htmlFor="email">Email</FormLabel>
                     <FormControl>
                       <Input
                         id="email"
@@ -162,7 +139,7 @@ export default function RegisterForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="password">{t('password')}</FormLabel>
+                    <FormLabel htmlFor="password">Password</FormLabel>
                     <FormControl>
                       <Input
                         id="password"
@@ -183,7 +160,7 @@ export default function RegisterForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel htmlFor="confirmPassword">
-                      {t('confirmPassword')}
+                      Confirm Password
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -200,35 +177,32 @@ export default function RegisterForm() {
               />
 
               <div className="grid gap-2">
-                <FormLabel htmlFor="image">{t('profileImage')}</FormLabel>
+                <FormLabel htmlFor="image">Profile Image (optional)</FormLabel>
                 <div className="flex items-end gap-4">
                   {imagePreview && (
-                    <div className="relative h-16 w-24 overflow-hidden rounded-sm">
+                    <div className="relative h-16 w-16 overflow-hidden rounded-sm">
                       <Image
                         src={imagePreview}
                         alt="Profile preview"
                         layout="fill"
+                        objectFit="cover"
                       />
                     </div>
                   )}
-                  <div className="flex w-full items-center">
+                  <div className="flex w-full items-center gap-2">
                     <FormField
                       name="image"
                       control={registerForm.control}
-                      render={({
-                        field: { value, onChange, ...fieldProps },
-                      }) => (
-                        <FormItem className="w-full">
+                      render={({ field }) => (
+                        <FormItem>
                           <FormControl>
                             <Input
-                              {...fieldProps}
                               id="image"
                               type="file"
                               accept="image/*"
                               className="w-full"
-                              onChange={(event) => {
-                                handleImageChange(event, onChange);
-                              }}
+                              {...field}
+                              onChange={handleImageChange}
                             />
                           </FormControl>
                           <FormMessage />
@@ -237,9 +211,10 @@ export default function RegisterForm() {
                     />
                     {imagePreview && (
                       <X
-                        className={cn('cursor-pointer')}
+                        className="cursor-pointer"
                         onClick={() => {
-                          registerForm.setValue('image', '');
+                          setImage(null);
+                          setImagePreview(null);
                         }}
                       />
                     )}
@@ -251,7 +226,7 @@ export default function RegisterForm() {
                 {loading ? (
                   <Loader2 size={16} className="animate-spin" />
                 ) : (
-                  t('createAccount')
+                  'Create an account'
                 )}
               </Button>
             </div>
@@ -264,13 +239,22 @@ export default function RegisterForm() {
             Secured by <span className="text-orange-400">better-auth.</span>
           </p>
           <p className="text-center text-xs text-neutral-500">
-            {t('haveAccount')}{' '}
+            Already have an account?{' '}
             <Link href="/login" className="underline hover:text-blue-500">
-              {t('signIn')}
+              Sign in
             </Link>
           </p>
         </div>
       </CardFooter>
     </Card>
   );
+}
+
+async function convertImageToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }

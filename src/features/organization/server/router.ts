@@ -58,7 +58,7 @@ export const organizationRouter = createTRPCRouter({
         });
       }
 
-      return await updateOrganization(input);
+      return await updateOrganization(input, ctx.auth.user.id);
     }),
   delete: permissionedProcedure
     .input(z.object({ id: z.string() }))
@@ -71,6 +71,6 @@ export const organizationRouter = createTRPCRouter({
           message: 'Error.forbidden_no_permission',
         });
       }
-      return await deleteOrganization(input.id);
+      return await deleteOrganization(input.id, ctx.auth.user.id);
     }),
 });

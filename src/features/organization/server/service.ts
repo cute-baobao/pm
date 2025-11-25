@@ -76,27 +76,33 @@ export const setActiveOrganization = async (
   return result;
 };
 
-export const updateOrganization = async (data: UpdateOrganizationData) => {
-  const [result] = await db
-    .update(organization)
-    .set({
-      name: data.name,
-      logo: data.logo,
-      metadata: data.metadata,
-      slug: data.slug,
-    })
-    .where(eq(organization.id, data.id))
-    .returning();
+export const updateOrganization = async (
+  data: UpdateOrganizationData,
+  userId: string,
+) => {
+  const [result] = await withUser<Organization[]>(userId, async (tx) => {
+    return await tx
+      .update(organization)
+      .set({
+        name: data.name,
+        logo: data.logo,
+        metadata: data.metadata,
+        slug: data.slug,
+      })
+      .where(eq(organization.id, data.id))
+      .returning();
+  });
 
   return result;
 };
 
-export const deleteOrganization = async (id: string) => {
-  const [result] = await db
-    .delete(organization)
-    .where(eq(organization.id, id))
-    .returning();
-
+export const deleteOrganization = async (id: string, userId: string) => {
+  const [result] = await withUser<Organization[]>(userId, async (tx) => {
+    return await tx
+      .delete(organization)
+      .where(eq(organization.id, id))
+      .returning();
+  });
   return result;
 };
 

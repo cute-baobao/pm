@@ -92,6 +92,15 @@
   "OrganizationMember": {
     "inviteSuccess": "成员邀请成功",
     "inviteError": "邀请成员失败: {message}",
+    "updateRoleSuccess": "成员角色更新成功",
+    "updateRoleError": "更新成员角色失败: {message}",
+    "deleteMemberSuccess": "成员移除成功",
+    "deleteMemberError": "移除成员失败: {message}",
+    "Roles": {
+      "owner": "所有者",
+      "admin": "管理员",
+      "member": "成员"
+    },
     "InviteMemberForm": {
       "generateConfirmTitle": "邀请成员",
       "generateConfirmMessage": "这将向用户发送邀请。",

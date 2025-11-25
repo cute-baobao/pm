@@ -92,6 +92,15 @@
   "OrganizationMember": {
     "inviteSuccess": "Member invited successfully",
     "inviteError": "Error inviting member: {message}",
+    "updateRoleSuccess": "Member role updated successfully",
+    "updateRoleError": "Error updating member role: {message}",
+    "deleteMemberSuccess": "Member removed successfully",
+    "deleteMemberError": "Error removing member: {message}",
+    "Roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
+    },
     "InviteMemberForm": {
       "generateConfirmTitle": "Invite Member",
       "generateConfirmMessage": "This will send an invitation to the user.",

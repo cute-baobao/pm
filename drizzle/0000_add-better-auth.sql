@@ -89,11 +89,6 @@ CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> state
 CREATE INDEX "session_userId_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "verification" USING btree ("identifier");--> statement-breakpoint
 CREATE POLICY "self_access" ON "member" AS PERMISSIVE FOR SELECT TO public USING ("member"."user_id" = current_setting('app.current_user_id', true));--> statement-breakpoint
-CREATE POLICY "view_peers" ON "member" AS PERMISSIVE FOR SELECT TO public USING ("member"."user_id" != current_setting('app.current_user_id', true) AND EXISTS (
-  SELECT 1 FROM "member" AS m
-  WHERE m."organization_id" = "member"."organization_id"
-    AND m."user_id" = current_setting('app.current_user_id', true)
-));--> statement-breakpoint
 CREATE POLICY "update_access" ON "member" AS PERMISSIVE FOR UPDATE TO public USING (EXISTS (
   SELECT 1 FROM "member" AS m
   WHERE m."organization_id" = "member"."organization_id"
@@ -110,11 +105,8 @@ CREATE POLICY "delete_access" ON "member" AS PERMISSIVE FOR DELETE TO public USI
     AND m."user_id" = current_setting('app.current_user_id', true)
     AND m."role" IN ('owner', 'admin')
 ));--> statement-breakpoint
-CREATE POLICY "member_access" ON "organization" AS PERMISSIVE FOR SELECT TO public USING (EXISTS (
-  SELECT 1 FROM "member" AS m
-  WHERE m."organization_id" = "organization"."id"
-    AND m."user_id" = current_setting('app.current_user_id', true)
-));--> statement-breakpoint
+CREATE POLICY "create_access" ON "member" AS PERMISSIVE FOR INSERT TO public WITH CHECK ("member"."user_id" = current_setting('app.current_user_id', true));--> statement-breakpoint
+CREATE POLICY "read_access" ON "organization" AS PERMISSIVE FOR SELECT TO public USING (true);--> statement-breakpoint
 CREATE POLICY "update_access" ON "organization" AS PERMISSIVE FOR UPDATE TO public USING (EXISTS (
   SELECT 1 FROM "member" AS m
   WHERE m."organization_id" = "organization"."id"

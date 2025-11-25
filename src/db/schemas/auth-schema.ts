@@ -97,11 +97,11 @@ export const organization = pgTable(
     metadata: text('metadata'),
   },
   (t) => [
-    // member access policy
-    pgPolicy('member_access', {
+    // public read access (needed for slug checks and routing)
+    pgPolicy('read_access', {
       for: 'select',
       to: 'public',
-      using: isOrgMember(t.id),
+      using: sql`true`,
     }),
     pgPolicy('update_access', {
       for: 'update',
@@ -142,10 +142,10 @@ export const member = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (t) => [
-    pgPolicy('self_access', {
+    pgPolicy('read_access', {
       for: 'select',
       to: 'public',
-      using: sql`${t.userId} = ${currentUserId}`,
+      using: sql`true`,
     }),
     // only owner or admin can update or delete members
     pgPolicy('update_access', {

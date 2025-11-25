@@ -1,6 +1,6 @@
 {
-  "id": "1554e722-1e1c-4ce9-8108-5656565cd644",
-  "prevId": "02814913-b11d-4e9a-a62d-a85e2721488a",
+  "id": "d783ed25-707b-4c3d-a3df-44563589225c",
+  "prevId": "126ec28f-46a7-49d1-a715-747491e0808b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -283,14 +283,14 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {
-        "self_access": {
-          "name": "self_access",
+        "read_access": {
+          "name": "read_access",
           "as": "PERMISSIVE",
           "for": "SELECT",
           "to": [
             "public"
           ],
-          "using": "\"member\".\"user_id\" = current_setting('app.current_user_id', true)"
+          "using": "true"
         },
         "update_access": {
           "name": "update_access",
@@ -380,14 +380,14 @@
         }
       },
       "policies": {
-        "member_access": {
-          "name": "member_access",
+        "read_access": {
+          "name": "read_access",
           "as": "PERMISSIVE",
           "for": "SELECT",
           "to": [
             "public"
           ],
-          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"organization\".\"id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+          "using": "true"
         },
         "update_access": {
           "name": "update_access",

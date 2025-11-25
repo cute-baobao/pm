@@ -13,10 +13,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { OrganizationRole } from '@/db/schemas';
 import { useConfirm } from '@/lib/hooks/use-confirm';
 import { cn } from '@/lib/utils';
-import { hasPermission } from '@/lib/utils/has-permission';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeftIcon, ImageIcon, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -32,27 +30,18 @@ import { UpdateOrganizationData, updateOrganizationSchema } from '../schema';
 
 interface EditOrganizationForm {
   slug: string;
-  role: OrganizationRole;
   onCancel?: () => void;
 }
 
 export const EditOrganizationForm = ({
   slug,
-  role,
   onCancel,
 }: EditOrganizationForm) => {
   const router = useRouter();
   const { data: initialValue } = useSuspenseOrganization(slug);
   const t = useTranslations('Organization.EditForm');
-  const canEdit = useMemo(() => {
-    return hasPermission(role, 'update');
-  }, [role]);
-  const canDelete = useMemo(() => {
-    return hasPermission(role, 'delete');
-  }, [role]);
   const form = useForm<UpdateOrganizationData>({
     resolver: zodResolver(updateOrganizationSchema),
-    disabled: !canEdit,
     defaultValues: {
       ...initialValue,
       logo: initialValue.logo ? initialValue.logo : '',
@@ -128,7 +117,7 @@ export const EditOrganizationForm = ({
             onClick={
               onCancel
                 ? onCancel
-                : () => router.push(`/organization/${initialValue.slug}`)
+                : () => router.push(`/organization/${initialValue.id}`)
             }
           >
             <ArrowLeftIcon className="mr-2 size-4" />
@@ -216,7 +205,7 @@ export const EditOrganizationForm = ({
                   render={({ field }) => {
                     return (
                       <FormItem>
-                        <FormLabel>{t('metadataLabel')} (Optional)</FormLabel>
+                        <FormLabel>{t('metadataLabel')}</FormLabel>
                         <FormControl>
                           <Textarea
                             className="max-h-[500px] overflow-auto"
@@ -266,7 +255,7 @@ export const EditOrganizationForm = ({
               className="mt-6 ml-auto w-fit"
               variant="destructive"
               size="sm"
-              disabled={disable || !canDelete}
+              disabled={disable}
             >
               {t('deleteButton')}
             </Button>

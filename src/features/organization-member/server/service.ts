@@ -4,9 +4,13 @@ import { env } from '@/env';
 import { OrganizationInviteTemplate } from '@/lib/templates/invite-organization-email';
 import { protocol, rootDomain } from '@/lib/utils';
 import { TRPCError } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { Resend } from 'resend';
-import { InviteMemberData } from '../schema';
+import {
+  DeleteMemberData,
+  InviteMemberData,
+  UpdateMemberRoleData,
+} from '../schema';
 
 export const inviteMember = async (
   data: InviteMemberData,
@@ -19,6 +23,7 @@ export const inviteMember = async (
           eq(inv.email, data.email),
           eq(inv.organizationId, data.organizationId),
           gt(inv.expiresAt, new Date()),
+          eq(inv.status, 'pending'),
         ),
     });
 
@@ -27,6 +32,21 @@ export const inviteMember = async (
         code: 'CONFLICT',
         message:
           'An active invitation already exists for this email and organization.',
+      });
+    }
+
+    const member = await tx.query.member.findFirst({
+      where: (mem, { eq, and }) =>
+        and(
+          eq(mem.organizationId, data.organizationId),
+          eq(mem.userId, inviterId),
+        ),
+    });
+
+    if (!member) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'You are not a member of this organization.',
       });
     }
 
@@ -75,7 +95,6 @@ export const getOrganizationMembers = async ({
   userId: string;
   organizationId: string;
 }) => {
-  console.log(123);
   const members = await withUser(userId, async (tx) => {
     return await tx.query.member.findMany({
       where: (member, { eq }) => eq(member.organizationId, organizationId),
@@ -93,14 +112,16 @@ export const joinOrganizationViaInvitation = async (
   userId: string,
   email: string,
 ) => {
-  const result = await db.transaction(async (tx) => {
+  const result = await withUser(userId, async (tx) => {
     const invitationRecord = await tx.query.invitation.findFirst({
       where: (inv, { eq, and }) => and(eq(inv.id, token), eq(inv.email, email)),
     });
 
-    console.log('invitationRecord', invitationRecord);
-
-    if (!invitationRecord || invitationRecord.expiresAt < new Date()) {
+    if (
+      !invitationRecord ||
+      invitationRecord.expiresAt < new Date() ||
+      invitationRecord.status !== 'pending'
+    ) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'Invitation token is invalid or has expired.',
@@ -131,10 +152,53 @@ export const joinOrganizationViaInvitation = async (
       })
       .returning();
 
-    await tx.delete(invitation).where(eq(invitation.id, invitationRecord.id));
+    await tx
+      .update(invitation)
+      .set({
+        status: 'accepted',
+      })
+      .where(eq(invitation.id, invitationRecord.id));
 
     return memberRecord;
   });
 
+  return result;
+};
+
+export const updateMemberRole = async (data: UpdateMemberRoleData) => {
+  const result = await withUser(data.operatorId, async (tx) => {
+    const [updated] = await tx
+      .update(member)
+      .set({
+        role: data.role,
+      })
+      .where(
+        and(
+          eq(member.id, data.memberId),
+          eq(member.organizationId, data.organizationId),
+        ),
+      )
+      .returning();
+
+    return updated;
+  });
+
+  return result;
+};
+
+export const deleteMember = async (data: DeleteMemberData) => {
+  const result = await withUser(data.operatorId, async (tx) => {
+    const [deleted] = await tx
+      .delete(member)
+      .where(
+        and(
+          eq(member.id, data.memberId),
+          eq(member.organizationId, data.organizationId),
+        ),
+      )
+      .returning();
+
+    return deleted;
+  });
   return result;
 };

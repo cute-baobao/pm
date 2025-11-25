@@ -1,5 +1,5 @@
 {
-  "id": "d842def2-1fc8-423d-8cdf-67b272a7a539",
+  "id": "9e3924ae-8e4b-4116-b0c8-601403043887",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -292,15 +292,6 @@
           ],
           "using": "\"member\".\"user_id\" = current_setting('app.current_user_id', true)"
         },
-        "view_peers": {
-          "name": "view_peers",
-          "as": "PERMISSIVE",
-          "for": "SELECT",
-          "to": [
-            "public"
-          ],
-          "using": "\"member\".\"user_id\" != current_setting('app.current_user_id', true) AND EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
-        },
         "update_access": {
           "name": "update_access",
           "as": "PERMISSIVE",
@@ -319,6 +310,15 @@
             "public"
           ],
           "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)"
+        },
+        "create_access": {
+          "name": "create_access",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "public"
+          ],
+          "withCheck": "\"member\".\"user_id\" = current_setting('app.current_user_id', true)"
         }
       },
       "checkConstraints": {},
@@ -380,14 +380,14 @@
         }
       },
       "policies": {
-        "member_access": {
-          "name": "member_access",
+        "read_access": {
+          "name": "read_access",
           "as": "PERMISSIVE",
           "for": "SELECT",
           "to": [
             "public"
           ],
-          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"organization\".\"id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+          "using": "true"
         },
         "update_access": {
           "name": "update_access",

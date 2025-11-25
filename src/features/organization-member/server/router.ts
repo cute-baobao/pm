@@ -2,8 +2,17 @@ import { hasPermission } from '@/lib/utils/has-permission';
 import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { inviteMemberSchema } from '../schema';
-import { getOrganizationMembers, inviteMember } from './service';
+import {
+  deleteMemberSchema,
+  inviteMemberSchema,
+  updateMemberRoleSchema,
+} from '../schema';
+import {
+  deleteMember,
+  getOrganizationMembers,
+  inviteMember,
+  updateMemberRole,
+} from './service';
 
 export const organizationMemberRouter = createTRPCRouter({
   invite: permissionedProcedure
@@ -26,11 +35,6 @@ export const organizationMemberRouter = createTRPCRouter({
     .input(z.object({ organizationId: z.string() }))
     .query(async ({ input, ctx }) => {
       const permission = hasPermission(ctx.auth.user.role, 'read');
-      console.log(
-        'permission',
-        permission,
-        ctx.auth.session.activeOrganizationId !== input.organizationId,
-      );
       if (
         !permission ||
         ctx.auth.session.activeOrganizationId !== input.organizationId
@@ -44,5 +48,38 @@ export const organizationMemberRouter = createTRPCRouter({
         organizationId: input.organizationId,
         userId: ctx.auth.user.id,
       });
+    }),
+  updateRole: permissionedProcedure
+    .input(updateMemberRoleSchema)
+    .mutation(async ({ ctx, input }) => {
+      const permission = hasPermission(ctx.auth.user.role, 'update');
+      if (
+        !permission ||
+        ctx.auth.session.activeOrganizationId !== input.organizationId
+      ) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Error.forbidden_no_permission',
+        });
+      }
+
+      const result = await updateMemberRole(input);
+      return result;
+    }),
+  delete: permissionedProcedure
+    .input(deleteMemberSchema)
+    .mutation(async ({ ctx, input }) => {
+      const permission = hasPermission(ctx.auth.user.role, 'delete');
+      if (
+        !permission ||
+        ctx.auth.session.activeOrganizationId !== input.organizationId
+      ) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Error.forbidden_no_permission',
+        });
+      }
+
+      return await deleteMember(input);
     }),
 });

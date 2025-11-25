@@ -35,7 +35,10 @@ export default async function WorkspaceMembersPage({
             organizationId={member.organizationId}
             role={member.role}
           />
-          <MemberList organizationId={member.organizationId} />
+          <MemberList
+            organizationId={member.organizationId}
+            role={member.role}
+          />
         </Suspense>
       </div>
     </HydrateClient>

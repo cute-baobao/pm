@@ -5,21 +5,21 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1764055314898,
-      "tag": "0000_add-better-auth-rls",
+      "when": 1764076240405,
+      "tag": "0000_add-better-auth",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1764062593927,
+      "when": 1764077217313,
       "tag": "0001_update-member-rls",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
-      "when": 1764062880077,
+      "when": 1764077492723,
       "tag": "0002_update-member-rls",
       "breakpoints": true
     }
