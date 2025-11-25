@@ -1,0 +1,1 @@
+DROP POLICY "view_peers" ON "member" CASCADE;

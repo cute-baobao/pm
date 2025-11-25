@@ -1,13 +1,15 @@
-import { InferSelectModel, relations } from 'drizzle-orm';
+import { InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
   index,
   pgEnum,
+  pgPolicy,
   pgTable,
   text,
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { currentUserId, isOrgMember, isOrgOwnerOrAdmin } from '../rls-utils';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -84,14 +86,35 @@ export const verification = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)],
 );
 
-export const organization = pgTable('organization', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: text('name').notNull(),
-  slug: text('slug').notNull().unique(),
-  logo: text('logo'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  metadata: text('metadata'),
-});
+export const organization = pgTable(
+  'organization',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: text('name').notNull(),
+    slug: text('slug').notNull().unique(),
+    logo: text('logo'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    metadata: text('metadata'),
+  },
+  (t) => [
+    // member access policy
+    pgPolicy('member_access', {
+      for: 'select',
+      to: 'public',
+      using: isOrgMember(t.id),
+    }),
+    pgPolicy('update_access', {
+      for: 'update',
+      to: 'public',
+      using: isOrgOwnerOrAdmin(t.id),
+    }),
+    pgPolicy('create_access', {
+      for: 'insert',
+      to: 'public',
+      withCheck: sql`${currentUserId} is not null`,
+    }),
+  ],
+);
 
 export type Organization = InferSelectModel<typeof organization>;
 
@@ -105,17 +128,44 @@ export const organizationRoleValues = organizationRole.enumValues;
 
 export type OrganizationRole = (typeof organizationRoleValues)[number];
 
-export const member = pgTable('member', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
-    .notNull()
-    .references(() => organization.id, { onDelete: 'cascade' }),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  role: organizationRole().default('member').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+export const member = pgTable(
+  'member',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    role: organizationRole().default('member').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (t) => [
+    pgPolicy('self_access', {
+      for: 'select',
+      to: 'public',
+      using: sql`${t.userId} = ${currentUserId}`,
+    }),
+    // only owner or admin can update or delete members
+    pgPolicy('update_access', {
+      for: 'update',
+      to: 'public',
+      using: isOrgOwnerOrAdmin(t.organizationId),
+      withCheck: isOrgMember(t.organizationId),
+    }),
+    pgPolicy('delete_access', {
+      for: 'delete',
+      to: 'public',
+      using: isOrgOwnerOrAdmin(t.organizationId),
+    }),
+    pgPolicy('create_access', {
+      for: 'insert',
+      to: 'public',
+      withCheck: sql`${t.userId} = ${currentUserId}`,
+    }),
+  ],
+);
 
 export type Member = InferSelectModel<typeof member>;
 
@@ -143,51 +193,3 @@ export const invitation = pgTable('invitation', {
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
 });
-
-export const userRelations = relations(user, ({ many }) => ({
-  sessions: many(session),
-  accounts: many(account),
-  members: many(member),
-  invitations: many(invitation),
-}));
-
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
-  }),
-}));
-
-export const accountRelations = relations(account, ({ one }) => ({
-  user: one(user, {
-    fields: [account.userId],
-    references: [user.id],
-  }),
-}));
-
-export const organizationRelations = relations(organization, ({ many }) => ({
-  members: many(member),
-  invitations: many(invitation),
-}));
-
-export const memberRelations = relations(member, ({ one }) => ({
-  organization: one(organization, {
-    fields: [member.organizationId],
-    references: [organization.id],
-  }),
-  user: one(user, {
-    fields: [member.userId],
-    references: [user.id],
-  }),
-}));
-
-export const invitationRelations = relations(invitation, ({ one }) => ({
-  organization: one(organization, {
-    fields: [invitation.organizationId],
-    references: [organization.id],
-  }),
-  user: one(user, {
-    fields: [invitation.inviterId],
-    references: [user.id],
-  }),
-}));

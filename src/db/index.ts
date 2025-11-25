@@ -1,7 +1,15 @@
 import { env } from '@/env';
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { ExtractTablesWithRelations, sql } from 'drizzle-orm';
+import { drizzle, NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
+import { PgTransaction } from 'drizzle-orm/pg-core';
 import ws from 'ws';
 import * as schema from './schemas';
+
+type Transaction = PgTransaction<
+  NeonQueryResultHKT,
+  typeof schema,
+  ExtractTablesWithRelations<typeof schema>
+>;
 
 const createDrizzleClient = () =>
   drizzle({
@@ -21,4 +29,18 @@ export const db = globalForDrizzle.drizzle ?? createDrizzleClient();
 if (env.NODE_ENV !== 'production') {
   globalForDrizzle.drizzle = db;
 }
+
+// 封装一个函数用于执行带用户上下文的查询
+export async function withUser<T>(
+  userId: string,
+  callback: (tx: Transaction) => Promise<T>,
+) {
+  return db.transaction(async (tx) => {
+    await tx.execute(
+      sql`SELECT set_config('app.current_user_id', ${userId}, true)`,
+    );
+    return callback(tx);
+  });
+}
+
 export default db;

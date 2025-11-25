@@ -5,22 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763954119349,
-      "tag": "0000_add-better-auth",
+      "when": 1764055314898,
+      "tag": "0000_add-better-auth-rls",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1763974003788,
-      "tag": "0001_add-invitation-status",
+      "when": 1764062593927,
+      "tag": "0001_update-member-rls",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
-      "when": 1763998881350,
-      "tag": "0002_update-invitation",
+      "when": 1764062880077,
+      "tag": "0002_update-member-rls",
       "breakpoints": true
     }
   ]

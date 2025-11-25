@@ -1,0 +1,1 @@
+CREATE POLICY "create_access" ON "member" AS PERMISSIVE FOR INSERT TO public WITH CHECK ("member"."user_id" = current_setting('app.current_user_id', true));

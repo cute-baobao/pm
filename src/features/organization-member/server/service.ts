@@ -1,4 +1,4 @@
-import db from '@/db';
+import db, { withUser } from '@/db';
 import { invitation, member } from '@/db/schemas';
 import { env } from '@/env';
 import { OrganizationInviteTemplate } from '@/lib/templates/invite-organization-email';
@@ -68,12 +68,21 @@ export const inviteMember = async (
   return r;
 };
 
-export const getOrganizationMembers = async (organizationId: string) => {
-  const members = await db.query.member.findMany({
-    where: (member, { eq }) => eq(member.organizationId, organizationId),
-    with: {
-      user: true,
-    },
+export const getOrganizationMembers = async ({
+  userId,
+  organizationId,
+}: {
+  userId: string;
+  organizationId: string;
+}) => {
+  console.log(123);
+  const members = await withUser(userId, async (tx) => {
+    return await tx.query.member.findMany({
+      where: (member, { eq }) => eq(member.organizationId, organizationId),
+      with: {
+        user: true,
+      },
+    });
   });
 
   return members;

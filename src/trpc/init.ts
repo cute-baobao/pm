@@ -1,4 +1,4 @@
-import db from '@/db';
+import { withUser } from '@/db';
 import { auth } from '@/lib/auth';
 import { PERMSSION } from '@/lib/configs/permission';
 import { initTRPC, TRPCError } from '@trpc/server';
@@ -57,12 +57,14 @@ export const permissionedProcedure = protectedProcedure.use(
       });
     }
 
-    const member = await db.query.member.findFirst({
-      where: (m, { eq, and }) =>
-        and(
-          eq(m.userId, user.id),
-          eq(m.organizationId, session.activeOrganizationId!),
-        ),
+    const member = await withUser(user.id, async (tx) => {
+      return await tx.query.member.findFirst({
+        where: (m, { eq, and }) =>
+          and(
+            eq(m.userId, user.id),
+            eq(m.organizationId, session.activeOrganizationId!),
+          ),
+      });
     });
 
     if (!member) {

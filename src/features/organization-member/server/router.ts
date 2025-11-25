@@ -1,11 +1,6 @@
-import db from '@/db';
-import { env } from '@/env';
-import { OrganizationInviteTemplate } from '@/lib/templates/invite-organization-email';
-import { protocol, rootDomain } from '@/lib/utils';
 import { hasPermission } from '@/lib/utils/has-permission';
 import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
-import { Resend } from 'resend';
 import z from 'zod';
 import { inviteMemberSchema } from '../schema';
 import { getOrganizationMembers, inviteMember } from './service';
@@ -31,6 +26,11 @@ export const organizationMemberRouter = createTRPCRouter({
     .input(z.object({ organizationId: z.string() }))
     .query(async ({ input, ctx }) => {
       const permission = hasPermission(ctx.auth.user.role, 'read');
+      console.log(
+        'permission',
+        permission,
+        ctx.auth.session.activeOrganizationId !== input.organizationId,
+      );
       if (
         !permission ||
         ctx.auth.session.activeOrganizationId !== input.organizationId
@@ -40,6 +40,9 @@ export const organizationMemberRouter = createTRPCRouter({
           message: 'Error.forbidden_no_permission',
         });
       }
-      return await getOrganizationMembers(input.organizationId);
+      return await getOrganizationMembers({
+        organizationId: input.organizationId,
+        userId: ctx.auth.user.id,
+      });
     }),
 });

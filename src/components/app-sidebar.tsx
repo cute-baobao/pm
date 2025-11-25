@@ -1,12 +1,11 @@
 'use client';
 
 // import { useHasActiveSubscription } from "@/features/subsctiptions/hooks/use-subscription";
+import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
-import { signOut } from '@/lib/auth-client';
 import {
   CircleGaugeIcon,
   HomeIcon,
-  LogOutIcon,
   SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -123,28 +122,6 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          {/* {!hasActiveSubscription && !isLoading && (
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                tooltip={"Upgrade to Pro"}
-                className="h-10 gap-x-4 px-4"
-                onClick={() => authClient.checkout({ slug: "pro" })}
-              >
-                <StarIcon className="size-4" />
-                <span>Upgrade to Pro</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )} */}
-          {/* <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip={"Billing Portal"}
-              className="h-10 gap-x-4 px-4"
-              onClick={() => authClient.customer.portal()}
-            >
-              <CreditCardIcon className="size-4" />
-              <span>Billing Portal</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem> */}
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip={t('settings')}
@@ -157,24 +134,7 @@ export function AppSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip={t('signOut')}
-              className="h-10 gap-x-4 px-4"
-              onClick={() =>
-                signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      router.push('/login');
-                    },
-                  },
-                })
-              }
-            >
-              <LogOutIcon className="size-4" />
-              <span>{t('signOut')}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <NavUser />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

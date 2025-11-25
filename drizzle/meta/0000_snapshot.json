@@ -1,5 +1,5 @@
 {
-  "id": "fcfe1cf7-0f2d-43bd-a8b2-383fe50b5a28",
+  "id": "d842def2-1fc8-423d-8cdf-67b272a7a539",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -151,13 +151,15 @@
         },
         "role": {
           "name": "role",
-          "type": "text",
+          "type": "organization_role",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "invitation_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'pending'"
@@ -280,7 +282,45 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "self_access": {
+          "name": "self_access",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "\"member\".\"user_id\" = current_setting('app.current_user_id', true)"
+        },
+        "view_peers": {
+          "name": "view_peers",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "\"member\".\"user_id\" != current_setting('app.current_user_id', true) AND EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+        },
+        "update_access": {
+          "name": "update_access",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)",
+          "withCheck": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+        },
+        "delete_access": {
+          "name": "delete_access",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -339,7 +379,35 @@
           ]
         }
       },
-      "policies": {},
+      "policies": {
+        "member_access": {
+          "name": "member_access",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"organization\".\"id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+        },
+        "update_access": {
+          "name": "update_access",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"organization\".\"id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)"
+        },
+        "create_access": {
+          "name": "create_access",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "public"
+          ],
+          "withCheck": "current_setting('app.current_user_id', true) is not null"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -584,6 +652,16 @@
     }
   },
   "enums": {
+    "public.invitation_status": {
+      "name": "invitation_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "accepted",
+        "revoked",
+        "expired"
+      ]
+    },
     "public.organization_role": {
       "name": "organization_role",
       "schema": "public",

@@ -1,6 +1,6 @@
 {
-  "id": "2fe0c932-4e61-4a79-b0b4-82913c4f7201",
-  "prevId": "f658f6f1-3a01-4187-9711-fbe2a0c3d71e",
+  "id": "1554e722-1e1c-4ce9-8108-5656565cd644",
+  "prevId": "02814913-b11d-4e9a-a62d-a85e2721488a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -282,7 +282,45 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
+      "policies": {
+        "self_access": {
+          "name": "self_access",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "\"member\".\"user_id\" = current_setting('app.current_user_id', true)"
+        },
+        "update_access": {
+          "name": "update_access",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)",
+          "withCheck": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+        },
+        "delete_access": {
+          "name": "delete_access",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"member\".\"organization_id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)"
+        },
+        "create_access": {
+          "name": "create_access",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "public"
+          ],
+          "withCheck": "\"member\".\"user_id\" = current_setting('app.current_user_id', true)"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -341,7 +379,35 @@
           ]
         }
       },
-      "policies": {},
+      "policies": {
+        "member_access": {
+          "name": "member_access",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"organization\".\"id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n)"
+        },
+        "update_access": {
+          "name": "update_access",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "public"
+          ],
+          "using": "EXISTS (\n  SELECT 1 FROM \"member\" AS m\n  WHERE m.\"organization_id\" = \"organization\".\"id\"\n    AND m.\"user_id\" = current_setting('app.current_user_id', true)\n    AND m.\"role\" IN ('owner', 'admin')\n)"
+        },
+        "create_access": {
+          "name": "create_access",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "public"
+          ],
+          "withCheck": "current_setting('app.current_user_id', true) is not null"
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },

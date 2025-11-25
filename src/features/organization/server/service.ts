@@ -1,7 +1,15 @@
-import db from '@/db';
-import { member, organization, session, User } from '@/db/schemas';
-import { eq, getTableColumns } from 'drizzle-orm';
+import db, { withUser } from '@/db';
+import {
+  member,
+  Organization,
+  organization,
+  session,
+  User,
+} from '@/db/schemas';
+import { eq } from 'drizzle-orm';
 import { CreateOrganizationData, UpdateOrganizationData } from '../schema';
+
+import { randomUUID } from 'crypto';
 
 export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
   const existingSlug = await db.query.organization.findFirst({
@@ -13,34 +21,44 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
 export const createOrganization = async (
   input: CreateOrganizationData,
   user: User,
-) => {
-  const result = await db.transaction(async (tx) => {
-    const [o] = await tx
-      .insert(organization)
-      .values({
-        name: input.name,
-        slug: input.slug,
-        logo: input.logo,
-        metadata: input.metadata,
-      })
-      .returning();
+): Promise<Organization> => {
+  const result = await withUser<Organization>(user.id, async (tx) => {
+    const id = randomUUID();
+    await tx.insert(organization).values({
+      id,
+      name: input.name,
+      slug: input.slug,
+      logo: input.logo,
+      metadata: input.metadata,
+    });
     await tx.insert(member).values({
-      organizationId: o.id,
+      organizationId: id,
       userId: user.id,
       role: 'owner',
     });
-    return o;
+    return {
+      id,
+      name: input.name,
+      slug: input.slug,
+      logo: input.logo,
+      metadata: input.metadata || '',
+      createdAt: new Date(),
+    };
   });
 
   return result;
 };
 
 export const getOrganizations = async (userId: string) => {
-  const orgs = await db
-    .select({ ...getTableColumns(organization) })
-    .from(organization)
-    .leftJoin(member, eq(organization.id, member.organizationId))
-    .where(eq(member.userId, userId));
+  const orgs = await withUser(userId, async (tx) => {
+    const members = await tx.query.member.findMany({
+      where: (member, { eq }) => eq(member.userId, userId),
+    });
+    const orgIds = members.map((m) => m.organizationId);
+    return await tx.query.organization.findMany({
+      where: (org, { inArray }) => inArray(org.id, orgIds),
+    });
+  });
 
   return orgs;
 };
@@ -91,8 +109,13 @@ export const getOrganization = async (slug: string) => {
 };
 
 export const getUserMembers = async (userId: string) => {
-  const members = await db.query.member.findMany({
-    where: (m, { eq }) => eq(m.userId, userId),
+  // const members = await db.query.member.findMany({
+  //   where: (m, { eq }) => eq(m.userId, userId),
+  // });
+  const members = await withUser(userId, async (tx) => {
+    return tx.query.member.findMany({
+      where: (m, { eq }) => eq(m.userId, userId),
+    });
   });
   return members;
 };

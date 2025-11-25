@@ -89,6 +89,7 @@ export async function requireOrganizationAccess(
     withOrganizations: true,
     withMembers,
   });
+
   if (!session) {
     redirect('/login');
   }

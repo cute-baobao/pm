@@ -1,4 +1,6 @@
 {
+  "chinese": "中文",
+  "english": "英文",
   "Auth": {
     "Register": {
       "signUp": "注册",

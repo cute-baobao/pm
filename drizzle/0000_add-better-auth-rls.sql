@@ -1,3 +1,4 @@
+CREATE TYPE "public"."invitation_status" AS ENUM('pending', 'accepted', 'revoked', 'expired');--> statement-breakpoint
 CREATE TYPE "public"."organization_role" AS ENUM('owner', 'admin', 'member');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
@@ -19,8 +20,8 @@ CREATE TABLE "invitation" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" uuid NOT NULL,
 	"email" text NOT NULL,
-	"role" text,
-	"status" text DEFAULT 'pending' NOT NULL,
+	"role" "organization_role" NOT NULL,
+	"status" "invitation_status" DEFAULT 'pending' NOT NULL,
 	"expires_at" timestamp NOT NULL,
 	"inviter_id" text NOT NULL
 );
@@ -33,6 +34,7 @@ CREATE TABLE "member" (
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "member" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "organization" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
@@ -43,6 +45,7 @@ CREATE TABLE "organization" (
 	CONSTRAINT "organization_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
+ALTER TABLE "organization" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"expires_at" timestamp NOT NULL,
@@ -84,4 +87,38 @@ ALTER TABLE "member" ADD CONSTRAINT "member_user_id_user_id_fk" FOREIGN KEY ("us
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "verification_identifier_idx" ON "verification" USING btree ("identifier");
+CREATE INDEX "verification_identifier_idx" ON "verification" USING btree ("identifier");--> statement-breakpoint
+CREATE POLICY "self_access" ON "member" AS PERMISSIVE FOR SELECT TO public USING ("member"."user_id" = current_setting('app.current_user_id', true));--> statement-breakpoint
+CREATE POLICY "view_peers" ON "member" AS PERMISSIVE FOR SELECT TO public USING ("member"."user_id" != current_setting('app.current_user_id', true) AND EXISTS (
+  SELECT 1 FROM "member" AS m
+  WHERE m."organization_id" = "member"."organization_id"
+    AND m."user_id" = current_setting('app.current_user_id', true)
+));--> statement-breakpoint
+CREATE POLICY "update_access" ON "member" AS PERMISSIVE FOR UPDATE TO public USING (EXISTS (
+  SELECT 1 FROM "member" AS m
+  WHERE m."organization_id" = "member"."organization_id"
+    AND m."user_id" = current_setting('app.current_user_id', true)
+    AND m."role" IN ('owner', 'admin')
+)) WITH CHECK (EXISTS (
+  SELECT 1 FROM "member" AS m
+  WHERE m."organization_id" = "member"."organization_id"
+    AND m."user_id" = current_setting('app.current_user_id', true)
+));--> statement-breakpoint
+CREATE POLICY "delete_access" ON "member" AS PERMISSIVE FOR DELETE TO public USING (EXISTS (
+  SELECT 1 FROM "member" AS m
+  WHERE m."organization_id" = "member"."organization_id"
+    AND m."user_id" = current_setting('app.current_user_id', true)
+    AND m."role" IN ('owner', 'admin')
+));--> statement-breakpoint
+CREATE POLICY "member_access" ON "organization" AS PERMISSIVE FOR SELECT TO public USING (EXISTS (
+  SELECT 1 FROM "member" AS m
+  WHERE m."organization_id" = "organization"."id"
+    AND m."user_id" = current_setting('app.current_user_id', true)
+));--> statement-breakpoint
+CREATE POLICY "update_access" ON "organization" AS PERMISSIVE FOR UPDATE TO public USING (EXISTS (
+  SELECT 1 FROM "member" AS m
+  WHERE m."organization_id" = "organization"."id"
+    AND m."user_id" = current_setting('app.current_user_id', true)
+    AND m."role" IN ('owner', 'admin')
+));--> statement-breakpoint
+CREATE POLICY "create_access" ON "organization" AS PERMISSIVE FOR INSERT TO public WITH CHECK (current_setting('app.current_user_id', true) is not null);

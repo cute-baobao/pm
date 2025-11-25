@@ -1,4 +1,6 @@
 {
+  "chinese": "Chinese",
+  "english": "English",
   "Auth": {
     "Register": {
       "signUp": "Sign Up",
