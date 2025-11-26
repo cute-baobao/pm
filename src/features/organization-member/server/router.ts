@@ -1,16 +1,25 @@
 import { hasPermission } from '@/lib/utils/has-permission';
-import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
+import {
+  createTRPCRouter,
+  permissionedProcedure,
+  protectedProcedure,
+} from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
 import {
   deleteMemberSchema,
+  exitOrganizationSchema,
   inviteMemberSchema,
+  joinOrganizationViaInvitationSchema,
   updateMemberRoleSchema,
 } from '../schema';
 import {
+  checkInvitationAvailability,
   deleteMember,
+  exitOrganization,
   getOrganizationMembers,
   inviteMember,
+  joinOrganizationViaInvitation,
   updateMemberRole,
 } from './service';
 
@@ -81,5 +90,18 @@ export const organizationMemberRouter = createTRPCRouter({
       }
 
       return await deleteMember(input);
+    }),
+  joinOrganizationViaInvitation: protectedProcedure
+    .input(joinOrganizationViaInvitationSchema)
+    .mutation(async ({ input }) => {
+      // check invitation availability
+      const record = await checkInvitationAvailability(input);
+      const result = await joinOrganizationViaInvitation(input);
+      return { ...result, slug: record.organization.slug };
+    }),
+  exitOrganization: protectedProcedure
+    .input(exitOrganizationSchema)
+    .mutation(async ({ input, ctx }) => {
+      return await exitOrganization(input, ctx.auth.user.id);
     }),
 });

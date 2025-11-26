@@ -18,11 +18,13 @@ export default function StandlongLayout({ children }: StandlongLayoutProps) {
               height={40}
               priority
             />
-            <span className="text-xl font-bold">Projects</span>
+            <span className="align-text-bottom text-2xl font-bold">
+              Projects
+            </span>
           </Link>
           <UserButton />
         </nav>
-        <div className="flex flex-col items-center justify-center py-4">
+        <div className="flex flex-1 flex-col items-center justify-center py-4">
           {children}
         </div>
       </div>

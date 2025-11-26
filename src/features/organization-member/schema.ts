@@ -20,6 +20,21 @@ export const deleteMemberSchema = z.object({
   operatorId: z.string().min(1, 'operatorId is required'),
 });
 
+export const joinOrganizationViaInvitationSchema = z.object({
+  token: z.string().min(1, 'token is required'),
+  userId: z.string().min(1, 'userId is required'),
+  email: z.string().min(1, 'email is required'),
+});
+
+export const exitOrganizationSchema = z.object({
+  organizationId: z.string().min(1, 'organizationId is required'),
+  userId: z.string().min(1, 'userId is required'),
+});
+
 export type InviteMemberData = z.infer<typeof inviteMemberSchema>;
 export type UpdateMemberRoleData = z.infer<typeof updateMemberRoleSchema>;
 export type DeleteMemberData = z.infer<typeof deleteMemberSchema>;
+export type JoinOrganizationViaInvitationData = z.infer<
+  typeof joinOrganizationViaInvitationSchema
+>;
+export type ExitOrganizationData = z.infer<typeof exitOrganizationSchema>;

@@ -29,7 +29,7 @@ export default async function WorkspaceMembersPage({
 
   return (
     <HydrateClient>
-      <div className="mx-auto flex w-full flex-col gap-4">
+      <div className="mx-auto flex w-full flex-col gap-4 p-4">
         <Suspense>
           <InviteMemberForm
             organizationId={member.organizationId}

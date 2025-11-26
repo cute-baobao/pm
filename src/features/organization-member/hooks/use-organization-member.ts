@@ -90,3 +90,50 @@ export const useDeleteOrganizationMember = () => {
     }),
   );
 };
+
+export const useJoinOrganizationViaInvitation = () => {
+  const trpc = useTRPC();
+  const t = useTranslations('OrganizationMember');
+  const tRoot = useTranslations();
+
+  return useMutation(
+    trpc.organizationMember.joinOrganizationViaInvitation.mutationOptions({
+      onSuccess: () => {
+        toast.success(t('joinSuccess'));
+      },
+      onError: (error) => {
+        const message = tRoot.has(error.message)
+          ? tRoot(error.message)
+          : error.message;
+        toast.error(t('joinError', { message }));
+      },
+    }),
+  );
+};
+
+export const useExitOrganization = () => {
+  const trpc = useTRPC();
+  const t = useTranslations('OrganizationMember');
+  const tRoot = useTranslations();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.organizationMember.exitOrganization.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(t('exitSuccess'));
+        queryClient.invalidateQueries(
+          trpc.organizationMember.getMany.queryOptions({
+            organizationId: data.organizationId,
+          }),
+        );
+        queryClient.invalidateQueries(trpc.organization.getList.queryOptions());
+      },
+      onError: (error) => {
+        const message = tRoot.has(error.message)
+          ? tRoot(error.message)
+          : error.message;
+        toast.error(t('exitError', { message }));
+      },
+    }),
+  );
+};

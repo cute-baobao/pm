@@ -13,9 +13,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { OrganizationRole } from '@/db/schemas';
+import { userAtom } from '@/features/auth/store/atom';
+import { useExitOrganization } from '@/features/organization-member/hooks/use-organization-member';
 import { useConfirm } from '@/lib/hooks/use-confirm';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAtom } from 'jotai';
 import { ArrowLeftIcon, ImageIcon, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -29,19 +33,23 @@ import {
 import { UpdateOrganizationData, updateOrganizationSchema } from '../schema';
 
 interface EditOrganizationForm {
+  role: OrganizationRole;
   slug: string;
   onCancel?: () => void;
 }
 
 export const EditOrganizationForm = ({
+  role,
   slug,
   onCancel,
 }: EditOrganizationForm) => {
+  const [user] = useAtom(userAtom);
   const router = useRouter();
   const { data: initialValue } = useSuspenseOrganization(slug);
   const t = useTranslations('Organization.EditForm');
   const form = useForm<UpdateOrganizationData>({
     resolver: zodResolver(updateOrganizationSchema),
+    disabled: role === 'member',
     defaultValues: {
       ...initialValue,
       logo: initialValue.logo ? initialValue.logo : '',
@@ -50,6 +58,19 @@ export const EditOrganizationForm = ({
   });
 
   const updateOrganization = useUpdateOrganization();
+  const deleteOrganization = useDeleteOrganization();
+  const exitOrganization = useExitOrganization();
+  const [DeleteDialog, confirmDelete] = useConfirm(
+    t('deleteConfirmTitle'),
+    t('deleteConfirmMessage'),
+    'destructive',
+  );
+
+  const [ExitDialog, confirmExit] = useConfirm(
+    t('exitConfirmTitle'),
+    t('exitConfirmMessage'),
+    'destructive',
+  );
 
   const imagePreview = useWatch({
     control: form.control,
@@ -80,14 +101,6 @@ export const EditOrganizationForm = ({
     });
   };
 
-  const [DeleteDialog, confirmDelete] = useConfirm(
-    t('deleteConfirmTitle'),
-    t('deleteConfirmMessage'),
-    'destructive',
-  );
-
-  const deleteOrganization = useDeleteOrganization();
-
   const handleDelete = async () => {
     const ok = await confirmDelete();
     if (!ok) return;
@@ -101,14 +114,38 @@ export const EditOrganizationForm = ({
     );
   };
 
+  const handleExit = async () => {
+    const ok = await confirmExit();
+    if (!ok || !user) return;
+    exitOrganization.mutate(
+      {
+        organizationId: initialValue.id,
+        userId: user.id,
+      },
+      {
+        onSuccess: () => {
+          router.push('/organization');
+        },
+      },
+    );
+  };
+
   const disable = useMemo(
-    () => updateOrganization.isPending || deleteOrganization.isPending,
-    [updateOrganization.isPending, deleteOrganization.isPending],
+    () =>
+      updateOrganization.isPending ||
+      deleteOrganization.isPending ||
+      exitOrganization.isPending,
+    [
+      updateOrganization.isPending,
+      deleteOrganization.isPending,
+      exitOrganization.isPending,
+    ],
   );
 
   return (
     <div className="flex flex-col gap-4">
       <DeleteDialog />
+      <ExitDialog />
       <Card className="h-full w-full gap-0 border-none shadow-none">
         <CardHeader className="flex flex-row items-center space-y-0 gap-x-4 px-7 py-4">
           <Button
@@ -117,7 +154,7 @@ export const EditOrganizationForm = ({
             onClick={
               onCancel
                 ? onCancel
-                : () => router.push(`/organization/${initialValue.id}`)
+                : () => router.push(`/organization/${initialValue.slug}`)
             }
           >
             <ArrowLeftIcon className="mr-2 size-4" />
@@ -232,7 +269,7 @@ export const EditOrganizationForm = ({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={!form.formState.isValid || disable}
+                  disabled={role === 'member' || disable}
                   size="lg"
                 >
                   {t('updateButton')}
@@ -255,9 +292,29 @@ export const EditOrganizationForm = ({
               className="mt-6 ml-auto w-fit"
               variant="destructive"
               size="sm"
-              disabled={disable}
+              disabled={disable || role !== 'owner'}
             >
               {t('deleteButton')}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="h-full w-full gap-0 border-none shadow-none">
+        <CardContent className="px-7 py-4">
+          <div className="flex flex-col">
+            <h3 className="font-bold">{t('exitTitle')}</h3>
+            <p className="text-muted-foreground text-sm">
+              {t('exitDescription')}
+            </p>
+            <Button
+              onClick={handleExit}
+              className="mt-6 ml-auto w-fit"
+              variant="destructive"
+              size="sm"
+              disabled={disable}
+            >
+              {t('exitButton')}
             </Button>
           </div>
         </CardContent>

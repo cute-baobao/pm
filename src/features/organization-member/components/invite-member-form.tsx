@@ -50,7 +50,7 @@ const CopyInviteLink = ({ inviteLink }: { inviteLink: string }) => {
     <div className="mt-4">
       <div className="flex items-center gap-x-2">
         <Input disabled value={inviteLink} />
-        <Button onClick={handleCopy} variant={"ghost"} className="size-9">
+        <Button onClick={handleCopy} variant={'ghost'} className="size-9">
           <CopyIcon className="size-5" />
         </Button>
       </div>

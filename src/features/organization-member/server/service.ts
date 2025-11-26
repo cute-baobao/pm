@@ -8,7 +8,9 @@ import { and, eq } from 'drizzle-orm';
 import { Resend } from 'resend';
 import {
   DeleteMemberData,
+  ExitOrganizationData,
   InviteMemberData,
+  JoinOrganizationViaInvitationData,
   UpdateMemberRoleData,
 } from '../schema';
 
@@ -30,8 +32,7 @@ export const inviteMember = async (
     if (check) {
       throw new TRPCError({
         code: 'CONFLICT',
-        message:
-          'An active invitation already exists for this email and organization.',
+        message: 'Error.invitation_already_exists',
       });
     }
 
@@ -46,7 +47,7 @@ export const inviteMember = async (
     if (!member) {
       throw new TRPCError({
         code: 'FORBIDDEN',
-        message: 'You are not a member of this organization.',
+        message: 'Error.forbidden_no_membership',
       });
     }
 
@@ -108,10 +109,9 @@ export const getOrganizationMembers = async ({
 };
 
 export const joinOrganizationViaInvitation = async (
-  token: string,
-  userId: string,
-  email: string,
+  data: JoinOrganizationViaInvitationData,
 ) => {
+  const { token, userId, email } = data;
   const result = await withUser(userId, async (tx) => {
     const invitationRecord = await tx.query.invitation.findFirst({
       where: (inv, { eq, and }) => and(eq(inv.id, token), eq(inv.email, email)),
@@ -124,7 +124,7 @@ export const joinOrganizationViaInvitation = async (
     ) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: 'Invitation token is invalid or has expired.',
+        message: 'Error.invitation_invalid_or_expired',
       });
     }
 
@@ -139,7 +139,7 @@ export const joinOrganizationViaInvitation = async (
     if (isMember) {
       throw new TRPCError({
         code: 'CONFLICT',
-        message: 'User is already a member of the organization.',
+        message: 'Error.user_already_member',
       });
     }
 
@@ -194,6 +194,72 @@ export const deleteMember = async (data: DeleteMemberData) => {
         and(
           eq(member.id, data.memberId),
           eq(member.organizationId, data.organizationId),
+        ),
+      )
+      .returning();
+
+    return deleted;
+  });
+  return result;
+};
+
+export const checkInvitationAvailability = async (
+  data: JoinOrganizationViaInvitationData,
+) => {
+  const invitationRecord = await db.query.invitation.findFirst({
+    where: (inv, { eq }) => eq(inv.id, data.token),
+    with: {
+      organization: true,
+    },
+  });
+
+  if (
+    !invitationRecord ||
+    invitationRecord.expiresAt < new Date() ||
+    invitationRecord.status !== 'pending'
+  ) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Error.invitation_invalid_or_expired',
+    });
+  }
+
+  if (invitationRecord.email !== data.email) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Error.invitation_email_mismatch',
+    });
+  }
+
+  const member = await db.query.member.findFirst({
+    where: (mem, { and, eq }) =>
+      and(
+        eq(mem.organizationId, invitationRecord.organizationId),
+        eq(mem.userId, data.userId),
+      ),
+  });
+
+  if (member) {
+    throw new TRPCError({
+      code: 'CONFLICT',
+      message: 'Error.user_already_member',
+    });
+  }
+
+  return invitationRecord;
+};
+
+export const exitOrganization = async (
+  data: ExitOrganizationData,
+  userId: string,
+) => {
+  const result = await withUser(userId, async (tx) => {
+    const [deleted] = await tx
+      .delete(member)
+      .where(
+        and(
+          eq(member.organizationId, data.organizationId),
+          eq(member.userId, userId),
         ),
       )
       .returning();

@@ -157,7 +157,7 @@ export const member = pgTable(
     pgPolicy('delete_access', {
       for: 'delete',
       to: 'public',
-      using: isOrgOwnerOrAdmin(t.organizationId),
+      using: sql`${isOrgOwnerOrAdmin(t.organizationId)} OR ${t.userId} = ${currentUserId}`,
     }),
     pgPolicy('create_access', {
       for: 'insert',

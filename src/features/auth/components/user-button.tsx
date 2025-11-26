@@ -1,7 +1,7 @@
 'use client';
 
 import { DottedSeparator } from '@/components/dotted-separator';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { LogOut } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { userAtom } from '../store/atom';
 
@@ -26,12 +25,9 @@ const UserAvatar = ({
 }) => {
   return (
     <Avatar className="size-10 border border-neutral-300 transition hover:opacity-75">
+      <AvatarImage src={image} alt="User Avatar" />
       <AvatarFallback className="flex items-center justify-center bg-neutral-200 font-medium text-neutral-500">
-        {image ? (
-          <Image src={image} width={40} height={40} alt="User Avatar" />
-        ) : (
-          avatarFallback
-        )}
+        {avatarFallback}
       </AvatarFallback>
     </Avatar>
   );

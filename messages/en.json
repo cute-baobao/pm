@@ -35,7 +35,13 @@
     "unauthorized": "User is not logged in or authentication failed",
     "forbidden_no_permission": "You do not have permission to perform this action",
     "forbidden_no_active_organization": "No active organization found",
-    "forbidden_no_membership": "You are not a member of this organization"
+    "forbidden_no_membership": "You are not a member of this organization",
+    "invitation_already_exists": "An active invitation already exists for this email and organization",
+    "invitation_invalid_or_expired": "Invitation token is invalid or has expired",
+    "user_already_member": "User is already a member of the organization",
+    "invitation_email_mismatch": "Invitation email does not match",
+    "exitSuccess": "Successfully exited organization",
+    "exitError": "Error exiting organization: {message}"
   },
   "Navigation": {
     "home": "Home",
@@ -86,7 +92,12 @@
       "updateButton": "Save Changes",
       "dangerZone": "Danger Zone",
       "dangerZoneDescription": "Deleting an organization is irreversible and will remove all associated data.",
-      "deleteButton": "Delete Organization"
+      "deleteButton": "Delete Organization",
+      "exitTitle": "Exit Organization",
+      "exitDescription": "Leaving the organization will remove your access to its resources.",
+      "exitButton": "Exit",
+      "exitConfirmTitle": "Exit Organization",
+      "exitConfirmMessage": "Are you sure you want to exit this organization? You will lose access to its resources."
     }
   },
   "OrganizationMember": {
@@ -96,6 +107,8 @@
     "updateRoleError": "Error updating member role: {message}",
     "deleteMemberSuccess": "Member removed successfully",
     "deleteMemberError": "Error removing member: {message}",
+    "joinSuccess": "Successfully joined organization",
+    "joinError": "Error joining organization: {message}",
     "Roles": {
       "owner": "Owner",
       "admin": "Admin",
@@ -119,6 +132,12 @@
       "setAdmin": "Set as Admin",
       "setMember": "Set as Member",
       "removeMember": "Remove {name}"
+    },
+    "JoinCard": {
+      "title": "Join Organization",
+      "description": "You've been invited to join an organization.",
+      "cancelButton": "Cancel",
+      "joinButton": "Join Organization"
     }
   }
 }
