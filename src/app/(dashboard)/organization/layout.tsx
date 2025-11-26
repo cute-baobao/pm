@@ -1,6 +1,5 @@
 import { AppHeader } from '@/components/app-header';
 import { AppSidebar } from '@/components/app-sidebar';
-import { Loading } from '@/components/loading';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { CreateOrganizationModal } from '@/features/organization/components/create-organization-modal';
 import { OrganizationError } from '@/features/organization/components/organization';
@@ -20,7 +19,7 @@ export default async function DashboardLayout({
       <SidebarProvider>
         <HydrateClient>
           <ErrorBoundary fallback={<OrganizationError />}>
-            <Suspense fallback={<Loading />}>
+            <Suspense>
               <AppSidebar />
               <SidebarInset className="bg-background">
                 <AppHeader />

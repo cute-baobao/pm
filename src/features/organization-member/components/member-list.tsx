@@ -92,7 +92,7 @@ export const MemberList = ({ role, organizationId }: MemberListProps) => {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-4xl shadow-none">
+    <Card className="mx-auto w-full max-w-4xl ">
       <ConfirmDialog />
       <CardHeader className="flex flex-row items-center space-y-0 gap-x-4">
         <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>

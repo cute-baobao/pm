@@ -1,8 +1,5 @@
 import { EditOrganizationForm } from '@/features/organization/components/edit-organization-form';
-import {
-  OrganizationError,
-  OrganizationLoading,
-} from '@/features/organization/components/organization';
+import { OrganizationError } from '@/features/organization/components/organization';
 import { prefetchOrganization } from '@/features/organization/server/prefetch';
 import { requireOrganizationAccess } from '@/lib/utils/auth-action';
 import { HydrateClient } from '@/trpc/server';
@@ -29,7 +26,7 @@ export default async function SlugPage({ params }: SubdomainPageProps) {
     <div className="w-full lg:max-w-xl">
       <HydrateClient>
         <ErrorBoundary fallback={<OrganizationError />}>
-          <Suspense fallback={<OrganizationLoading />}>
+          <Suspense>
             <EditOrganizationForm slug={slug} role={member.role} />
           </Suspense>
         </ErrorBoundary>

@@ -29,6 +29,13 @@
       "when": 1764124320894,
       "tag": "0003_update-member-rks",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764141581289,
+      "tag": "0004_add-project-schema",
+      "breakpoints": true
     }
   ]
 }

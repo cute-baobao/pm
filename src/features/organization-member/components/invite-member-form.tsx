@@ -98,7 +98,7 @@ export function InviteMemberForm({
       <GenerateConfirm>
         {inviteLink && <CopyInviteLink inviteLink={inviteLink} />}{' '}
       </GenerateConfirm>
-      <Card className="w-full gap-0 shadow-none">
+      <Card className="w-full gap-0">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 gap-x-4 px-7 py-4">
           <div>
             <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>

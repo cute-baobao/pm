@@ -49,11 +49,9 @@ export const OrganizationSwitcher = () => {
             )}
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">
-              {activeOrganization?.name || t('placeholder')}
-            </span>
+            <span className="truncate font-semibold">Projects</span>
             <span className="text-muted-foreground truncate text-xs">
-              {t('title')}
+              {activeOrganization?.name}
             </span>
           </div>
           <ChevronsUpDown className="ml-auto size-4 opacity-50" />

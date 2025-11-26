@@ -3,6 +3,7 @@ import { Providers } from '@/lib/providers';
 import { getSession } from '@/lib/utils/auth-action';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from 'sonner';
 import './globals.css';
 
@@ -33,6 +34,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NextTopLoader color="var(--primary)" showSpinner={false} />
         <Providers>
           <SessionProvider initialUser={session?.user ?? null}>
             {children}

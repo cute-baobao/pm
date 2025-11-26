@@ -10,7 +10,6 @@ import {
   UsersIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import {
@@ -61,32 +60,11 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="md:h-12">
-              <Link prefetch href={'/'}>
-                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Image
-                    src="/icons/logo.svg"
-                    alt="Projects"
-                    width={20}
-                    height={20}
-                    className="brightness-0 invert filter"
-                  />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-bold">Projects</span>
-                  <span className="text-muted-foreground text-xs">v1.0.0</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarMenu>
-          <SidebarMenuItem className="px-2">
             <OrganizationSwitcher />
           </SidebarMenuItem>
         </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent className='px-1'>
         {menuItems.map((group) => (
           <SidebarGroup key={group.title} title={group.title}>
             <SidebarGroupContent>
