@@ -46,6 +46,7 @@
   "Navigation": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "projects": "Projects",
     "members": "Members",
     "settings": "Settings",
     "signOut": "Sign Out"

@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronsUpDown, LogOut } from 'lucide-react';
+import { ChevronsUpDown, LogOut, SettingsIcon } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -19,13 +19,17 @@ import {
 } from '@/components/ui/sidebar';
 import { signOut } from '@/lib/auth-client';
 import { useAtom } from 'jotai';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import { userAtom } from '../store/atom';
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
+  const t = useTranslations();
+  const params = useParams();
   const router = useRouter();
   const [user] = useAtom(userAtom);
+  const { isMobile } = useSidebar();
 
   const handleSignOut = () => {
     signOut({
@@ -87,10 +91,16 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link href={`/organization/${params.slug}/setting`}>
+                <SettingsIcon className="size-4" />
+                <span>{t('Navigation.settings')}</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
-              Log out
+              {t('Auth.UserButton.logOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

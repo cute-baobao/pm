@@ -5,8 +5,8 @@ import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
 import {
   CircleGaugeIcon,
+  FolderOpenDotIcon,
   HomeIcon,
-  SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -45,6 +45,11 @@ export function AppSidebar() {
           url: '/dashboard',
         },
         {
+          title: t('projects'),
+          icon: FolderOpenDotIcon,
+          url: '/projects',
+        },
+        {
           title: t('members'),
           icon: UsersIcon,
           url: '/members',
@@ -64,7 +69,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className='px-1'>
+      <SidebarContent className="px-1">
         {menuItems.map((group) => (
           <SidebarGroup key={group.title} title={group.title}>
             <SidebarGroupContent>
@@ -100,18 +105,6 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip={t('settings')}
-              className="h-10 gap-x-4 px-4"
-              asChild
-            >
-              <Link href={`/organization/${params.slug}/setting`}>
-                <SettingsIcon className="size-4" />
-                <span>{t('settings')}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
           <NavUser />
         </SidebarMenu>
       </SidebarFooter>

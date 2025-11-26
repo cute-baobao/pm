@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { SidebarMenuButton } from '@/components/ui/sidebar';
+import { SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
 import { OrganizationAvatar } from './organization-avatar';
 
 import { ChevronsUpDown, CirclePlusIcon } from 'lucide-react';
@@ -25,6 +25,7 @@ export const OrganizationSwitcher = () => {
   const router = useRouter();
   const slug = useOrganizationSlug();
   const { open } = useCreateOrganizationModal();
+  const { isMobile } = useSidebar();
 
   const activeOrganization = organizations.find((org) => org.slug === slug);
 
@@ -58,9 +59,9 @@ export const OrganizationSwitcher = () => {
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="min-w-60 rounded-lg"
-        align="start"
-        side="bottom"
+        className="w-(--radix-dropdown-menu-trigger-width) rounded-lg"
+        align="end"
+        side={isMobile ? 'bottom' : 'right'}
         sideOffset={4}
       >
         {organizations.map((organization) => (
