@@ -23,7 +23,7 @@ export default async function DashboardLayout({
               <AppSidebar />
               <SidebarInset className="bg-background">
                 <AppHeader />
-                <main className="mx-auto w-full max-w-screen-2xl flex-1 overflow-auto p-4 md:px-6">
+                <main className="mx-auto w-full max-w-screen-2xl flex-1 overflow-auto p-4 md:p-10 md:py-6">
                   {children}
                   <CreateOrganizationModal />
                 </main>

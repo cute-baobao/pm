@@ -32,14 +32,14 @@ export default async function ProjectsPage({
   });
 
   return (
-    <WorkflowsContainer organizationId={access.session.activeOrganizationId!}>
-      <HydrateClient>
+    <HydrateClient>
+      <WorkflowsContainer organizationId={access.session.activeOrganizationId!}>
         <ErrorBoundary fallback={<ProjectsError />}>
           <Suspense fallback={<ProjectsLoading />}>
             <ProjectsList />
           </Suspense>
         </ErrorBoundary>
-      </HydrateClient>
-    </WorkflowsContainer>
+      </WorkflowsContainer>
+    </HydrateClient>
   );
 }

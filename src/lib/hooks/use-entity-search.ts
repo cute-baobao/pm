@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { PAGINATION } from "../configs/constants";
 
 interface useEntitySearchProps<T extends { search: string; page: number }> {
@@ -14,28 +14,39 @@ export function useEntitySearch<T extends { search: string; page: number }>({
 }: useEntitySearchProps<T>) {
   const [localSearch, setLocalSearch] = useState(params.search);
 
+  // Only watch the specific param we care about to avoid effect churn when
+  // other params change. Wrap calls to setParams in startTransition so that
+  // the resulting navigation/state update is low-priority and won't cause a
+  // noticeable white flash while the app-router fetches new server content.
   useEffect(() => {
-    if (localSearch === "" && params.search !== "") {
-      setParams({
-        ...params,
-        search: "",
-        page: PAGINATION.DEFAULT_PAGE,
+    const currentSearch = params.search;
+
+    if (localSearch === "" && currentSearch !== "") {
+      startTransition(() => {
+        setParams({
+          ...params,
+          search: "",
+          page: PAGINATION.DEFAULT_PAGE,
+        });
       });
       return;
     }
 
     const timer = setTimeout(() => {
-      if (localSearch !== params.search) {
-        setParams({
-          ...params,
-          search: localSearch,
-          page: PAGINATION.DEFAULT_PAGE,
+      if (localSearch !== currentSearch) {
+        startTransition(() => {
+          setParams({
+            ...params,
+            search: localSearch,
+            page: PAGINATION.DEFAULT_PAGE,
+          });
         });
       }
     }, debounceMs);
 
     return () => clearTimeout(timer);
-  }, [localSearch, params, setParams, debounceMs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localSearch, params.search, debounceMs]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

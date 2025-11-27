@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { GetProjectParams } from '../schema';
 import { useProjectsParams } from './use-project-params';
 
 export const useSuspenseProjects = (organizationId: string) => {
@@ -17,9 +18,9 @@ export const useSuspenseProjects = (organizationId: string) => {
   );
 };
 
-export const useSuspenseProject = (projectId: string) => {
+export const useSuspenseProject = (params: GetProjectParams) => {
   const trpc = useTRPC();
-  return useSuspenseQuery(trpc.project.getOne.queryOptions({ projectId }));
+  return useSuspenseQuery(trpc.project.getOne.queryOptions(params));
 };
 
 export const useCreateProject = () => {
@@ -43,6 +44,32 @@ export const useCreateProject = () => {
           ? tRoot(error.message)
           : error.message;
         toast.error(t('createError', { message }));
+      },
+    }),
+  );
+};
+
+export const useDeleteProject = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const t = useTranslations('Project');
+  const tRoot = useTranslations();
+
+  return useMutation(
+    trpc.project.delete.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(t('deleteSuccess'));
+        queryClient.invalidateQueries(
+          trpc.project.getMany.queryOptions({
+            organizationId: data.organizationId,
+          }),
+        );
+      },
+      onError: (error) => {
+        const message = tRoot.has(error.message)
+          ? tRoot(error.message)
+          : error.message;
+        toast.error(t('deleteError', { message }));
       },
     }),
   );

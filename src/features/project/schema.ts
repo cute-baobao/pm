@@ -1,6 +1,11 @@
 import { PAGINATION } from '@/lib/configs/constants';
 import z from 'zod';
 
+export const getProjectSchema = z.object({
+  projectName: z.string().min(1, 'Project name is required'),
+  organizationId: z.string().min(1, 'Organization ID is required'),
+});
+
 export const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
   image: z.string().optional(),
@@ -21,3 +26,4 @@ export const projectPaginationSchema = z.object({
 
 export type CreateProjectData = z.infer<typeof createProjectSchema>;
 export type ProjectPaginationData = z.infer<typeof projectPaginationSchema>;
+export type GetProjectParams = z.infer<typeof getProjectSchema>;

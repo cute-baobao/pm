@@ -168,6 +168,8 @@
   "Project": {
     "createSuccess": "Project created successfully",
     "createError": "Error creating project: {message}",
+    "deleteSuccess": "Project deleted successfully",
+    "deleteError": "Error deleting project: {message}",
     "CreateForm": {
       "title": "Create Project",
       "nameLabel": "Project Name",

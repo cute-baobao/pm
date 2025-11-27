@@ -26,7 +26,7 @@ export function Breadcrumbs() {
                   className="hover:text-foreground transition-colors"
                   href={item.link}
                 >
-                  {item.title}
+                  {decodeURIComponent(item.title)}
                 </Link>
               </BreadcrumbItem>
             )}
@@ -36,7 +36,7 @@ export function Breadcrumbs() {
               </BreadcrumbSeparator>
             )}
             {index === items.length - 1 && (
-              <BreadcrumbPage>{item.title}</BreadcrumbPage>
+              <BreadcrumbPage>{decodeURIComponent(item.title)}</BreadcrumbPage>
             )}
           </Fragment>
         ))}

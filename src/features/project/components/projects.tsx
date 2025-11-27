@@ -15,11 +15,11 @@ import { Project } from '@/db/schemas';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { useEntitySearch } from '@/lib/hooks/use-entity-search';
 import { formatDistanceToNow } from 'date-fns';
-import { FolderOpenDotIcon, WorkflowIcon } from 'lucide-react';
+import { FolderOpenDotIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createContext, useContext } from 'react';
-import { useTranslations } from 'next-intl';
-import { useSuspenseProjects } from '../hooks/use-project';
+import { useDeleteProject, useSuspenseProjects } from '../hooks/use-project';
 import { useProjectsParams } from '../hooks/use-project-params';
 
 export const ProjectsContext = createContext<{ organizationId: string }>({
@@ -135,24 +135,21 @@ export function ProjectsEmpty() {
   };
   return (
     <>
-      <EmptyView
-        onNew={handleCreate}
-        message={t('List.emptyMessage')}
-      />
+      <EmptyView onNew={handleCreate} message={t('List.emptyMessage')} />
     </>
   );
 }
 
 export function ProjectItem({ data }: { data: Project }) {
-  //   const removeProject = useRemoveProject();
-
+  const removeProject = useDeleteProject();
+  const slug = useOrganizationSlug();
   const handleRemove = () => {
-    // removeWorkflow.mutate({ id: data.id });
+    removeProject.mutate({ projectId: data.id });
   };
 
   return (
     <EntityItem
-      href={`/workflows/${data.id}`}
+      href={`/organization/${slug}/projects/${data.name}`}
       title={data.name}
       subtitle={<>{formatDistanceToNow(data.createdAt, { addSuffix: true })}</>}
       image={
@@ -161,7 +158,7 @@ export function ProjectItem({ data }: { data: Project }) {
         </div>
       }
       onRemove={handleRemove}
-      isRemoving={false}
+      isRemoving={removeProject.isPending}
     />
   );
 }

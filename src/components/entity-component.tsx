@@ -93,7 +93,7 @@ const PureContainer = ({
   pagination,
 }: PureContainerProps) => {
   return (
-    <div className="h-full p-4 md:p-10 md:py-6">
+    <div className="h-full">
       <div className="mx-auto flex h-full w-full max-w-screen flex-col gap-y-8">
         {header}
         <div className="flex h-full flex-col gap-y-4">
@@ -186,7 +186,7 @@ export function LoadingView({ message, entity = "items" }: LoadingViewProps) {
       <Loader2Icon className="text-primary size-6 animate-spin" />
       {!!message && (
         <p className="text-muted-foreground text-sm">
-          {t('Loading.message', { message })}
+          { message }
         </p>
       )}
     </div>

@@ -1,11 +1,17 @@
 import db from '@/db';
 import { project } from '@/db/schemas';
 import { and, desc, eq, ilike } from 'drizzle-orm';
-import { CreateProjectData, ProjectPaginationData } from '../schema';
+import {
+  CreateProjectData,
+  GetProjectParams,
+  ProjectPaginationData,
+} from '../schema';
 
-export const getOneProject = async (projectId: string) => {
+export const getOneProject = async (params: GetProjectParams) => {
+  const { projectName, organizationId } = params;
   const project = await db.query.project.findFirst({
-    where: (p, { eq }) => eq(p.id, projectId),
+    where: (p, { eq, and }) =>
+      and(eq(p.name, projectName), eq(p.organizationId, organizationId)),
   });
 
   return project;
@@ -53,7 +59,16 @@ export const createProject = async (data: CreateProjectData) => {
       name: data.name,
       image: data.image ?? null,
       organizationId: data.organizationId,
+      description: data.description ?? null,
     })
+    .returning();
+  return result;
+};
+
+export const deleteProject = async (projectId: string) => {
+  const [result] = await db
+    .delete(project)
+    .where(eq(project.id, projectId))
     .returning();
   return result;
 };
