@@ -1,7 +1,8 @@
 import { prefetch, trpc } from '@/trpc/server';
+import { ProjectPaginationData } from '../schema';
 
-export const prefetchProjects = (organizationId: string) => {
-  return prefetch(trpc.project.getMany.queryOptions({ organizationId }));
+export const prefetchProjects = (payload: ProjectPaginationData) => {
+  return prefetch(trpc.project.getMany.queryOptions(payload));
 };
 
 export const prefetchProject = (projectId: string) => {

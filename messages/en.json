@@ -140,5 +140,52 @@
       "cancelButton": "Cancel",
       "joinButton": "Join Organization"
     }
+  },
+  "Entity": {
+    "Pagination": {
+      "pageOf": "Page {page} of {totalPages}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "Loading": {
+      "message": "Loading {message}..."
+    },
+    "Error": {
+      "message": "Error: {message}"
+    },
+    "Empty": {
+      "noItems": "No items",
+      "message": "{message}",
+      "addItem": "Add item"
+    },
+    "Actions": {
+      "delete": "Delete"
+    },
+    "Search": {
+      "placeholder": "Search..."
+    }
+  },
+  "Project": {
+    "createSuccess": "Project created successfully",
+    "createError": "Error creating project: {message}",
+    "CreateForm": {
+      "title": "Create Project",
+      "nameLabel": "Project Name",
+      "namePlaceholder": "Enter project name",
+      "descriptionLabel": "Project Description",
+      "descriptionPlaceholder": "Enter project description",
+      "imageLabel": "Project Icon",
+      "cancelButton": "Cancel",
+      "createButton": "Create Project"
+    },
+    "List": {
+      "title": "Projects",
+      "description": "Create and manage your projects",
+      "newButtonLabel": "New project",
+      "searchPlaceholder": "Search projects...",
+      "loadingMessage": "Loading projects...",
+      "errorMessage": "Error loading projects...",
+      "emptyMessage": "No projects found, Get started by creating a project"
+    }
   }
 }

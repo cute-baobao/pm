@@ -36,6 +36,13 @@
       "when": 1764141581289,
       "tag": "0004_add-project-schema",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1764212545274,
+      "tag": "0005_update-project-add-description",
+      "breakpoints": true
     }
   ]
 }

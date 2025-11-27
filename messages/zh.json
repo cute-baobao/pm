@@ -140,5 +140,52 @@
       "cancelButton": "取消",
       "joinButton": "加入组织"
     }
+  },
+  "Entity": {
+    "Pagination": {
+      "pageOf": "第 {page} 页，共 {totalPages} 页",
+      "previous": "上一页",
+      "next": "下一页"
+    },
+    "Loading": {
+      "message": "正在加载 {message}..."
+    },
+    "Error": {
+      "message": "错误：{message}"
+    },
+    "Empty": {
+      "noItems": "暂无内容",
+      "message": "{message}",
+      "addItem": "添加条目"
+    },
+    "Actions": {
+      "delete": "删除"
+    },
+    "Search": {
+      "placeholder": "搜索..."
+    }
+  },
+  "Project": {
+    "createSuccess": "项目创建成功",
+    "createError": "创建项目失败: {message}",
+    "CreateForm": {
+      "title": "创建项目",
+      "nameLabel": "项目名称",
+      "namePlaceholder": "输入项目名称",
+      "descriptionLabel": "项目描述",
+      "descriptionPlaceholder": "输入项目描述",
+      "imageLabel": "项目Icon",
+      "cancelButton": "取消",
+      "createButton": "创建项目"
+    },
+    "List": {
+      "title": "项目",
+      "description": "创建和管理您的项目",
+      "newButtonLabel": "新建项目",
+      "searchPlaceholder": "搜索项目...",
+      "loadingMessage": "正在加载项目...",
+      "errorMessage": "加载项目时出错...",
+      "emptyMessage": "未找到项目，开始创建项目"
+    }
   }
 }
