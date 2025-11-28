@@ -5,6 +5,7 @@ import {
   CreateProjectData,
   GetProjectParams,
   ProjectPaginationData,
+  UpdateProjectData,
 } from '../schema';
 
 export const getOneProject = async (params: GetProjectParams) => {
@@ -70,5 +71,24 @@ export const deleteProject = async (projectId: string) => {
     .delete(project)
     .where(eq(project.id, projectId))
     .returning();
+  return result;
+};
+
+export const updateProject = async (data: UpdateProjectData) => {
+  const [result] = await db
+    .update(project)
+    .set({
+      name: data.name,
+      image: data.image ?? null,
+      description: data.description ?? null,
+    })
+    .where(
+      and(
+        eq(project.id, data.id),
+        eq(project.organizationId, data.organizationId),
+      ),
+    )
+    .returning();
+
   return result;
 };

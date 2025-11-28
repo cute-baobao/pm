@@ -143,10 +143,10 @@ export const EditOrganizationForm = ({
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex max-w-xl flex-col gap-4">
       <DeleteDialog />
       <ExitDialog />
-      <Card className="h-full w-full gap-0 border-none shadow-none">
+      <Card className="h-full w-full gap-0 shadow-none">
         <CardHeader className="flex flex-row items-center space-y-0 gap-x-4 px-7 py-4">
           <Button
             size="sm"
@@ -280,7 +280,7 @@ export const EditOrganizationForm = ({
         </CardContent>
       </Card>
 
-      <Card className="h-full w-full gap-0 border-none shadow-none">
+      <Card className="h-full w-full gap-0 shadow-none">
         <CardContent className="px-7 py-4">
           <div className="flex flex-col">
             <h3 className="font-bold">{t('dangerZone')}</h3>
@@ -300,7 +300,7 @@ export const EditOrganizationForm = ({
         </CardContent>
       </Card>
 
-      <Card className="h-full w-full gap-0 border-none shadow-none">
+      <Card className="h-full w-full gap-0 shadow-none">
         <CardContent className="px-7 py-4">
           <div className="flex flex-col">
             <h3 className="font-bold">{t('exitTitle')}</h3>

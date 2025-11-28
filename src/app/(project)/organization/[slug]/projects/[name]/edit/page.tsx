@@ -1,4 +1,4 @@
-import { ProjectView } from '@/features/project/components/project';
+import { EditProjectForm } from '@/features/project/components/edit-project-form';
 import {
   ProjectsError,
   ProjectsLoading,
@@ -29,10 +29,11 @@ export default async function ProjectEditPage({
     <HydrateClient>
       <ErrorBoundary fallback={<ProjectsError />}>
         <Suspense fallback={<ProjectsLoading />}>
-          <ProjectView
-            slug={slug}
+          <EditProjectForm
             organizationId={session.session.activeOrganizationId!}
             projectName={projectName}
+            role={'member'}
+            slug={slug}
           />
         </Suspense>
       </ErrorBoundary>

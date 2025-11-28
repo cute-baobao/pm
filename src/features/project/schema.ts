@@ -24,6 +24,11 @@ export const projectPaginationSchema = z.object({
   search: z.string().default(''),
 });
 
+export const updateProjectSchema = createProjectSchema.extend({
+  id: z.string().min(1, 'Project ID is required'),
+});
+
 export type CreateProjectData = z.infer<typeof createProjectSchema>;
 export type ProjectPaginationData = z.infer<typeof projectPaginationSchema>;
 export type GetProjectParams = z.infer<typeof getProjectSchema>;
+export type UpdateProjectData = z.infer<typeof updateProjectSchema>;

@@ -1,6 +1,5 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 interface MemberAvatarProps {
   name: string;
@@ -16,19 +15,23 @@ export const MemberAvatar = ({
   fallbackClassName,
 }: MemberAvatarProps) => {
   return (
-    <Avatar className={cn('size-8 rounded-md', className)}>
-      <AvatarFallback
+    <>
+      <Avatar
         className={cn(
-          'flex items-center justify-center overflow-hidden bg-neutral-200 font-medium text-neutral-500',
-          fallbackClassName,
+          'size-10 rounded-md transition hover:opacity-75',
+          className,
         )}
       >
-        {image ? (
-          <Image src={image} fill alt={name} />
-        ) : (
-          name.charAt(0).toUpperCase() || 'U'
-        )}
-      </AvatarFallback>
-    </Avatar>
+        <AvatarImage src={image ? image : undefined} alt="User Avatar" />
+        <AvatarFallback
+          className={cn(
+            'flex items-center justify-center bg-neutral-200 font-medium text-neutral-500',
+            fallbackClassName,
+          )}
+        >
+          {name.charAt(0).toUpperCase() || 'U'}
+        </AvatarFallback>
+      </Avatar>
+    </>
   );
 };

@@ -74,3 +74,24 @@ export const useDeleteProject = () => {
     }),
   );
 };
+
+export const useUpdateProject = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.project.update.mutationOptions({
+      onSuccess: (data) => {
+        toast.success('Project updated successfully');
+        queryClient.invalidateQueries(
+          trpc.project.getMany.queryOptions({
+            organizationId: data.organizationId,
+          }),
+        );
+      },
+      onError: (error) => {
+        toast.error('Failed to update project: ' + error.message);
+      },
+    }),
+  );
+};

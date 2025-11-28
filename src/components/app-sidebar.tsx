@@ -7,6 +7,7 @@ import {
   CircleGaugeIcon,
   FolderOpenDotIcon,
   HomeIcon,
+  SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -105,6 +106,21 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip={'settings'}
+              asChild
+              isActive={pathname.startsWith(
+                `/organization/${params.slug}/setting`,
+              )}
+              className="h-10 gap-x-4 px-4"
+            >
+              <Link href={`/organization/${params.slug}/setting`} prefetch>
+                <SettingsIcon className="size-4" />
+                <span>Setting</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <NavUser />
         </SidebarMenu>
       </SidebarFooter>

@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TaskViewSwitcher } from '@/features/task/components/task-view-switcher';
 import { EditIcon } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -49,6 +50,9 @@ export function ProjectView({
           </Button>
         </div>
       </CardHeader>
+      <CardContent>
+        <TaskViewSwitcher />
+      </CardContent>
     </Card>
   );
 }

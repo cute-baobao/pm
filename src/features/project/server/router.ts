@@ -1,11 +1,17 @@
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
 import z from 'zod';
-import { createProjectSchema, getProjectSchema, projectPaginationSchema } from '../schema';
+import {
+  createProjectSchema,
+  getProjectSchema,
+  projectPaginationSchema,
+  updateProjectSchema,
+} from '../schema';
 import {
   createProject,
   deleteProject,
   getManyProjectsByOrganization,
   getOneProject,
+  updateProject,
 } from './service';
 
 export const projectRouter = createTRPCRouter({
@@ -25,10 +31,14 @@ export const projectRouter = createTRPCRouter({
       const project = await deleteProject(input.projectId);
       return project;
     }),
+  update: protectedProcedure
+    .input(updateProjectSchema)
+    .mutation(async ({ input }) => {
+      const project = await updateProject(input);
+      return project;
+    }),
   getOne: protectedProcedure
-    .input(
-     getProjectSchema,
-    )
+    .input(getProjectSchema)
     .query(async ({ input }) => {
       const project = await getOneProject(input);
       return project;
