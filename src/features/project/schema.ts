@@ -2,7 +2,7 @@ import { PAGINATION } from '@/lib/configs/constants';
 import z from 'zod';
 
 export const getProjectSchema = z.object({
-  projectName: z.string().min(1, 'Project name is required'),
+  projectId: z.string().min(1, 'Project ID is required'),
   organizationId: z.string().min(1, 'Organization ID is required'),
 });
 

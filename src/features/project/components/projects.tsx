@@ -149,7 +149,7 @@ export function ProjectItem({ data }: { data: Project }) {
 
   return (
     <EntityItem
-      href={`/organization/${slug}/projects/${data.name}`}
+      href={`/organization/${slug}/projects/${data.id}`}
       title={data.name}
       subtitle={<>{formatDistanceToNow(data.createdAt, { addSuffix: true })}</>}
       image={

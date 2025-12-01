@@ -78,6 +78,7 @@
     "sonner": "^2.0.7",
     "superjson": "^2.2.5",
     "tailwind-merge": "^3.3.1",
+    "trpc-shield": "^2.0.1",
     "vaul": "^1.1.2",
     "ws": "^8.18.3",
     "zod": "^4.1.5"

@@ -73,7 +73,7 @@ export const CreateProjectForm = ({
   const onSubmit = (data: CreateProjectData) => {
     createProject.mutate(data, {
       onSuccess: (project) => {
-        router.push(`/organization/${slug}/projects/${project.name}`);
+        router.push(`/organization/${slug}/projects/${project.id}`);
       },
     });
   };

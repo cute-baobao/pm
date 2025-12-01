@@ -110,6 +110,8 @@
     "deleteMemberError": "Error removing member: {message}",
     "joinSuccess": "Successfully joined organization",
     "joinError": "Error joining organization: {message}",
+    "exitSuccess": "Successfully exited organization",
+    "exitError": "Error exiting organization: {message}",
     "Roles": {
       "owner": "Owner",
       "admin": "Admin",
@@ -188,6 +190,35 @@
       "loadingMessage": "Loading projects...",
       "errorMessage": "Error loading projects...",
       "emptyMessage": "No projects found, Get started by creating a project"
+    }
+  },
+  "Task": {
+    "createSuccess": "Task created successfully",
+    "createError": "Error creating task: {message}",
+    "updateSuccess": "Task updated successfully",
+    "updateError": "Error updating task: {message}",
+    "deleteSuccess": "Task deleted successfully",
+    "deleteError": "Error deleting task: {message}",
+    "Status": {
+      "BACKLOG": "Backlog",
+      "TODO": "To Do",
+      "IN_PROGRESS": "In Progress",
+      "IN_REVIEW": "In Review",
+      "DONE": "Done"
+    },
+    "CreateForm": {
+      "title": "Create Task",
+      "nameLabel": "Task Name",
+      "namePlaceholder": "Enter task name",
+      "descriptionLabel": "Description (Optional)",
+      "descriptionPlaceholder": "Enter task description (optional)",
+      "dueDateLabel": "Due Date",
+      "assignedLabel": "Assigned To",
+      "assignedPlaceholder": "Select a user",
+      "statusLabel": "Task Status",
+      "statusPlaceholder": "Select a status",
+      "cancelButton": "Cancel",
+      "createButton": "Create Task"
     }
   }
 }

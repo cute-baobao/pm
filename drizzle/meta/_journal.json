@@ -43,6 +43,13 @@
       "when": 1764212545274,
       "tag": "0005_update-project-add-description",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1764581445700,
+      "tag": "0006_add-task-schema",
+      "breakpoints": true
     }
   ]
 }

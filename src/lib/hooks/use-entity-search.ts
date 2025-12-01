@@ -1,5 +1,5 @@
-import { useEffect, useState, startTransition } from "react";
-import { PAGINATION } from "../configs/constants";
+import { startTransition, useEffect, useState } from 'react';
+import { PAGINATION } from '../configs/constants';
 
 interface useEntitySearchProps<T extends { search: string; page: number }> {
   params: T;
@@ -21,11 +21,11 @@ export function useEntitySearch<T extends { search: string; page: number }>({
   useEffect(() => {
     const currentSearch = params.search;
 
-    if (localSearch === "" && currentSearch !== "") {
+    if (localSearch === '' && currentSearch !== '') {
       startTransition(() => {
         setParams({
           ...params,
-          search: "",
+          search: '',
           page: PAGINATION.DEFAULT_PAGE,
         });
       });
@@ -49,7 +49,6 @@ export function useEntitySearch<T extends { search: string; page: number }>({
   }, [localSearch, params.search, debounceMs]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalSearch(params.search);
   }, [params.search]);
 

@@ -1,6 +1,7 @@
 import { useTRPC } from '@/trpc/client';
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query';
@@ -21,6 +22,13 @@ export const useSuspenseProjects = (organizationId: string) => {
 export const useSuspenseProject = (params: GetProjectParams) => {
   const trpc = useTRPC();
   return useSuspenseQuery(trpc.project.getOne.queryOptions(params));
+};
+
+export const useProject = (organizationId: string) => {
+  const trpc = useTRPC();
+  return useQuery(
+    trpc.project.getManyWithNoPagination.queryOptions({ organizationId }),
+  );
 };
 
 export const useCreateProject = () => {

@@ -5,25 +5,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TaskViewSwitcher } from '@/features/task/components/task-view-switcher';
 import { EditIcon } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { useSuspenseProject } from '../hooks/use-project';
 import { ProjectAvatar } from './project-avatar';
 
 interface ProjectViewProps {
   slug: string;
   organizationId: string;
-  projectName: string;
+  projectId: string;
 }
 
 export function ProjectView({
   slug,
   organizationId,
-  projectName,
+  projectId,
 }: ProjectViewProps) {
+  const router = useRouter();
   const { data } = useSuspenseProject({
     organizationId,
-    projectName,
+    projectId,
   });
+
+  const onNewTask = () => {
+    router.push(`/organization/${slug}/projects/${projectId}/task/new`);
+  };
 
   if (data === undefined) {
     throw notFound();
@@ -43,7 +48,7 @@ export function ProjectView({
             </div>
           </CardTitle>
           <Button asChild variant="outline" size="sm">
-            <Link href={`/organization/${slug}/projects/${data.name}/edit`}>
+            <Link href={`/organization/${slug}/projects/${data.id}/edit`}>
               <EditIcon className="mr-2 size-4" />
               Edit Project
             </Link>
@@ -51,7 +56,7 @@ export function ProjectView({
         </div>
       </CardHeader>
       <CardContent>
-        <TaskViewSwitcher />
+        <TaskViewSwitcher onNewTask={onNewTask} />
       </CardContent>
     </Card>
   );

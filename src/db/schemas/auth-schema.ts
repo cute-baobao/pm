@@ -46,6 +46,8 @@ export const session = pgTable(
   (table) => [index('session_userId_idx').on(table.userId)],
 );
 
+export type Session = InferSelectModel<typeof session>;
+
 export const account = pgTable(
   'account',
   {

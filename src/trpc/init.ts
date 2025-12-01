@@ -5,12 +5,22 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import superjson from 'superjson';
+import { or, shield } from 'trpc-shield/src';
+import {
+  anyone,
+  Context,
+  isOrganizationAdmin,
+  isOrganizationMember,
+  isOrganizationOwner,
+} from './shield';
+
 export const createTRPCContext = cache(async () => {
   /**
    * @see: https://trpc.io/docs/server/context
    */
   return { userId: 'user_123' };
 });
+
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
@@ -25,6 +35,42 @@ const t = initTRPC.create({
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
+
+const permissions = shield<Context>({
+  organization: {
+    query: {
+      create: anyone,
+    },
+    mutation: {
+      update: or(isOrganizationOwner, isOrganizationAdmin),
+      delete: isOrganizationOwner,
+    },
+  },
+  organizationMember: {
+    query: {
+      invite: or(isOrganizationOwner, isOrganizationAdmin),
+      getMany: isOrganizationMember,
+    },
+    mutation: {
+      updateRole: or(isOrganizationOwner, isOrganizationAdmin),
+      delete: or(isOrganizationOwner, isOrganizationAdmin),
+      exitOrganization: isOrganizationMember,
+    },
+  },
+  project: {
+    query: {
+      getOne: isOrganizationMember,
+      getMany: isOrganizationMember,
+    },
+    mutation: {
+      create: or(isOrganizationAdmin, isOrganizationOwner),
+      update: or(isOrganizationAdmin, isOrganizationOwner),
+      delete: or(isOrganizationAdmin, isOrganizationOwner),
+    },
+  },
+});
+
+const permissionMiddleware = t.middleware(permissions);
 
 // Protected procedure that requires authentication
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
@@ -47,8 +93,8 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 });
 
 // check user permission procedure
-export const permissionedProcedure = protectedProcedure.use(
-  async ({ ctx, next }) => {
+export const permissionedProcedure = protectedProcedure
+  .use(async ({ ctx, next }) => {
     const { session, user } = ctx.auth;
     if (!session.activeOrganizationId) {
       throw new TRPCError({
@@ -78,8 +124,9 @@ export const permissionedProcedure = protectedProcedure.use(
       ...user,
       role: member.role as keyof typeof PERMSSION,
     };
+
     return next({
       ctx: { ...ctx, auth: { session, user: userWithRole } },
     });
-  },
-);
+  })
+  .use(permissionMiddleware);

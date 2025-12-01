@@ -9,10 +9,10 @@ import {
 } from '../schema';
 
 export const getOneProject = async (params: GetProjectParams) => {
-  const { projectName, organizationId } = params;
+  const { projectId, organizationId } = params;
   const project = await db.query.project.findFirst({
     where: (p, { eq, and }) =>
-      and(eq(p.name, projectName), eq(p.organizationId, organizationId)),
+      and(eq(p.id, projectId), eq(p.organizationId, organizationId)),
   });
 
   return project;
@@ -51,6 +51,17 @@ export const getManyProjectsByOrganization = async (
     hasNextPage,
     hasPreviousPage,
   };
+};
+
+export const getManyProjectsByOrganizationNoPagination = async (
+  organizationId: string,
+) => {
+  const items = await db.query.project.findMany({
+    where: eq(project.organizationId, organizationId),
+    orderBy: desc(project.createdAt),
+  });
+
+  return items;
 };
 
 export const createProject = async (data: CreateProjectData) => {

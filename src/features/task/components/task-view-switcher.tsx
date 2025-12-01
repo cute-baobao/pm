@@ -4,7 +4,11 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TabsContent } from '@radix-ui/react-tabs';
 import { PlusIcon } from 'lucide-react';
 
-export function TaskViewSwitcher() {
+interface TaskViewSwitcherProps {
+  onNewTask?: () => void;
+}
+
+export function TaskViewSwitcher({ onNewTask }: TaskViewSwitcherProps) {
   return (
     <Tabs className="w-full flex-1 rounded-lg border">
       <div className="flex h-full flex-col overflow-auto p-4">
@@ -20,7 +24,7 @@ export function TaskViewSwitcher() {
               Calendar
             </TabsTrigger>
           </TabsList>
-          <Button className="w-full lg:w-auto" size="sm">
+          <Button onClick={onNewTask} className="w-full lg:w-auto" size="sm">
             <PlusIcon className="mr-2 size-4" />
             New Task
           </Button>

@@ -189,5 +189,34 @@
       "errorMessage": "加载项目时出错...",
       "emptyMessage": "未找到项目，开始创建项目"
     }
+  },
+  "Task": {
+    "createSuccess": "任务创建成功",
+    "createError": "创建任务失败: {message}",
+    "updateSuccess": "任务更新成功",
+    "updateError": "更新任务失败: {message}",
+    "deleteSuccess": "任务删除成功",
+    "deleteError": "删除任务失败: {message}",
+    "Status": {
+      "BACKLOG": "待处理",
+      "TODO": "待办",
+      "IN_PROGRESS": "进行中",
+      "IN_REVIEW": "审查中",
+      "DONE": "已完成"
+    },
+    "CreateForm": {
+      "title": "创建任务",
+      "nameLabel": "任务名称",
+      "namePlaceholder": "输入任务名称",
+      "descriptionLabel": "描述（可选）",
+      "descriptionPlaceholder": "输入任务描述（可选）",
+      "dueDateLabel": "截止日期",
+      "assignedLabel": "负责人",
+      "assignedPlaceholder": "选择用户",
+      "statusLabel": "任务状态",
+      "statusPlaceholder": "选择状态",
+      "cancelButton": "取消",
+      "createButton": "创建任务"
+    }
   }
 }

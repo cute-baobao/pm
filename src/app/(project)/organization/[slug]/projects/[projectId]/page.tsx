@@ -1,4 +1,4 @@
-import { EditProjectForm } from '@/features/project/components/edit-project-form';
+import { ProjectView } from '@/features/project/components/project';
 import {
   ProjectsError,
   ProjectsLoading,
@@ -9,31 +9,28 @@ import { HydrateClient } from '@/trpc/server';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-interface ProjectEditPageProps {
-  params: Promise<{ slug: string; name: string }>;
+interface ProjectDetailPageProps {
+  params: Promise<{ slug: string; projectId: string }>;
 }
-export default async function ProjectEditPage({
+export default async function ProjectDetailPage({
   params,
-}: ProjectEditPageProps) {
-  const { slug, name } = await params;
-  const projectName = decodeURIComponent(name);
-
+}: ProjectDetailPageProps) {
+  const { slug, projectId } = await params;
   const session = await requireOrganizationAccess(slug);
 
   await prefetchProject({
     organizationId: session.session.activeOrganizationId!,
-    projectName,
+    projectId,
   });
 
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<ProjectsError />}>
         <Suspense fallback={<ProjectsLoading />}>
-          <EditProjectForm
-            organizationId={session.session.activeOrganizationId!}
-            projectName={projectName}
-            role={'member'}
+          <ProjectView
             slug={slug}
+            organizationId={session.session.activeOrganizationId!}
+            projectId={projectId}
           />
         </Suspense>
       </ErrorBoundary>

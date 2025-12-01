@@ -34,7 +34,7 @@ import { UpdateProjectData, updateProjectSchema } from '../schema';
 interface EditProjectForm {
   role: OrganizationRole;
   organizationId: string;
-  projectName: string;
+  projectId: string;
   slug: string;
   onCancel?: () => void;
 }
@@ -42,7 +42,7 @@ interface EditProjectForm {
 export const EditProjectForm = ({
   role,
   organizationId,
-  projectName,
+  projectId,
   slug,
   onCancel,
 }: EditProjectForm) => {
@@ -50,7 +50,7 @@ export const EditProjectForm = ({
   const router = useRouter();
   const { data: initialValue } = useSuspenseProject({
     organizationId,
-    projectName,
+    projectId,
   });
   const t = useTranslations('Organization.EditForm');
   const form = useForm<UpdateProjectData>({
@@ -99,7 +99,7 @@ export const EditProjectForm = ({
     updateProject.mutate(data, {
       onSuccess: (data) => {
         form.reset();
-        router.push(`/organization/${slug}/projects/${data.name}`);
+        router.push(`/organization/${slug}/projects/${data.id}`);
       },
     });
   };
@@ -140,7 +140,7 @@ export const EditProjectForm = ({
                 ? onCancel
                 : () =>
                     router.push(
-                      `/organization/${slug}/projects/${initialValue.name}`,
+                      `/organization/${slug}/projects/${initialValue.id}`,
                     )
             }
           >

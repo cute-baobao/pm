@@ -27,11 +27,7 @@ export const organizationMemberRouter = createTRPCRouter({
   invite: permissionedProcedure
     .input(inviteMemberSchema)
     .mutation(async ({ input, ctx }) => {
-      const permission = hasPermission(ctx.auth.user.role, 'create');
-      if (
-        !permission ||
-        ctx.auth.session.activeOrganizationId !== input.organizationId
-      ) {
+      if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Error.forbidden_no_permission',
@@ -43,11 +39,7 @@ export const organizationMemberRouter = createTRPCRouter({
   getMany: permissionedProcedure
     .input(z.object({ organizationId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const permission = hasPermission(ctx.auth.user.role, 'read');
-      if (
-        !permission ||
-        ctx.auth.session.activeOrganizationId !== input.organizationId
-      ) {
+      if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Error.forbidden_no_permission',
@@ -61,11 +53,7 @@ export const organizationMemberRouter = createTRPCRouter({
   updateRole: permissionedProcedure
     .input(updateMemberRoleSchema)
     .mutation(async ({ ctx, input }) => {
-      const permission = hasPermission(ctx.auth.user.role, 'update');
-      if (
-        !permission ||
-        ctx.auth.session.activeOrganizationId !== input.organizationId
-      ) {
+      if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Error.forbidden_no_permission',
@@ -78,9 +66,8 @@ export const organizationMemberRouter = createTRPCRouter({
   delete: permissionedProcedure
     .input(deleteMemberSchema)
     .mutation(async ({ ctx, input }) => {
-      const permission = hasPermission(ctx.auth.user.role, 'delete');
       if (
-        !permission ||
+      
         ctx.auth.session.activeOrganizationId !== input.organizationId
       ) {
         throw new TRPCError({
