@@ -1,0 +1,105 @@
+import db from '@/db';
+import { project } from '@/db/schemas';
+import { and, desc, eq, ilike } from 'drizzle-orm';
+import {
+  CreateProjectData,
+  GetProjectParams,
+  ProjectPaginationData,
+  UpdateProjectData,
+} from '../schema';
+
+export const getOneProject = async (params: GetProjectParams) => {
+  const { projectId, organizationId } = params;
+  const project = await db.query.project.findFirst({
+    where: (p, { eq, and }) =>
+      and(eq(p.id, projectId), eq(p.organizationId, organizationId)),
+  });
+
+  return project;
+};
+
+export const getManyProjectsByOrganization = async (
+  data: ProjectPaginationData,
+) => {
+  const { search, page, pageSize, organizationId } = data;
+  const whereCondition = search
+    ? and(
+        eq(project.organizationId, organizationId),
+        ilike(project.name, `%${search}%`),
+      )
+    : eq(project.organizationId, organizationId);
+
+  const [items, totalCount] = await Promise.all([
+    db.query.project.findMany({
+      where: whereCondition,
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+      orderBy: desc(project.createdAt),
+    }),
+    db.$count(project, whereCondition),
+  ]);
+  const totalPages = Math.ceil(totalCount / pageSize);
+  const hasNextPage = page < totalPages;
+  const hasPreviousPage = page > 1;
+
+  return {
+    items,
+    page,
+    pageSize,
+    totalCount,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+  };
+};
+
+export const getManyProjectsByOrganizationNoPagination = async (
+  organizationId: string,
+) => {
+  const items = await db.query.project.findMany({
+    where: eq(project.organizationId, organizationId),
+    orderBy: desc(project.createdAt),
+  });
+
+  return items;
+};
+
+export const createProject = async (data: CreateProjectData) => {
+  const [result] = await db
+    .insert(project)
+    .values({
+      name: data.name,
+      image: data.image ?? null,
+      organizationId: data.organizationId,
+      description: data.description ?? null,
+    })
+    .returning();
+  return result;
+};
+
+export const deleteProject = async (projectId: string) => {
+  const [result] = await db
+    .delete(project)
+    .where(eq(project.id, projectId))
+    .returning();
+  return result;
+};
+
+export const updateProject = async (data: UpdateProjectData) => {
+  const [result] = await db
+    .update(project)
+    .set({
+      name: data.name,
+      image: data.image ?? null,
+      description: data.description ?? null,
+    })
+    .where(
+      and(
+        eq(project.id, data.id),
+        eq(project.organizationId, data.organizationId),
+      ),
+    )
+    .returning();
+
+  return result;
+};

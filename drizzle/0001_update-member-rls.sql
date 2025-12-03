@@ -1,0 +1,2 @@
+DROP POLICY "self_access" ON "member" CASCADE;--> statement-breakpoint
+CREATE POLICY "read_access" ON "member" AS PERMISSIVE FOR SELECT TO public USING ((current_setting('app.current_organization_id', true))::uuid = "member"."organization_id");

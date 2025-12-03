@@ -5,8 +5,50 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763632021428,
+      "when": 1764076240405,
       "tag": "0000_add-better-auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1764077217313,
+      "tag": "0001_update-member-rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764077492723,
+      "tag": "0002_update-member-rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1764124320894,
+      "tag": "0003_update-member-rks",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764141581289,
+      "tag": "0004_add-project-schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1764212545274,
+      "tag": "0005_update-project-add-description",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1764581445700,
+      "tag": "0006_add-task-schema",
       "breakpoints": true
     }
   ]

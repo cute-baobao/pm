@@ -18,23 +18,28 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { LoginFormData, loginFormSchema } from '@/features/auth/schema';
 import { signIn } from '@/lib/auth-client';
-import { loginFormSchema, LoginFormData } from '@/features/auth/schema';
-import { cn } from '@/lib/utils';
+import { cn, safeRedirect } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSetAtom } from 'jotai';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { userAtom } from '../store/atom';
 
 export default function LoginForm() {
-  const t = useTranslations('AuthLayout.Login');
+  const t = useTranslations('Auth.Login');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const nextUrl = safeRedirect(searchParams.get('next'));
+  const setUserAtom = useSetAtom(userAtom);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
@@ -48,10 +53,10 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
-    await signIn.email({
+    const result = await signIn.email({
       email: data.email,
       password: data.password,
-      callbackURL: '/',
+      callbackURL: nextUrl ? nextUrl : '/organization',
       fetchOptions: {
         onResponse: () => {
           setLoading(false);
@@ -62,11 +67,19 @@ export default function LoginForm() {
         onError: (ctx) => {
           toast.error(ctx.error.message);
         },
-        onSuccess: async () => {
-          router.push('/');
-        },
       },
     });
+    if (result) {
+      // normalize user.image to be string | null (no undefined) before updating atom
+      const user = result.data?.user
+        ? {
+            ...result.data.user,
+            image: result.data.user.image ?? null,
+          }
+        : null;
+
+      setUserAtom(user);
+    }
   };
 
   const signInGithub = async () => {
@@ -130,7 +143,9 @@ export default function LoginForm() {
                   render={({ field }) => (
                     <FormItem>
                       <div className="flex items-center">
-                        <FormLabel htmlFor="password">{t('password')}</FormLabel>
+                        <FormLabel htmlFor="password">
+                          {t('password')}
+                        </FormLabel>
                         <Link
                           href="#"
                           className="ml-auto inline-block text-sm underline"
@@ -197,7 +212,15 @@ export default function LoginForm() {
           </p>
           <p className="text-center text-xs text-neutral-500">
             {t('noAccount')}{' '}
-            <Link href="/register" className="underline hover:text-blue-500">
+            <Link
+              prefetch
+              href={
+                nextUrl
+                  ? `/register?next=${encodeURIComponent(nextUrl)}`
+                  : '/register'
+              }
+              className="underline hover:text-blue-500"
+            >
               {t('signUp')}
             </Link>
           </p>

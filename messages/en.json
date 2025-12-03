@@ -1,5 +1,7 @@
 {
-  "AuthLayout": {
+  "chinese": "Chinese",
+  "english": "English",
+  "Auth": {
     "Register": {
       "signUp": "Sign Up",
       "description": "Enter your information to create a new account.",
@@ -20,9 +22,203 @@
       "forgotPassword": "Forgot your password?",
       "login": "Login",
       "signInGithub": "Sign in with Github",
+      "securedBy": "Secured by",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
       "githubError": "Github OAuth error: "
+    },
+    "UserButton": {
+      "logOut": "Log out"
+    }
+  },
+  "Error": {
+    "unauthorized": "User is not logged in or authentication failed",
+    "forbidden_no_permission": "You do not have permission to perform this action",
+    "forbidden_no_active_organization": "No active organization found",
+    "forbidden_no_membership": "You are not a member of this organization",
+    "invitation_already_exists": "An active invitation already exists for this email and organization",
+    "invitation_invalid_or_expired": "Invitation token is invalid or has expired",
+    "user_already_member": "User is already a member of the organization",
+    "invitation_email_mismatch": "Invitation email does not match",
+    "exitSuccess": "Successfully exited organization",
+    "exitError": "Error exiting organization: {message}"
+  },
+  "Navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "members": "Members",
+    "settings": "Settings",
+    "signOut": "Sign Out"
+  },
+  "Confirm": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "Organization": {
+    "createSuccess": "Organization {name} created successfully",
+    "createError": "Error creating organization: {message}",
+    "updateSuccess": "Organization {name} updated successfully",
+    "updateError": "Error updating organization: {message}",
+    "deleteSuccess": "Organization {name} deleted successfully",
+    "deleteError": "Error deleting organization: {message}",
+    "slugConflict": "Slug is already taken",
+    "notFound": "Organization not found",
+    "CreateForm": {
+      "title": "Create Organization",
+      "joinButton": "Join Workspace",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "e.g. Acme Corp",
+      "logoLabel": "Organization Logo",
+      "metadataLabel": "Metadata",
+      "metadataPlaceholder": "Additional information about the organization",
+      "cancelButton": "Cancel",
+      "createButton": "Create Organization"
+    },
+    "Switcher": {
+      "title": "Organizations",
+      "placeholder": "Select organization",
+      "createOrganization": "Create Organization"
+    },
+    "EditForm": {
+      "deleteConfirmTitle": "Are you sure?",
+      "deleteConfirmMessage": "This action cannot be undone.",
+      "backButton": "Back",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "Enter organization name",
+      "logoLabel": "Organization Logo",
+      "metadataLabel": "Metadata",
+      "metadataPlaceholder": "Enter metadata",
+      "cancelButton": "Cancel",
+      "updateButton": "Save Changes",
+      "dangerZone": "Danger Zone",
+      "dangerZoneDescription": "Deleting an organization is irreversible and will remove all associated data.",
+      "deleteButton": "Delete Organization",
+      "exitTitle": "Exit Organization",
+      "exitDescription": "Leaving the organization will remove your access to its resources.",
+      "exitButton": "Exit",
+      "exitConfirmTitle": "Exit Organization",
+      "exitConfirmMessage": "Are you sure you want to exit this organization? You will lose access to its resources."
+    }
+  },
+  "OrganizationMember": {
+    "inviteSuccess": "Member invited successfully",
+    "inviteError": "Error inviting member: {message}",
+    "updateRoleSuccess": "Member role updated successfully",
+    "updateRoleError": "Error updating member role: {message}",
+    "deleteMemberSuccess": "Member removed successfully",
+    "deleteMemberError": "Error removing member: {message}",
+    "joinSuccess": "Successfully joined organization",
+    "joinError": "Error joining organization: {message}",
+    "exitSuccess": "Successfully exited organization",
+    "exitError": "Error exiting organization: {message}",
+    "Roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member"
+    },
+    "InviteMemberForm": {
+      "generateConfirmTitle": "Invite Member",
+      "generateConfirmMessage": "This will send an invitation to the user.",
+      "title": "Invite Member",
+      "description": "Invite new members to your organization",
+      "inviteLinkButton": "Invite via Link",
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "roleLabel": "Role",
+      "rolePlaceholder": "Select Role"
+    },
+    "MemberList": {
+      "title": "Members",
+      "removeConfirmTitle": "Remove Member",
+      "removeConfirmMessage": "Are you sure you want to remove this member from the organization?",
+      "setAdmin": "Set as Admin",
+      "setMember": "Set as Member",
+      "removeMember": "Remove {name}"
+    },
+    "JoinCard": {
+      "title": "Join Organization",
+      "description": "You've been invited to join an organization.",
+      "cancelButton": "Cancel",
+      "joinButton": "Join Organization"
+    }
+  },
+  "Entity": {
+    "Pagination": {
+      "pageOf": "Page {page} of {totalPages}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "Loading": {
+      "message": "Loading {message}..."
+    },
+    "Error": {
+      "message": "Error: {message}"
+    },
+    "Empty": {
+      "noItems": "No items",
+      "message": "{message}",
+      "addItem": "Add item"
+    },
+    "Actions": {
+      "delete": "Delete"
+    },
+    "Search": {
+      "placeholder": "Search..."
+    }
+  },
+  "Project": {
+    "createSuccess": "Project created successfully",
+    "createError": "Error creating project: {message}",
+    "deleteSuccess": "Project deleted successfully",
+    "deleteError": "Error deleting project: {message}",
+    "CreateForm": {
+      "title": "Create Project",
+      "nameLabel": "Project Name",
+      "namePlaceholder": "Enter project name",
+      "descriptionLabel": "Project Description",
+      "descriptionPlaceholder": "Enter project description",
+      "imageLabel": "Project Icon",
+      "cancelButton": "Cancel",
+      "createButton": "Create Project"
+    },
+    "List": {
+      "title": "Projects",
+      "description": "Create and manage your projects",
+      "newButtonLabel": "New project",
+      "searchPlaceholder": "Search projects...",
+      "loadingMessage": "Loading projects...",
+      "errorMessage": "Error loading projects...",
+      "emptyMessage": "No projects found, Get started by creating a project"
+    }
+  },
+  "Task": {
+    "createSuccess": "Task created successfully",
+    "createError": "Error creating task: {message}",
+    "updateSuccess": "Task updated successfully",
+    "updateError": "Error updating task: {message}",
+    "deleteSuccess": "Task deleted successfully",
+    "deleteError": "Error deleting task: {message}",
+    "Status": {
+      "BACKLOG": "Backlog",
+      "TODO": "To Do",
+      "IN_PROGRESS": "In Progress",
+      "IN_REVIEW": "In Review",
+      "DONE": "Done"
+    },
+    "CreateForm": {
+      "title": "Create Task",
+      "nameLabel": "Task Name",
+      "namePlaceholder": "Enter task name",
+      "descriptionLabel": "Description (Optional)",
+      "descriptionPlaceholder": "Enter task description (optional)",
+      "dueDateLabel": "Due Date",
+      "assignedLabel": "Assigned To",
+      "assignedPlaceholder": "Select a user",
+      "statusLabel": "Task Status",
+      "statusPlaceholder": "Select a status",
+      "cancelButton": "Cancel",
+      "createButton": "Create Task"
     }
   }
 }

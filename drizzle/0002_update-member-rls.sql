@@ -1,0 +1,1 @@
+ALTER POLICY "read_access" ON "member" TO public USING (true);

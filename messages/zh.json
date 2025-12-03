@@ -1,5 +1,7 @@
 {
-  "AuthLayout": {
+  "chinese": "中文",
+  "english": "英文",
+  "Auth": {
     "Register": {
       "signUp": "注册",
       "description": "输入您的信息以创建一个新帐户。",
@@ -20,9 +22,201 @@
       "forgotPassword": "忘记密码？",
       "login": "登录",
       "signInGithub": "使用 Github 登录",
+      "securedBy": "安全支持",
       "noAccount": "还没有帐户？",
       "signUp": "注册",
       "githubError": "Github OAuth 错误："
+    },
+    "UserButton": {
+      "logOut": "退出登录"
+    }
+  },
+  "Error": {
+    "unauthorized": "用户未登录或身份验证失败",
+    "forbidden_no_permission": "您没有权限执行此操作",
+    "forbidden_no_active_organization": "未找到活跃的组织",
+    "forbidden_no_membership": "您不是该组织的成员",
+    "invitation_already_exists": "该邮箱和组织已存在有效的邀请",
+    "invitation_invalid_or_expired": "邀请链接无效或已过期",
+    "user_already_member": "用户已经是该组织的成员",
+    "invitation_email_mismatch": "邀请邮箱不匹配",
+    "exitSuccess": "退出组织成功",
+    "exitError": "退出组织失败: {message}"
+  },
+  "Navigation": {
+    "home": "首页",
+    "dashboard": "仪表盘",
+    "projects": "项目",
+    "members": "成员",
+    "settings": "设置",
+    "signOut": "退出登录"
+  },
+  "Confirm": {
+    "cancel": "取消",
+    "confirm": "确认"
+  },
+  "Organization": {
+    "createSuccess": "组织 {name} 创建成功",
+    "createError": "创建组织失败: {message}",
+    "updateSuccess": "组织 {name} 更新成功",
+    "updateError": "更新组织失败: {message}",
+    "deleteSuccess": "组织 {name} 删除成功",
+    "deleteError": "删除组织失败: {message}",
+    "slugConflict": "组织标识符已被占用",
+    "notFound": "未找到组织",
+    "CreateForm": {
+      "title": "创建组织",
+      "joinButton": "加入工作区",
+      "nameLabel": "组织名称",
+      "namePlaceholder": "例如：Acme Corp",
+      "logoLabel": "组织 Logo",
+      "metadataLabel": "元数据",
+      "metadataPlaceholder": "关于组织的附加信息",
+      "cancelButton": "取消",
+      "createButton": "创建组织"
+    },
+    "Switcher": {
+      "title": "组织",
+      "placeholder": "选择组织",
+      "createOrganization": "创建组织"
+    },
+    "EditForm": {
+      "deleteConfirmTitle": "您确定吗？",
+      "deleteConfirmMessage": "此操作无法撤消。",
+      "backButton": "返回",
+      "nameLabel": "组织名称",
+      "namePlaceholder": "输入组织名称",
+      "logoLabel": "组织 Logo",
+      "metadataLabel": "元数据",
+      "metadataPlaceholder": "输入元数据",
+      "cancelButton": "取消",
+      "updateButton": "保存更改",
+      "dangerZone": "危险区域",
+      "dangerZoneDescription": "删除组织是不可逆的，将删除所有相关数据。",
+      "deleteButton": "删除组织",
+      "exitTitle": "退出组织",
+      "exitDescription": "退出组织将移除您对该组织资源的访问权限。",
+      "exitButton": "退出",
+      "exitConfirmTitle": "退出组织",
+      "exitConfirmMessage": "您确定要退出此组织吗？您将失去对其资源的访问权限。"
+    }
+  },
+  "OrganizationMember": {
+    "inviteSuccess": "成员邀请成功",
+    "inviteError": "邀请成员失败: {message}",
+    "updateRoleSuccess": "成员角色更新成功",
+    "updateRoleError": "更新成员角色失败: {message}",
+    "deleteMemberSuccess": "成员移除成功",
+    "deleteMemberError": "移除成员失败: {message}",
+    "joinSuccess": "成功加入组织",
+    "joinError": "加入组织失败: {message}",
+    "Roles": {
+      "owner": "所有者",
+      "admin": "管理员",
+      "member": "成员"
+    },
+    "InviteMemberForm": {
+      "generateConfirmTitle": "邀请成员",
+      "generateConfirmMessage": "这将向用户发送邀请。",
+      "title": "邀请成员",
+      "description": "邀请新成员加入您的组织",
+      "inviteLinkButton": "通过链接邀请",
+      "emailLabel": "电子邮件",
+      "emailPlaceholder": "name@example.com",
+      "roleLabel": "角色",
+      "rolePlaceholder": "选择角色"
+    },
+    "MemberList": {
+      "title": "成员列表",
+      "removeConfirmTitle": "移除成员",
+      "removeConfirmMessage": "您确定要将此成员从组织中移除吗？",
+      "setAdmin": "设为管理员",
+      "setMember": "设为成员",
+      "removeMember": "移除 {name}"
+    },
+    "JoinCard": {
+      "title": "加入组织",
+      "description": "您已被邀请加入一个组织。",
+      "cancelButton": "取消",
+      "joinButton": "加入组织"
+    }
+  },
+  "Entity": {
+    "Pagination": {
+      "pageOf": "第 {page} 页，共 {totalPages} 页",
+      "previous": "上一页",
+      "next": "下一页"
+    },
+    "Loading": {
+      "message": "正在加载 {message}..."
+    },
+    "Error": {
+      "message": "错误：{message}"
+    },
+    "Empty": {
+      "noItems": "暂无内容",
+      "message": "{message}",
+      "addItem": "添加条目"
+    },
+    "Actions": {
+      "delete": "删除"
+    },
+    "Search": {
+      "placeholder": "搜索..."
+    }
+  },
+  "Project": {
+    "createSuccess": "项目创建成功",
+    "createError": "创建项目失败: {message}",
+    "deleteSuccess": "项目删除成功",
+    "deleteError": "删除项目失败: {message}",
+    "CreateForm": {
+      "title": "创建项目",
+      "nameLabel": "项目名称",
+      "namePlaceholder": "输入项目名称",
+      "descriptionLabel": "项目描述",
+      "descriptionPlaceholder": "输入项目描述",
+      "imageLabel": "项目Icon",
+      "cancelButton": "取消",
+      "createButton": "创建项目"
+    },
+    "List": {
+      "title": "项目",
+      "description": "创建和管理您的项目",
+      "newButtonLabel": "新建项目",
+      "searchPlaceholder": "搜索项目...",
+      "loadingMessage": "正在加载项目...",
+      "errorMessage": "加载项目时出错...",
+      "emptyMessage": "未找到项目，开始创建项目"
+    }
+  },
+  "Task": {
+    "createSuccess": "任务创建成功",
+    "createError": "创建任务失败: {message}",
+    "updateSuccess": "任务更新成功",
+    "updateError": "更新任务失败: {message}",
+    "deleteSuccess": "任务删除成功",
+    "deleteError": "删除任务失败: {message}",
+    "Status": {
+      "BACKLOG": "待处理",
+      "TODO": "待办",
+      "IN_PROGRESS": "进行中",
+      "IN_REVIEW": "审查中",
+      "DONE": "已完成"
+    },
+    "CreateForm": {
+      "title": "创建任务",
+      "nameLabel": "任务名称",
+      "namePlaceholder": "输入任务名称",
+      "descriptionLabel": "描述（可选）",
+      "descriptionPlaceholder": "输入任务描述（可选）",
+      "dueDateLabel": "截止日期",
+      "assignedLabel": "负责人",
+      "assignedPlaceholder": "选择用户",
+      "statusLabel": "任务状态",
+      "statusPlaceholder": "选择状态",
+      "cancelButton": "取消",
+      "createButton": "创建任务"
     }
   }
 }
