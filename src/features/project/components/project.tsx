@@ -56,7 +56,11 @@ export function ProjectView({
         </div>
       </CardHeader>
       <CardContent>
-        <TaskViewSwitcher onNewTask={onNewTask} />
+        <TaskViewSwitcher
+          organizationId={organizationId}
+          projectId={projectId}
+          onNewTask={onNewTask}
+        />
       </CardContent>
     </Card>
   );

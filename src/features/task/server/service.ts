@@ -39,8 +39,8 @@ export const getManyTasksByFilters = async (filters: QueryTaskData) => {
     where: (t, { eq, and, ilike, lte }) =>
       and(
         eq(t.organizationId, filters.organizationId),
-        eq(t.status, filters.status),
         // 使用短路求值：有值则添加条件，否则返回 undefined（会被 and 忽略）
+        filters.status ? eq(t.status, filters.status) : undefined,
         filters.projectId ? eq(t.projectId, filters.projectId) : undefined,
         filters.assignedId ? eq(t.assignedId, filters.assignedId) : undefined,
         filters.search ? ilike(t.name, `%${filters.search}%`) : undefined,

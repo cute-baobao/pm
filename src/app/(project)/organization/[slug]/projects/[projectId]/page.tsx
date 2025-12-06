@@ -4,6 +4,7 @@ import {
   ProjectsLoading,
 } from '@/features/project/components/projects';
 import { prefetchProject } from '@/features/project/server/prefetch';
+import { prefetchTasks } from '@/features/task/server/prefetch';
 import { requireOrganizationAccess } from '@/lib/utils/auth-action';
 import { HydrateClient } from '@/trpc/server';
 import { Suspense } from 'react';
@@ -21,6 +22,10 @@ export default async function ProjectDetailPage({
   await prefetchProject({
     organizationId: session.session.activeOrganizationId!,
     projectId,
+  });
+
+  await prefetchTasks({
+    organizationId: session.session.activeOrganizationId!,
   });
 
   return (

@@ -2,6 +2,9 @@ import {
   createTRPCRouter,
   permissionedProcedure,
   protectedProcedure,
+  memberProcedure,
+  adminOrOwnerProcedure,
+  ownerProcedure,
 } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
@@ -16,7 +19,7 @@ import {
 } from './service';
 
 export const organizationRouter = createTRPCRouter({
-  create: protectedProcedure
+  create: memberProcedure
     .input(createOrganizationSchema)
     .mutation(async ({ input, ctx }) => {
       const check = await checkSlugAvailability(input.slug);
@@ -45,7 +48,7 @@ export const organizationRouter = createTRPCRouter({
       }
       return organization;
     }),
-  update: permissionedProcedure
+  update: adminOrOwnerProcedure
     .input(updateOrganizationSchema)
     .mutation(async ({ input, ctx }) => {
       if (ctx.auth.session.activeOrganizationId !== input.id) {
@@ -57,7 +60,7 @@ export const organizationRouter = createTRPCRouter({
 
       return await updateOrganization(input, ctx.auth.user.id);
     }),
-  delete: permissionedProcedure
+  delete: ownerProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
       if (ctx.auth.session.activeOrganizationId !== input.id) {

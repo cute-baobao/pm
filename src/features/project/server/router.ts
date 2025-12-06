@@ -1,4 +1,4 @@
-import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
+import { createTRPCRouter, memberProcedure, adminOrOwnerProcedure } from '@/trpc/init';
 import z from 'zod';
 import {
   createProjectSchema,
@@ -16,13 +16,13 @@ import {
 } from './service';
 
 export const projectRouter = createTRPCRouter({
-  create: permissionedProcedure
+  create: adminOrOwnerProcedure
     .input(createProjectSchema)
     .mutation(async ({ input }) => {
       const project = await createProject(input);
       return project;
     }),
-  delete: permissionedProcedure
+  delete: adminOrOwnerProcedure
     .input(
       z.object({
         projectId: z.string(),
@@ -32,25 +32,25 @@ export const projectRouter = createTRPCRouter({
       const project = await deleteProject(input.projectId);
       return project;
     }),
-  update: permissionedProcedure
+  update: adminOrOwnerProcedure
     .input(updateProjectSchema)
     .mutation(async ({ input }) => {
       const project = await updateProject(input);
       return project;
     }),
-  getOne: permissionedProcedure
+  getOne: memberProcedure
     .input(getProjectSchema)
     .query(async ({ input }) => {
       const project = await getOneProject(input);
       return project;
     }),
-  getMany: permissionedProcedure
+  getMany: memberProcedure
     .input(projectPaginationSchema)
     .query(async ({ input }) => {
       const projects = await getManyProjectsByOrganization(input);
       return projects;
     }),
-  getManyWithNoPagination: permissionedProcedure
+  getManyWithNoPagination: memberProcedure
     .input(
       z.object({
         organizationId: z.string(),

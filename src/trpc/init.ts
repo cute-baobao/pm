@@ -5,10 +5,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import superjson from 'superjson';
-import { or, shield } from 'trpc-shield/src';
 import {
-  anyone,
-  Context,
   isOrganizationAdmin,
   isOrganizationMember,
   isOrganizationOwner,
@@ -36,42 +33,6 @@ export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 
-const permissions = shield<Context>({
-  organization: {
-    query: {
-      create: anyone,
-    },
-    mutation: {
-      update: or(isOrganizationOwner, isOrganizationAdmin),
-      delete: isOrganizationOwner,
-    },
-  },
-  organizationMember: {
-    query: {
-      invite: or(isOrganizationOwner, isOrganizationAdmin),
-      getMany: isOrganizationMember,
-    },
-    mutation: {
-      updateRole: or(isOrganizationOwner, isOrganizationAdmin),
-      delete: or(isOrganizationOwner, isOrganizationAdmin),
-      exitOrganization: isOrganizationMember,
-    },
-  },
-  project: {
-    query: {
-      getOne: isOrganizationMember,
-      getMany: isOrganizationMember,
-    },
-    mutation: {
-      create: or(isOrganizationAdmin, isOrganizationOwner),
-      update: or(isOrganizationAdmin, isOrganizationOwner),
-      delete: or(isOrganizationAdmin, isOrganizationOwner),
-    },
-  },
-});
-
-const permissionMiddleware = t.middleware(permissions);
-
 // Protected procedure that requires authentication
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
   const session = await auth.api.getSession({
@@ -93,8 +54,8 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 });
 
 // check user permission procedure
-export const permissionedProcedure = protectedProcedure
-  .use(async ({ ctx, next }) => {
+export const permissionedProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
     const { session, user } = ctx.auth;
     if (!session.activeOrganizationId) {
       throw new TRPCError({
@@ -128,5 +89,59 @@ export const permissionedProcedure = protectedProcedure
     return next({
       ctx: { ...ctx, auth: { session, user: userWithRole } },
     });
-  })
-  .use(permissionMiddleware);
+  },
+);
+
+// Role-based procedure factories
+export const memberProcedure = permissionedProcedure.use(
+  async ({ ctx, next }) => {
+    const hasPermission = await isOrganizationMember(ctx);
+    if (!hasPermission) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Error.forbidden_no_membership',
+      });
+    }
+    return next();
+  },
+);
+
+export const adminProcedure = permissionedProcedure.use(
+  async ({ ctx, next }) => {
+    const hasPermission = await isOrganizationAdmin(ctx);
+    if (!hasPermission) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Error.forbidden_no_permission',
+      });
+    }
+    return next();
+  },
+);
+
+export const ownerProcedure = permissionedProcedure.use(
+  async ({ ctx, next }) => {
+    const hasPermission = await isOrganizationOwner(ctx);
+    if (!hasPermission) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Error.forbidden_no_permission',
+      });
+    }
+    return next();
+  },
+);
+
+export const adminOrOwnerProcedure = permissionedProcedure.use(
+  async ({ ctx, next }) => {
+    const isAdmin = await isOrganizationAdmin(ctx);
+    const isOwner = await isOrganizationOwner(ctx);
+    if (!isAdmin && !isOwner) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Error.forbidden_no_permission',
+      });
+    }
+    return next();
+  },
+);

@@ -1,27 +1,36 @@
-import { Session, User } from '@/db/schemas';
+import { User } from '@/db/schemas';
 import { PERMSSION } from '@/lib/configs/permission';
-import { rule } from 'trpc-shield/src';
 
 export type Context = {
   auth?: {
-    session: Session;
+    session: {
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
+      userId: string;
+      expiresAt: Date;
+      token: string;
+      ipAddress?: string | null | undefined;
+      userAgent?: string | null | undefined;
+      activeOrganizationId?: string | null | undefined;
+    };
     user: User & { role: keyof typeof PERMSSION };
   };
 };
 
-export const anyone = rule<Context>()(async () => {
+export const anyone = async (ctx: Context) => {
   return true;
-});
+};
 
-export const isOrganizationMember = rule<Context>()(async (ctx) => {
+export const isOrganizationMember = async (ctx: Context) => {
   return ctx.auth?.user.role !== undefined;
-});
+};
 
-export const isOrganizationAdmin = rule<Context>()(async (ctx) => {
+export const isOrganizationAdmin = async (ctx: Context) => {
   return ctx.auth?.user.role === 'admin';
-});
+};
 
-export const isOrganizationOwner = rule<Context>()(async (ctx) => {
+export const isOrganizationOwner = async (ctx: Context) => {
   console.log('Checking isOwner for user role:', ctx.auth?.user.role);
   return ctx.auth?.user.role === 'owner';
-});
+};
