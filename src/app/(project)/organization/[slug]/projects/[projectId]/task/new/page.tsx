@@ -11,7 +11,6 @@ export default async function CreateTaskPage({ params }: CreateTaskPageProps) {
 
   return (
     <CreateTaskFormWrapper
-      projectId={projectId}
       organizationId={access.session.activeOrganizationId!}
     />
   );

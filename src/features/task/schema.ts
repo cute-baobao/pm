@@ -6,11 +6,11 @@ export const createTaskSchema = z.object({
   status: z.enum(taskStatusValues, {
     error: 'Status is required',
   }),
-  description: z.string().optional(),
-  dueDate: z.date().optional(),
+  description: z.string().nullable(),
+  dueDate: z.date(),
   projectId: z.string().min(1, 'Project ID is required'),
   organizationId: z.string().min(1, 'Organization ID is required'),
-  assignedId: z.string().optional(),
+  assignedId: z.string(),
 });
 
 export const queryTaskSchema = z.object({
@@ -22,5 +22,11 @@ export const queryTaskSchema = z.object({
   dueDate: z.string().nullish(),
 });
 
+export const updateTaskSchema = createTaskSchema.partial().extend({
+  id: z.string().min(1, 'Task ID is required'),
+  position: z.number().optional(),
+});
+
 export type CreateTaskData = z.infer<typeof createTaskSchema>;
 export type QueryTaskData = z.infer<typeof queryTaskSchema>;
+export type UpdateTaskData = z.infer<typeof updateTaskSchema>;

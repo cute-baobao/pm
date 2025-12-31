@@ -1,10 +1,14 @@
 import { DottedSeparator } from '@/components/dotted-separator';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TabsContent } from '@radix-ui/react-tabs';
-import { PlusIcon } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader, PlusIcon } from 'lucide-react';
 import { useQueryState } from 'nuqs';
-import { useSuspenseTasks } from '../hooks/use-task';
+import { useBulkUpdateTasks, useSuspenseTasks } from '../hooks/use-task';
+import { UpdateTaskData } from '../schema';
+import { columns } from './columns';
+import { DataFilters } from './data-filters';
+import { DataKanban } from './data-kanban';
+import { DataTable } from './data-table';
 
 interface TaskViewSwitcherProps {
   organizationId: string;
@@ -20,9 +24,14 @@ export function TaskViewSwitcher({
     defaultValue: 'table',
   });
 
-  const { data: tasks, isLoading: isTaskLoading } = useSuspenseTasks({
-    organizationId,
-  });
+  const { data: tasks, isLoading: isTaskLoading } =
+    useSuspenseTasks(organizationId);
+
+  const { mutate: bulkUpdateTask } = useBulkUpdateTasks();
+
+  const onChange = (data: UpdateTaskData[]) => {
+    bulkUpdateTask(data);
+  };
 
   return (
     <Tabs
@@ -49,19 +58,25 @@ export function TaskViewSwitcher({
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        Data filter
+        <DataFilters organizationId={organizationId} />
         <DottedSeparator className="my-4" />
-        <>
-          <TabsContent value="table" className="mt-0">
-            {JSON.stringify(tasks)}
-          </TabsContent>
-          <TabsContent value="kanban" className="mt-0">
-            Kanban Board View
-          </TabsContent>
-          <TabsContent value="calendar" className="mt-0">
-            Calendar View
-          </TabsContent>
-        </>
+        {isTaskLoading ? (
+          <div className="flex h-[200px] w-full flex-col items-center justify-center rounded-lg border">
+            <Loader className="text-muted-foreground size-5 animate-spin" />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="table" className="mt-0">
+              <DataTable columns={columns} data={tasks ?? []} />
+            </TabsContent>
+            <TabsContent value="kanban" className="mt-0">
+              <DataKanban onChange={onChange} data={tasks || []} />
+            </TabsContent>
+            <TabsContent value="calendar" className="mt-0">
+              Calendar View
+            </TabsContent>
+          </>
+        )}
       </div>
     </Tabs>
   );

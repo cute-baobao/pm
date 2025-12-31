@@ -27,6 +27,7 @@ import {
   useUpdateOrganizationMemberRole,
 } from '../hooks/use-organization-member';
 import { MemberAvatar } from './member-avatar';
+import { useParams } from 'next/navigation';
 
 // role badge config
 const roleConfig: Record<
@@ -92,7 +93,7 @@ export const MemberList = ({ role, organizationId }: MemberListProps) => {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-4xl ">
+    <Card className="mx-auto w-full max-w-4xl">
       <ConfirmDialog />
       <CardHeader className="flex flex-row items-center space-y-0 gap-x-4">
         <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { TaskStatus, taskStatusValues } from '@/db/schemas';
+import { Task, taskStatusValues } from '@/db/schemas';
 import { MemberAvatar } from '@/features/organization-member/components/member-avatar';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { cn } from '@/lib/utils';
@@ -29,51 +29,45 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useCreateTask } from '../hooks/use-task';
-import { type CreateTaskData, createTaskSchema } from '../schema';
+import { useUpdateTask } from '../hooks/use-task';
+import { UpdateTaskData, updateTaskSchema } from '../schema';
 
 type Options = { name: string; id: string; imageUrl: string | null };
 
-interface CreateTaskFormProps {
-  organizationId: string;
-  projectId: string;
+interface EditTaskFormProps {
   projectOptions?: Options[];
   memberOptions?: Options[];
-  taskStatus?: TaskStatus;
   onCancel?: () => void;
+  initialValue: Task;
 }
 
-export const CreateTaskForm = ({
+export const EditTaskForm = ({
   memberOptions,
-  organizationId,
-  projectId,
   onCancel,
-  taskStatus,
-}: CreateTaskFormProps) => {
+  initialValue,
+}: EditTaskFormProps) => {
   const router = useRouter();
   const slug = useOrganizationSlug();
   const t = useTranslations('Task.CreateForm');
   const tStatus = useTranslations('Task.Status');
-  const form = useForm<CreateTaskData>({
-    resolver: zodResolver(createTaskSchema),
+  const form = useForm<UpdateTaskData>({
+    resolver: zodResolver(updateTaskSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
-      name: '',
-      description: '',
-      organizationId: organizationId,
-      projectId: projectId,
-      dueDate: undefined,
-      status: taskStatus,
+      ...initialValue,
+      dueDate: initialValue.dueDate
+        ? new Date(initialValue.dueDate)
+        : undefined,
     },
   });
 
-  const createTask = useCreateTask();
+  const { mutate: updateTask, isPending } = useUpdateTask();
 
-  const onSubmit = (data: CreateTaskData) => {
-    createTask.mutate(data, {
+  const onSubmit = (data: UpdateTaskData) => {
+    updateTask(data, {
       onSuccess: (task) => {
-        router.push(`/organization/${slug}/projects/${projectId}`);
+        router.push(`/organization/${slug}/projects/${task.projectId}`);
       },
     });
   };
@@ -229,7 +223,7 @@ export const CreateTaskForm = ({
               </Button>
               <Button
                 type="submit"
-                disabled={!form.formState.isValid || createTask.isPending}
+                disabled={!form.formState.isValid || isPending}
                 size="lg"
               >
                 {t('createButton')}

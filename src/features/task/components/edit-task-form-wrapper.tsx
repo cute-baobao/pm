@@ -1,25 +1,26 @@
-"use client";
+'use client';
 import { Card, CardContent } from '@/components/ui/card';
 import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
-import { useGetProject, useProjectId } from '@/features/project/hooks/use-project';
+import { useGetProject } from '@/features/project/hooks/use-project';
 import { LoaderIcon } from 'lucide-react';
-import { CreateTaskForm } from './create-task-form';
-import { TaskStatus } from '@/db/schemas';
+import { useGetTask } from '../hooks/use-task';
+import { EditTaskForm } from './edit-task-form';
 
-interface CreateTaskFormWrapperProps {
+interface EditTaskFormWrapperProps {
+  taskId: string;
   organizationId: string;
-  taskStatus?: TaskStatus;
 }
 
-export const CreateTaskFormWrapper = ({
+export const EditTaskFormWrapper = ({
+  taskId,
   organizationId,
-  taskStatus,
-}: CreateTaskFormWrapperProps) => {
-  const projectId = useProjectId();
+}: EditTaskFormWrapperProps) => {
   const { data: projects, isLoading: projectsLoading } =
     useGetProject(organizationId);
   const { data: members, isLoading: membersLoading } =
     useSuspenseOrganizationMembers(organizationId);
+
+  const { data: task, isLoading: taskLoading } = useGetTask(taskId);
 
   const projectOptions = projects?.map((project) => ({
     name: project.name,
@@ -33,7 +34,11 @@ export const CreateTaskFormWrapper = ({
     imageUrl: member.user.image,
   }));
 
-  const isLoading = projectsLoading || membersLoading;
+  const isLoading = projectsLoading || membersLoading || taskLoading;
+
+  if (!task) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -46,12 +51,10 @@ export const CreateTaskFormWrapper = ({
   }
 
   return (
-    <CreateTaskForm
-      projectId={projectId}
+    <EditTaskForm
       projectOptions={projectOptions ?? []}
       memberOptions={memberOptions ?? []}
-      organizationId={organizationId}
-      taskStatus={taskStatus}
+      initialValue={task}
     />
   );
 };

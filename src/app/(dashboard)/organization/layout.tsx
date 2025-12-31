@@ -8,12 +8,15 @@ import { HydrateClient } from '@/trpc/server';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
+
 export default async function DashboardLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: DashboardLayoutProps) {
   await prefetchOrganizations();
+
   return (
     <>
       <SidebarProvider>
