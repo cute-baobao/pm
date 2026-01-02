@@ -6,6 +6,7 @@ import { useQueryState } from 'nuqs';
 import { useBulkUpdateTasks, useSuspenseTasks } from '../hooks/use-task';
 import { UpdateTaskData } from '../schema';
 import { columns } from './columns';
+import { DataCalendar } from './data-calendar';
 import { DataFilters } from './data-filters';
 import { DataKanban } from './data-kanban';
 import { DataTable } from './data-table';
@@ -73,7 +74,7 @@ export function TaskViewSwitcher({
               <DataKanban onChange={onChange} data={tasks || []} />
             </TabsContent>
             <TabsContent value="calendar" className="mt-0">
-              Calendar View
+              <DataCalendar data={tasks ?? []} />
             </TabsContent>
           </>
         )}

@@ -21,6 +21,7 @@ import { Fragment } from 'react';
 import type { OrganizationRole } from '@/db/schemas';
 import { userAtom } from '@/features/auth/store/atom';
 import { useAtom } from 'jotai';
+import { useSession } from '@/lib/auth-client';
 import {
   useDeleteOrganizationMember,
   useSuspenseOrganizationMembers,
@@ -51,11 +52,12 @@ const roleConfig: Record<
 };
 
 interface MemberListProps {
-  organizationId: string;
   role?: OrganizationRole;
 }
 
-export const MemberList = ({ role, organizationId }: MemberListProps) => {
+export const MemberList = ({ role }: MemberListProps) => {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const [user] = useAtom(userAtom);
   const t = useTranslations('OrganizationMember.MemberList');
   const tRoles = useTranslations('OrganizationMember.Roles');

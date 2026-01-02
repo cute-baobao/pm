@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { OrganizationRole, organizationRoleValues } from '@/db/schemas';
 import { useConfirm } from '@/lib/hooks/use-confirm';
+import { useSession } from '@/lib/auth-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CopyIcon, LinkIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -36,7 +37,6 @@ import { useInviteOrganizationMember } from '../hooks/use-organization-member';
 import { InviteMemberData, inviteMemberSchema } from '../schema';
 
 interface InviteMemberFormProps {
-  organizationId: string;
   role?: OrganizationRole;
 }
 
@@ -59,9 +59,10 @@ const CopyInviteLink = ({ inviteLink }: { inviteLink: string }) => {
 };
 
 export function InviteMemberForm({
-  organizationId,
   role = 'member',
 }: InviteMemberFormProps) {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const t = useTranslations('OrganizationMember.InviteMemberForm');
   const slug = useOrganizationSlug();
   const [inviteLink, setInviteLink] = useState<string>('');

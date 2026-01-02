@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
+import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageIcon, X } from 'lucide-react';
@@ -26,14 +27,14 @@ import { useCreateProject } from '../hooks/use-project';
 import { type CreateProjectData, createProjectSchema } from '../schema';
 
 interface CreateProjectFormProps {
-  organizationId: string;
   onCancel?: () => void;
 }
 
 export const CreateProjectForm = ({
-  organizationId,
   onCancel,
 }: CreateProjectFormProps) => {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const router = useRouter();
   const slug = useOrganizationSlug();
   const t = useTranslations('Project.CreateForm');

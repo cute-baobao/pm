@@ -33,7 +33,7 @@ export default async function ProjectsPage({
 
   return (
     <HydrateClient>
-      <WorkflowsContainer organizationId={access.session.activeOrganizationId!}>
+      <WorkflowsContainer>
         <ErrorBoundary fallback={<ProjectsError />}>
           <Suspense fallback={<ProjectsLoading />}>
             <ProjectsList />

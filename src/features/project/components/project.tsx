@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreateTaskModal } from '@/features/task/components/create-task-modal';
 import { EditTaskModal } from '@/features/task/components/edit-task-modal';
 import { TaskViewSwitcher } from '@/features/task/components/task-view-switcher';
+import { useSession } from '@/lib/auth-client';
 import { EditIcon } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
@@ -13,15 +14,15 @@ import { ProjectAvatar } from './project-avatar';
 
 interface ProjectViewProps {
   slug: string;
-  organizationId: string;
   projectId: string;
 }
 
 export function ProjectView({
   slug,
-  organizationId,
   projectId,
 }: ProjectViewProps) {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const router = useRouter();
   const { data } = useSuspenseProject({
     organizationId,
@@ -38,8 +39,8 @@ export function ProjectView({
 
   return (
     <>
-      <EditTaskModal organizationId={organizationId} />
-      <CreateTaskModal organizationId={organizationId} />
+      <EditTaskModal />
+      <CreateTaskModal />
       <Card className="h-full w-full shadow-none">
         <CardHeader>
           <div className="flex items-center justify-between">

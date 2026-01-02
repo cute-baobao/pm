@@ -40,7 +40,6 @@ export default async function ProjectDetailPage({
         <Suspense fallback={<ProjectsLoading />}>
           <ProjectView
             slug={slug}
-            organizationId={session.session.activeOrganizationId!}
             projectId={projectId}
           />
         </Suspense>

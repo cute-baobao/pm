@@ -2,19 +2,20 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
 import { useGetProject } from '@/features/project/hooks/use-project';
+import { useSession } from '@/lib/auth-client';
 import { LoaderIcon } from 'lucide-react';
 import { useGetTask } from '../hooks/use-task';
 import { EditTaskForm } from './edit-task-form';
 
 interface EditTaskFormWrapperProps {
   taskId: string;
-  organizationId: string;
 }
 
 export const EditTaskFormWrapper = ({
   taskId,
-  organizationId,
 }: EditTaskFormWrapperProps) => {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const { data: projects, isLoading: projectsLoading } =
     useGetProject(organizationId);
   const { data: members, isLoading: membersLoading } =

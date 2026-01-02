@@ -12,9 +12,7 @@ export default async function CreateProjectPage({
   const session = await requireOrganizationAccess(slug);
   return (
     <div className="flex w-full items-center justify-center">
-      <CreateProjectForm
-        organizationId={session.session.activeOrganizationId!}
-      />
+      <CreateProjectForm />
     </div>
   );
 }

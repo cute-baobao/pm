@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { TaskStatus, taskStatusValues } from '@/db/schemas';
 import { MemberAvatar } from '@/features/organization-member/components/member-avatar';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
+import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -35,7 +36,6 @@ import { type CreateTaskData, createTaskSchema } from '../schema';
 type Options = { name: string; id: string; imageUrl: string | null };
 
 interface CreateTaskFormProps {
-  organizationId: string;
   projectId: string;
   projectOptions?: Options[];
   memberOptions?: Options[];
@@ -45,11 +45,11 @@ interface CreateTaskFormProps {
 
 export const CreateTaskForm = ({
   memberOptions,
-  organizationId,
   projectId,
   onCancel,
   taskStatus,
 }: CreateTaskFormProps) => {
+  const { data: sessionData } = useSession();
   const router = useRouter();
   const slug = useOrganizationSlug();
   const t = useTranslations('Task.CreateForm');
@@ -61,7 +61,7 @@ export const CreateTaskForm = ({
     defaultValues: {
       name: '',
       description: '',
-      organizationId: organizationId,
+      organizationId: sessionData?.session?.activeOrganizationId || '',
       projectId: projectId,
       dueDate: undefined,
       status: taskStatus,
