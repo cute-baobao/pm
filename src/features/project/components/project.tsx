@@ -2,8 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreateTaskModal } from '@/features/task/components/create-task-modal';
-import { EditTaskModal } from '@/features/task/components/edit-task-modal';
 import { TaskViewSwitcher } from '@/features/task/components/task-view-switcher';
 import { useSession } from '@/lib/auth-client';
 import { EditIcon } from 'lucide-react';
@@ -17,10 +15,7 @@ interface ProjectViewProps {
   projectId: string;
 }
 
-export function ProjectView({
-  slug,
-  projectId,
-}: ProjectViewProps) {
+export function ProjectView({ slug, projectId }: ProjectViewProps) {
   const { data: sessionData } = useSession();
   const organizationId = sessionData?.session?.activeOrganizationId || '';
   const router = useRouter();
@@ -39,9 +34,7 @@ export function ProjectView({
 
   return (
     <>
-      <EditTaskModal />
-      <CreateTaskModal />
-      <Card className="h-full w-full shadow-none">
+      <Card className="h-full w-full border-none shadow-none">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>
@@ -64,7 +57,6 @@ export function ProjectView({
         <CardContent>
           <TaskViewSwitcher
             organizationId={organizationId}
-            projectId={projectId}
             onNewTask={onNewTask}
           />
         </CardContent>

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   AlertTriangleIcon,
   Loader2Icon,
@@ -7,18 +7,18 @@ import {
   PlusIcon,
   SearchIcon,
   TrashIcon,
-} from "lucide-react";
-import Link from "next/link";
-import { memo } from "react";
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Button } from "./ui/button";
-import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
+import Link from 'next/link';
+import { memo } from 'react';
+import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardTitle } from './ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from './ui/dropdown-menu';
 import {
   Empty,
   EmptyContent,
@@ -26,8 +26,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "./ui/empty";
-import { Input } from "./ui/input";
+} from './ui/empty';
+import { Input } from './ui/input';
 type PureHeaderProps = {
   title: string;
   description?: string;
@@ -60,13 +60,13 @@ const PureHeader = ({
         )}
       </div>
       {onNew && !newButtonHref && (
-        <Button disabled={disabled || isCreating} onClick={onNew} size={"sm"}>
+        <Button disabled={disabled || isCreating} onClick={onNew} size={'sm'}>
           <PlusIcon className="size-4" />
           {newButtonLabel}
         </Button>
       )}
       {newButtonHref && !onNew && (
-        <Button size={"sm"} asChild>
+        <Button size={'sm'} asChild>
           <Link href={newButtonHref} prefetch>
             <PlusIcon className="size-4" />
             {newButtonLabel}
@@ -152,14 +152,14 @@ const PurePagination = ({
       <div className="py- flex items-center justify-end space-x-2">
         <Button
           disabled={disabled || page === 1}
-          variant={"outline"}
+          variant={'outline'}
           onClick={() => onPageChange(Math.max(1, page - 1))}
         >
           {t('Pagination.previous')}
         </Button>
         <Button
           disabled={disabled || page === totalPages || totalPages === 0}
-          variant={"outline"}
+          variant={'outline'}
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
         >
           {t('Pagination.next')}
@@ -173,20 +173,26 @@ export const EntityPagination = memo(PurePagination);
 
 interface StateViewProps {
   message?: string;
+  messageNode?: React.ReactNode;
 }
 
 interface LoadingViewProps extends StateViewProps {
   entity?: string;
 }
 
-export function LoadingView({ message, entity = "items" }: LoadingViewProps) {
+export function LoadingView({
+  message,
+  entity = 'items',
+  messageNode,
+}: LoadingViewProps) {
   const t = useTranslations('Entity');
   return (
     <div className="flex h-full flex-1 flex-col items-center justify-center gap-y-4">
       <Loader2Icon className="text-primary size-6 animate-spin" />
       {!!message && (
         <p className="text-muted-foreground text-sm">
-          { message }
+          {message}
+          {messageNode}
         </p>
       )}
     </div>
@@ -197,7 +203,7 @@ interface ErrorViewProps extends StateViewProps {
   entity?: string;
 }
 
-export function ErrorView({ message, entity = "items" }: ErrorViewProps) {
+export function ErrorView({ message, entity = 'items' }: ErrorViewProps) {
   const t = useTranslations('Entity');
   return (
     <div className="flex h-full flex-1 flex-col items-center justify-center gap-y-4">
@@ -226,7 +232,9 @@ export function EmptyView({ message, onNew }: EmptyViewProps) {
         </EmptyMedia>
       </EmptyHeader>
       <EmptyTitle>{t('Empty.noItems')}</EmptyTitle>
-      {!!message && <EmptyDescription>{t('Empty.message', { message })}</EmptyDescription>}
+      {!!message && (
+        <EmptyDescription>{t('Empty.message', { message })}</EmptyDescription>
+      )}
       {!!onNew && (
         <EmptyContent>
           <Button onClick={onNew}>{t('Empty.addItem')}</Button>
@@ -260,7 +268,7 @@ export function EntityList<T>({
   }
 
   return (
-    <div className={cn("flex flex-col gap-y-4", className)}>
+    <div className={cn('flex flex-col gap-y-4', className)}>
       {items.map((item, index) => (
         <div key={getKey ? getKey(item, index) : index}>
           {renderItem(item, index)}
@@ -302,8 +310,8 @@ export function EntityItem({
     <Link href={href} prefetch>
       <Card
         className={cn(
-          "cursor-pointer p-4 shadow-none hover:shadow",
-          isRemoving && "cursor-not-allowed opacity-50",
+          'cursor-pointer p-4 shadow-none hover:shadow',
+          isRemoving && 'cursor-not-allowed opacity-50',
           className,
         )}
       >

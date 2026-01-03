@@ -1,16 +1,16 @@
-"use client";
+'use client';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { useConfirm } from '@/lib/hooks/use-confirm';
 import { ExternalLinkIcon, PencilIcon, TrashIcon } from 'lucide-react';
-import { useDeleteTask } from '../hooks/use-task';
 import { useRouter } from 'next/navigation';
-import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { useEditTaskModal } from '../hooks/use-edit-task-modal';
+import { useDeleteTask } from '../hooks/use-task';
 
 interface TaskActionProps {
   id: string;
@@ -19,7 +19,7 @@ interface TaskActionProps {
 }
 
 export function TaskAction({ id, projectId, children }: TaskActionProps) {
-  const slug = useOrganizationSlug()
+  const slug = useOrganizationSlug();
   const router = useRouter();
   const [ConfirmDialog, confirm] = useConfirm(
     'Delete Task',
@@ -29,7 +29,7 @@ export function TaskAction({ id, projectId, children }: TaskActionProps) {
 
   const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
 
-  const { open } = useEditTaskModal()
+  const { open } = useEditTaskModal();
 
   const onDelete = async () => {
     const ok = await confirm();
@@ -39,15 +39,15 @@ export function TaskAction({ id, projectId, children }: TaskActionProps) {
 
   const onOpenProject = () => {
     router.push(`/organization/${slug}/projects/${projectId}`);
-  }
+  };
 
   const onOpenTask = () => {
-    router.push(`/organization/${slug}/tasks/${id}`);
-  }
+    router.push(`/organization/${slug}/projects/${projectId}/task/${id}`);
+  };
 
   const onEditTask = () => {
-    open(id)
-  }
+    open(id);
+  };
 
   return (
     <div className="flex justify-end">

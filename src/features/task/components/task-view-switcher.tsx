@@ -1,3 +1,5 @@
+'use client';
+
 import { DottedSeparator } from '@/components/dotted-separator';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,7 +15,6 @@ import { DataTable } from './data-table';
 
 interface TaskViewSwitcherProps {
   organizationId: string;
-  projectId: string;
   onNewTask?: () => void;
 }
 
@@ -59,7 +60,7 @@ export function TaskViewSwitcher({
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        <DataFilters organizationId={organizationId} />
+        <DataFilters organizationId={organizationId} hideProjectFilter />
         <DottedSeparator className="my-4" />
         {isTaskLoading ? (
           <div className="flex h-[200px] w-full flex-col items-center justify-center rounded-lg border">

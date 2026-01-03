@@ -1,7 +1,7 @@
 import { Project, TaskStatus, taskStatusValues, User } from '@/db/schemas';
 import { MemberAvatar } from '@/features/organization-member/components/member-avatar';
+import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { ProjectAvatar } from '@/features/project/components/project-avatar';
-import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -29,16 +29,13 @@ const statusColorMap: Record<TaskStatus, string> = {
 };
 
 export function EventCard({ data }: EventCardProps) {
-  const { start, end, title, project, assignee, id, status } = data;
-  const { data: sessionData, isPending } = useSession();
+  const { title, project, assignee, id, status } = data;
+  const slug = useOrganizationSlug();
   const router = useRouter();
-
   const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    if (isPending) return;
-    router.push(
-      `/organization/${sessionData?.session?.activeOrganizationId}/tasks/${id}`,
-    );
+
+    router.push(`/organization/${slug}/projects/${project.id}/task/${id}`);
   };
 
   return (

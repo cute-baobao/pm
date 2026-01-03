@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/select';
 import { TaskStatus, taskStatusValues } from '@/db/schemas';
 import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
-import { useGetProjectId } from '@/features/project/hooks/use-get-projectId';
-import { ListCheck, UserIcon } from 'lucide-react';
+import { useGetProject } from '@/features/project/hooks/use-project';
+import { FolderIcon, ListCheck, UserIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTaskFilters } from '../hooks/use-task-filters';
 
@@ -22,15 +22,20 @@ export function DataFilters({
   hideProjectFilter,
   organizationId,
 }: DataFiltersProps) {
-  const projectId = useGetProjectId();
   const tStatus = useTranslations('Task.Status');
   const { data: members } = useSuspenseOrganizationMembers(organizationId);
-  const [{ status, assignedId, search, dueDate }, setFilters] =
+  const [{ status, assignedId, search, dueDate, projectId }, setFilters] =
     useTaskFilters();
+  const { data: projects } = useGetProject(organizationId);
 
   const memberOptions = members.map((member) => ({
     label: member.user.name || member.user.email,
     value: member.user.id,
+  }));
+
+  const projectOptions = projects?.map((project) => ({
+    label: project.name,
+    value: project.id,
   }));
 
   const onStatusChange = (value: string) => {
@@ -46,6 +51,14 @@ export function DataFilters({
       setFilters({ assignedId: null });
     } else {
       setFilters({ assignedId: value });
+    }
+  };
+
+  const onProjectIdChange = (value: string) => {
+    if (value === 'all') {
+      setFilters({ projectId: null });
+    } else {
+      setFilters({ projectId: value });
     }
   };
 
@@ -78,6 +91,28 @@ export function DataFilters({
           ))}
         </SelectContent>
       </Select>
+
+      {!hideProjectFilter && (
+        <Select
+          onValueChange={onProjectIdChange}
+          defaultValue={(projectId as string) || 'all'}
+        >
+          <SelectTrigger className="h-8 w-full lg:w-auto">
+            <div className="flex items-center pr-2">
+              <FolderIcon className="mr-2 size-4 h-4 w-4" />
+              <SelectValue placeholder="All projects" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All projects</SelectItem>
+            {projectOptions?.map((project) => (
+              <SelectItem key={project.value} value={project.value}>
+                {project.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
 
       <Select
         onValueChange={onAssignedIdChange}

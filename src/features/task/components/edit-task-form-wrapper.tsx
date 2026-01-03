@@ -11,9 +11,7 @@ interface EditTaskFormWrapperProps {
   taskId: string;
 }
 
-export const EditTaskFormWrapper = ({
-  taskId,
-}: EditTaskFormWrapperProps) => {
+export const EditTaskFormWrapper = ({ taskId }: EditTaskFormWrapperProps) => {
   const { data: sessionData } = useSession();
   const organizationId = sessionData?.session?.activeOrganizationId || '';
   const { data: projects, isLoading: projectsLoading } =
@@ -37,10 +35,6 @@ export const EditTaskFormWrapper = ({
 
   const isLoading = projectsLoading || membersLoading || taskLoading;
 
-  if (!task) {
-    return null;
-  }
-
   if (isLoading) {
     return (
       <Card className="h-[714px] w-full shadow-none">
@@ -49,6 +43,10 @@ export const EditTaskFormWrapper = ({
         </CardContent>
       </Card>
     );
+  }
+
+  if (!task) {
+    return null;
   }
 
   return (

@@ -1,19 +1,28 @@
 import { useTRPC } from '@/trpc/client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useTaskFilters } from './use-task-filters';
+
+export const useTaskId = () => {
+  const params = useParams();
+  return params.taskId as string;
+};
 
 export const useSuspenseTasks = (organizationId: string) => {
   const trpc = useTRPC();
   const [params] = useTaskFilters();
-  return useQuery({
+  return useSuspenseQuery({
     ...trpc.task.getMany.queryOptions({
       ...params,
       organizationId,
     }),
-    refetchOnMount: 'always',
-    staleTime: 3000,
   });
 };
 

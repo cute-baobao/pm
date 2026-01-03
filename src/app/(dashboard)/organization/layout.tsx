@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { CreateOrganizationModal } from '@/features/organization/components/create-organization-modal';
 import { OrganizationError } from '@/features/organization/components/organization';
 import { prefetchOrganizations } from '@/features/organization/server/prefetch';
+import { EditTaskModal } from '@/features/task/components/edit-task-modal';
 import { HydrateClient } from '@/trpc/server';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -29,6 +30,7 @@ export default async function DashboardLayout({
                 <main className="mx-auto w-full max-w-screen-2xl flex-1 overflow-auto p-4 md:p-10 md:py-6">
                   {children}
                   <CreateOrganizationModal />
+                  <EditTaskModal />
                 </main>
               </SidebarInset>
             </Suspense>

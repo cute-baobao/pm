@@ -97,7 +97,7 @@ export function ProjectsPagination() {
   );
 }
 
-export function WorkflowsContainer({
+export function ProjectsContainer({
   children,
 }: {
   children: React.ReactNode;

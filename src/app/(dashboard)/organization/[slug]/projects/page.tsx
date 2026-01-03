@@ -1,8 +1,8 @@
 import {
+  ProjectsContainer,
   ProjectsError,
   ProjectsList,
   ProjectsLoading,
-  WorkflowsContainer,
 } from '@/features/project/components/projects';
 import { projectsParamsLoader } from '@/features/project/server/params-loader';
 import { prefetchProjects } from '@/features/project/server/prefetch';
@@ -33,13 +33,13 @@ export default async function ProjectsPage({
 
   return (
     <HydrateClient>
-      <WorkflowsContainer>
+      <ProjectsContainer>
         <ErrorBoundary fallback={<ProjectsError />}>
           <Suspense fallback={<ProjectsLoading />}>
             <ProjectsList />
           </Suspense>
         </ErrorBoundary>
-      </WorkflowsContainer>
+      </ProjectsContainer>
     </HydrateClient>
   );
 }

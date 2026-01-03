@@ -29,6 +29,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useEditTaskModal } from '../hooks/use-edit-task-modal';
 import { useUpdateTask } from '../hooks/use-task';
 import { UpdateTaskData, updateTaskSchema } from '../schema';
 
@@ -61,13 +62,19 @@ export const EditTaskForm = ({
         : undefined,
     },
   });
+  const { taskId, close } = useEditTaskModal();
 
   const { mutate: updateTask, isPending } = useUpdateTask();
 
   const onSubmit = (data: UpdateTaskData) => {
     updateTask(data, {
       onSuccess: (task) => {
-        router.push(`/organization/${slug}/projects/${task.projectId}`);
+        if (taskId) {
+          close();
+          return;
+        } else {
+          router.push(`/organization/${slug}/projects/${task.projectId}`);
+        }
       },
     });
   };

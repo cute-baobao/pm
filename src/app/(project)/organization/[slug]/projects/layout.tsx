@@ -2,6 +2,8 @@ import { AppHeader } from '@/components/app-header';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { CreateOrganizationModal } from '@/features/organization/components/create-organization-modal';
+import { CreateTaskModal } from '@/features/task/components/create-task-modal';
+import { EditTaskModal } from '@/features/task/components/edit-task-modal';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,6 +14,8 @@ export default async function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <>
+      <EditTaskModal />
+      <CreateTaskModal />
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset className="bg-background">

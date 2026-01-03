@@ -41,7 +41,7 @@ interface CustomToolbarProps {
 
 function CustomToolbar({ date, onNavigate }: CustomToolbarProps) {
   return (
-    <div className="mb-4 flex w-full items-center justify-center gap-x-2 lg:w-auto lg:justify-start">
+    <div className="mb-4 flex w-full items-center justify-center gap-x-2 lg:w-full lg:justify-start">
       <Button
         onClick={() => onNavigate('PREV')}
         size="icon"
@@ -52,7 +52,7 @@ function CustomToolbar({ date, onNavigate }: CustomToolbarProps) {
       </Button>
       <div
         onClick={() => onNavigate('TODAY')}
-        className="border-input hover:bg-muted flex h-8 w-full cursor-pointer items-center justify-center rounded-md border px-3 py-2 lg:w-auto"
+        className="border-input hover:bg-muted flex h-8 w-full cursor-pointer items-center justify-center rounded-md border px-3 py-2"
       >
         <CalendarIcon className="mr-2 size-4" />
         <p>{format(date, 'MMMM yyyy')}</p>
