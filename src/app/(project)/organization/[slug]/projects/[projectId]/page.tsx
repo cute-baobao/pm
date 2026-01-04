@@ -3,7 +3,10 @@ import {
   ProjectsError,
   ProjectsLoading,
 } from '@/features/project/components/projects';
-import { prefetchProject } from '@/features/project/server/prefetch';
+import {
+  prefetchProject,
+  prefetchProjectAnalytics,
+} from '@/features/project/server/prefetch';
 import { taskParamsLoader } from '@/features/task/server/params-loader';
 import { prefetchTasks } from '@/features/task/server/prefetch';
 import { requireOrganizationAccess } from '@/lib/utils/auth-action';
@@ -24,6 +27,8 @@ export default async function ProjectDetailPage({
   const session = await requireOrganizationAccess(slug);
   const loader = await taskParamsLoader(searchParams);
 
+  const userId = session.session.userId;
+
   await prefetchProject({
     organizationId: session.session.activeOrganizationId!,
     projectId,
@@ -34,11 +39,16 @@ export default async function ProjectDetailPage({
     organizationId: session.session.activeOrganizationId!,
   });
 
+  await prefetchProjectAnalytics({
+    projectId,
+    assigneeId: userId,
+  });
+
   return (
     <HydrateClient>
       <ErrorBoundary fallback={<ProjectsError />}>
         <Suspense fallback={<ProjectsLoading />}>
-          <ProjectView slug={slug} projectId={projectId} />
+          <ProjectView slug={slug} projectId={projectId} userId={userId} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>

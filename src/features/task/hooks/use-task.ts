@@ -42,6 +42,12 @@ export const useCreateTask = () => {
             projectId: data.projectId,
           }),
         );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data.projectId,
+            assigneeId: data.assignedId,
+          }),
+        );
       },
       onError: (error) => {
         const message = tRoot.has(error.message)
@@ -67,6 +73,12 @@ export const useDeleteTask = () => {
           trpc.task.getMany.queryOptions({
             organizationId: data.deletedTask.organizationId,
             projectId: data.deletedTask.projectId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data.deletedTask.projectId,
+            assigneeId: data.deletedTask.assignedId,
           }),
         );
       },
@@ -100,6 +112,12 @@ export const useUpdateTask = () => {
         queryClient.invalidateQueries(
           trpc.task.get.queryOptions({ taskId: data.id }),
         );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data.projectId,
+            assigneeId: data.assignedId,
+          }),
+        );
       },
       onError: (error) => {
         const message = tRoot.has(error.message)
@@ -125,6 +143,12 @@ export const useBulkUpdateTasks = () => {
           trpc.task.getMany.queryOptions({
             organizationId: data[0].organizationId,
             projectId: data[0].projectId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data[0].projectId,
+            assigneeId: data[0].assignedId,
           }),
         );
       },

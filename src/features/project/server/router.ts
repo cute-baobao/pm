@@ -1,12 +1,18 @@
-import { createTRPCRouter, memberProcedure, adminOrOwnerProcedure } from '@/trpc/init';
+import {
+  adminOrOwnerProcedure,
+  createTRPCRouter,
+  memberProcedure,
+} from '@/trpc/init';
 import z from 'zod';
 import {
+  analyticsSchema,
   createProjectSchema,
   getProjectSchema,
   projectPaginationSchema,
   updateProjectSchema,
 } from '../schema';
 import {
+  analytics,
   createProject,
   deleteProject,
   getManyProjectsByOrganization,
@@ -38,12 +44,10 @@ export const projectRouter = createTRPCRouter({
       const project = await updateProject(input);
       return project;
     }),
-  getOne: memberProcedure
-    .input(getProjectSchema)
-    .query(async ({ input }) => {
-      const project = await getOneProject(input);
-      return project;
-    }),
+  getOne: memberProcedure.input(getProjectSchema).query(async ({ input }) => {
+    const project = await getOneProject(input);
+    return project;
+  }),
   getMany: memberProcedure
     .input(projectPaginationSchema)
     .query(async ({ input }) => {
@@ -62,4 +66,8 @@ export const projectRouter = createTRPCRouter({
       );
       return projects;
     }),
+  analytics: memberProcedure.input(analyticsSchema).query(async ({ input }) => {
+    const data = await analytics(input);
+    return data;
+  }),
 });

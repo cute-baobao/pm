@@ -8,7 +8,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { GetProjectParams } from '../schema';
+import { AnalyticsParams, GetProjectParams } from '../schema';
 import { useProjectsParams } from './use-project-params';
 
 export const useProjectId = () => {
@@ -108,4 +108,9 @@ export const useUpdateProject = () => {
       },
     }),
   );
+};
+
+export const useSuspenseProjectAnalytics = (params: AnalyticsParams) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.project.analytics.queryOptions(params));
 };

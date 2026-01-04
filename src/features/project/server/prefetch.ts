@@ -1,5 +1,5 @@
 import { prefetch, trpc } from '@/trpc/server';
-import { GetProjectParams, ProjectPaginationData } from '../schema';
+import { AnalyticsParams, GetProjectParams, ProjectPaginationData } from '../schema';
 
 export const prefetchProjects = (payload: ProjectPaginationData) => {
   return prefetch(trpc.project.getMany.queryOptions(payload));
@@ -8,3 +8,7 @@ export const prefetchProjects = (payload: ProjectPaginationData) => {
 export const prefetchProject = (params: GetProjectParams) => {
   return prefetch(trpc.project.getOne.queryOptions(params));
 };
+
+export const prefetchProjectAnalytics = (params: AnalyticsParams) => {
+  return prefetch(trpc.project.analytics.queryOptions(params));
+}
