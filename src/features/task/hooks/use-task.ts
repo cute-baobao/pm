@@ -85,6 +85,7 @@ export const useUpdateTask = () => {
   const t = useTranslations('Task');
   const tRoot = useTranslations();
   const queryClient = useQueryClient();
+  const [params] = useTaskFilters();
 
   return useMutation(
     trpc.task.update.mutationOptions({
@@ -92,8 +93,8 @@ export const useUpdateTask = () => {
         toast.success(t('createSuccess'));
         queryClient.invalidateQueries(
           trpc.task.getMany.queryOptions({
+            ...params,
             organizationId: data.organizationId,
-            projectId: data.projectId,
           }),
         );
         queryClient.invalidateQueries(

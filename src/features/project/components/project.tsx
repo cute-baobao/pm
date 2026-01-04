@@ -58,6 +58,7 @@ export function ProjectView({ slug, projectId }: ProjectViewProps) {
           <TaskViewSwitcher
             organizationId={organizationId}
             onNewTask={onNewTask}
+            hideProjectFilter
           />
         </CardContent>
       </Card>

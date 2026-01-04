@@ -28,7 +28,6 @@ export default async function TasksPage({
   await prefetchTasks({
     ...search,
     organizationId: access.session.activeOrganizationId!,
-    assignedId: access.session.userId,
   });
 
   return (

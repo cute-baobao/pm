@@ -36,6 +36,7 @@ export const createTask = async (data: CreateTaskData) => {
 };
 
 export const getManyTasksByFilters = async (filters: QueryTaskData) => {
+  console.log('Filters:', filters);
   return await db.query.task.findMany({
     where: (t, { eq, and, ilike, lte }) =>
       and(

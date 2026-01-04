@@ -38,10 +38,7 @@ export default async function ProjectDetailPage({
     <HydrateClient>
       <ErrorBoundary fallback={<ProjectsError />}>
         <Suspense fallback={<ProjectsLoading />}>
-          <ProjectView
-            slug={slug}
-            projectId={projectId}
-          />
+          <ProjectView slug={slug} projectId={projectId} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>

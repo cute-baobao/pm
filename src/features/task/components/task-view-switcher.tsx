@@ -16,11 +16,13 @@ import { DataTable } from './data-table';
 interface TaskViewSwitcherProps {
   organizationId: string;
   onNewTask?: () => void;
+  hideProjectFilter?: boolean;
 }
 
 export function TaskViewSwitcher({
   organizationId,
   onNewTask,
+  hideProjectFilter = false,
 }: TaskViewSwitcherProps) {
   const [view, setView] = useQueryState('task-view', {
     defaultValue: 'table',
@@ -60,7 +62,10 @@ export function TaskViewSwitcher({
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        <DataFilters organizationId={organizationId} hideProjectFilter />
+        <DataFilters
+          organizationId={organizationId}
+          hideProjectFilter={hideProjectFilter}
+        />
         <DottedSeparator className="my-4" />
         {isTaskLoading ? (
           <div className="flex h-[200px] w-full flex-col items-center justify-center rounded-lg border">

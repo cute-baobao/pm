@@ -3,6 +3,7 @@
 // import { useHasActiveSubscription } from "@/features/subsctiptions/hooks/use-subscription";
 import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
+import { useSession } from '@/lib/auth-client';
 import {
   CircleGaugeIcon,
   FolderOpenDotIcon,
@@ -29,6 +30,8 @@ export function AppSidebar() {
   const t = useTranslations('Navigation');
   const pathname = usePathname();
   const params = useParams();
+  const { data: sessionData } = useSession();
+  const userId = sessionData?.session.userId || '';
 
   const menuItems = [
     {
@@ -47,7 +50,7 @@ export function AppSidebar() {
         {
           title: 'My Tasks',
           icon: FolderOpenDotIcon,
-          url: '/tasks',
+          url: '/tasks?assignedId=' + userId,
         },
         {
           title: t('projects'),
