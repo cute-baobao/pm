@@ -18,5 +18,11 @@ export const updateOrganizationSchema = createOrganizationSchema.extend({
   id: z.string().min(1, 'id is required'),
 });
 
+export const organizationAnalyticsSchema = z.object({
+  organizationId: z.string().min(1, 'Organization ID is required'),
+  assigneeId: z.string().min(1, 'Assignee ID is required'),
+});
+
 export type UpdateOrganizationData = z.infer<typeof updateOrganizationSchema>;
 export type CreateOrganizationData = z.infer<typeof createOrganizationSchema>;
+export type OrganizationAnalyticsParams = z.infer<typeof organizationAnalyticsSchema>;

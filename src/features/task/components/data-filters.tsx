@@ -24,7 +24,7 @@ export function DataFilters({
 }: DataFiltersProps) {
   const tStatus = useTranslations('Task.Status');
   const { data: members } = useSuspenseOrganizationMembers(organizationId);
-  const [{ status, assignedId, search, dueDate, projectId }, setFilters] =
+  const [{ status, assignedId, dueDate, projectId }, setFilters] =
     useTaskFilters();
   const { data: projects } = useGetProject(organizationId);
 

@@ -20,15 +20,14 @@ import { Fragment } from 'react';
 
 import type { OrganizationRole } from '@/db/schemas';
 import { userAtom } from '@/features/auth/store/atom';
-import { useAtom } from 'jotai';
 import { useSession } from '@/lib/auth-client';
+import { useAtom } from 'jotai';
 import {
   useDeleteOrganizationMember,
   useSuspenseOrganizationMembers,
   useUpdateOrganizationMemberRole,
 } from '../hooks/use-organization-member';
 import { MemberAvatar } from './member-avatar';
-import { useParams } from 'next/navigation';
 
 // role badge config
 const roleConfig: Record<

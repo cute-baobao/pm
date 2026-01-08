@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { useConfirm } from '@/lib/hooks/use-confirm';
+import { useTranslations } from 'next-intl';
 import { ExternalLinkIcon, PencilIcon, TrashIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEditTaskModal } from '../hooks/use-edit-task-modal';
@@ -21,9 +22,10 @@ interface TaskActionProps {
 export function TaskAction({ id, projectId, children }: TaskActionProps) {
   const slug = useOrganizationSlug();
   const router = useRouter();
+  const t = useTranslations('Task.Actions');
   const [ConfirmDialog, confirm] = useConfirm(
-    'Delete Task',
-    'This action cannot be undone',
+    t('deleteConfirmTitle'),
+    t('deleteConfirmMessage'),
     'destructive',
   );
 
@@ -61,7 +63,7 @@ export function TaskAction({ id, projectId, children }: TaskActionProps) {
             className="p-[10px] font-medium"
           >
             <ExternalLinkIcon className="mr-2 size-4 stroke-2" />
-            Task Details
+            {t('taskDetails')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onOpenProject}
@@ -69,7 +71,7 @@ export function TaskAction({ id, projectId, children }: TaskActionProps) {
             className="p-[10px] font-medium"
           >
             <ExternalLinkIcon className="mr-2 size-4 stroke-2" />
-            Open Project
+            {t('openProject')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onEditTask}
@@ -77,7 +79,7 @@ export function TaskAction({ id, projectId, children }: TaskActionProps) {
             className="p-[10px] font-medium"
           >
             <PencilIcon className="mr-2 size-4 stroke-2" />
-            Edit Task
+            {t('edit')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onDelete}
@@ -85,7 +87,7 @@ export function TaskAction({ id, projectId, children }: TaskActionProps) {
             className="p-[10px] font-medium text-amber-700 focus-within:text-amber-700/80"
           >
             <TrashIcon className="mr-2 size-4 stroke-2" />
-            Delete Task
+            {t('delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

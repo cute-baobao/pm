@@ -68,7 +68,7 @@ export const useDeleteTask = () => {
   return useMutation(
     trpc.task.delete.mutationOptions({
       onSuccess: (data) => {
-        toast.success(t('createSuccess'));
+        toast.success(t('deleteSuccess'));
         queryClient.invalidateQueries(
           trpc.task.getMany.queryOptions({
             organizationId: data.deletedTask.organizationId,
@@ -86,7 +86,7 @@ export const useDeleteTask = () => {
         const message = tRoot.has(error.message)
           ? tRoot(error.message)
           : error.message;
-        toast.error(t('createError', { message }));
+        toast.error(t('deleteError', { message }));
       },
     }),
   );
@@ -102,7 +102,7 @@ export const useUpdateTask = () => {
   return useMutation(
     trpc.task.update.mutationOptions({
       onSuccess: (data) => {
-        toast.success(t('createSuccess'));
+        toast.success(t('updateSuccess'));
         queryClient.invalidateQueries(
           trpc.task.getMany.queryOptions({
             ...params,
@@ -123,7 +123,7 @@ export const useUpdateTask = () => {
         const message = tRoot.has(error.message)
           ? tRoot(error.message)
           : error.message;
-        toast.error(t('createError', { message }));
+        toast.error(t('updateError', { message }));
       },
     }),
   );
@@ -138,7 +138,8 @@ export const useBulkUpdateTasks = () => {
   return useMutation(
     trpc.task.bulkUpdate.mutationOptions({
       onSuccess: (data) => {
-        toast.success(t('createSuccess'));
+        toast.success(t('updateSuccess'));
+        if (data.length === 0) return;
         queryClient.invalidateQueries(
           trpc.task.getMany.queryOptions({
             organizationId: data[0].organizationId,
@@ -156,7 +157,7 @@ export const useBulkUpdateTasks = () => {
         const message = tRoot.has(error.message)
           ? tRoot(error.message)
           : error.message;
-        toast.error(t('createError', { message }));
+        toast.error(t('updateError', { message }));
       },
     }),
   );

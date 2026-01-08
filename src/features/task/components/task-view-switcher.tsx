@@ -3,6 +3,7 @@
 import { DottedSeparator } from '@/components/dotted-separator';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 import { Loader, PlusIcon } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { useBulkUpdateTasks, useSuspenseTasks } from '../hooks/use-task';
@@ -27,6 +28,7 @@ export function TaskViewSwitcher({
   const [view, setView] = useQueryState('task-view', {
     defaultValue: 'table',
   });
+  const t = useTranslations('Task.Views');
 
   const { data: tasks, isLoading: isTaskLoading } =
     useSuspenseTasks(organizationId);
@@ -47,18 +49,18 @@ export function TaskViewSwitcher({
         <div className="flex flex-col items-center justify-between gap-y-2 lg:flex-row">
           <TabsList className="w-full lg:w-auto">
             <TabsTrigger className="h-8 w-full lg:w-auto" value="table">
-              Table
+              {t('table')}
             </TabsTrigger>
             <TabsTrigger className="h-8 w-full lg:w-auto" value="kanban">
-              Kanban
+              {t('kanban')}
             </TabsTrigger>
             <TabsTrigger className="h-8 w-full lg:w-auto" value="calendar">
-              Calendar
+              {t('calendar')}
             </TabsTrigger>
           </TabsList>
           <Button onClick={onNewTask} className="w-full lg:w-auto" size="sm">
             <PlusIcon className="mr-2 size-4" />
-            New Task
+            {t('newTask')}
           </Button>
         </div>
         <DottedSeparator className="my-4" />

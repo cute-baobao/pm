@@ -1,15 +1,19 @@
 import {
-  createTRPCRouter,
-  permissionedProcedure,
-  protectedProcedure,
-  memberProcedure,
   adminOrOwnerProcedure,
+  createTRPCRouter,
+  memberProcedure,
   ownerProcedure,
+  protectedProcedure,
 } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { createOrganizationSchema, updateOrganizationSchema } from '../schema';
 import {
+  createOrganizationSchema,
+  organizationAnalyticsSchema,
+  updateOrganizationSchema,
+} from '../schema';
+import {
+  analytics,
   checkSlugAvailability,
   createOrganization,
   deleteOrganization,
@@ -70,5 +74,11 @@ export const organizationRouter = createTRPCRouter({
         });
       }
       return await deleteOrganization(input.id, ctx.auth.user.id);
+    }),
+  analytics: memberProcedure
+    .input(organizationAnalyticsSchema)
+    .query(async ({ input }) => {
+      const res = await analytics(input);
+      return res;
     }),
 });

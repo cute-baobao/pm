@@ -1,5 +1,5 @@
 import { User } from '@/db/schemas';
-import { PERMSSION } from '@/lib/configs/permission';
+import { PERMISSION } from '@/lib/configs/permission';
 
 export type Context = {
   auth?: {
@@ -14,7 +14,7 @@ export type Context = {
       userAgent?: string | null | undefined;
       activeOrganizationId?: string | null | undefined;
     };
-    user: User & { role: keyof typeof PERMSSION };
+    user: User & { role: keyof typeof PERMISSION };
   };
 };
 
@@ -31,6 +31,5 @@ export const isOrganizationAdmin = async (ctx: Context) => {
 };
 
 export const isOrganizationOwner = async (ctx: Context) => {
-  console.log('Checking isOwner for user role:', ctx.auth?.user.role);
   return ctx.auth?.user.role === 'owner';
 };

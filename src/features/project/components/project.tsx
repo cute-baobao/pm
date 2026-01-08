@@ -29,13 +29,10 @@ export function ProjectView({ slug, projectId, userId }: ProjectViewProps) {
     projectId,
   });
 
-  const { data: analytics, isLoading: isLoadingAnalytics } =
-    useSuspenseProjectAnalytics({
-      projectId,
-      assigneeId: userId,
-    });
-
-  console.log('Analytics data:', analytics);
+  const { data: analytics } = useSuspenseProjectAnalytics({
+    projectId,
+    assigneeId: userId,
+  });
 
   const onNewTask = () => {
     router.push(`/organization/${slug}/projects/${projectId}/task/new`);

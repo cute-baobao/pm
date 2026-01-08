@@ -3,6 +3,7 @@ import { Project, Task } from '@/db/schemas';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { ProjectAvatar } from '@/features/project/components/project-avatar';
 import { useConfirm } from '@/lib/hooks/use-confirm';
+import { useTranslations } from 'next-intl';
 import { ChevronRightIcon, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,9 +19,10 @@ export function TaskBreadcrumbs({ project, task }: TaskBreadcrumbsProps) {
 
   const { mutate, isPending } = useDeleteTask();
   const router = useRouter();
+  const t = useTranslations('Task.Actions');
 
   const [ConfrimDialog, confirm] = useConfirm(
-    'Delete task',
+    t('deleteConfirmTitle'),
     'This action cannot be undone.',
     'destructive',
   );
@@ -65,7 +67,7 @@ export function TaskBreadcrumbs({ project, task }: TaskBreadcrumbsProps) {
           disabled={isPending}
         >
           <TrashIcon className="size-4 lg:mr-2" />
-          <span>Delete Task</span>
+          <span>{t('delete')}</span>
         </Button>
       </div>
     </>

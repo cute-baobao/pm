@@ -5,7 +5,6 @@ import {
   Droppable,
   DropResult,
 } from '@hello-pangea/dnd';
-import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { UpdateTaskData } from '../schema';
 import { KanbanCard, TaskEnhanced } from './kanban-card';
@@ -21,7 +20,6 @@ type TasksState = {
 };
 
 export function DataKanban({ data, onChange }: DataKanbanProps) {
-  const tStatus = useTranslations('Task.Status');
   const boards = taskStatusValues;
 
   const [tasks, setTasks] = useState<TasksState>({
@@ -32,10 +30,10 @@ export function DataKanban({ data, onChange }: DataKanbanProps) {
     [taskStatusValues[4]]: [],
   });
 
-  const onDragEnd = useCallback((reuslt: DropResult) => {
-    if (!reuslt.destination) return;
+  const onDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return;
 
-    const { source, destination } = reuslt;
+    const { source, destination } = result;
     const sourceStatus = source.droppableId as TaskStatus;
     const destStatus = destination.droppableId as TaskStatus;
 
@@ -101,7 +99,7 @@ export function DataKanban({ data, onChange }: DataKanbanProps) {
     if (updatePayload.length > 0) {
       onChange(updatePayload);
     }
-  }, []);
+  }, [onChange]);
 
   useEffect(() => {
     const newTasks: TasksState = {

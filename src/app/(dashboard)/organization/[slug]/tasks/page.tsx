@@ -7,7 +7,7 @@ import { taskParamsLoader } from '@/features/task/server/params-loader';
 import { prefetchTasks } from '@/features/task/server/prefetch';
 import { requireOrganizationAccess } from '@/lib/utils/auth-action';
 import { HydrateClient } from '@/trpc/server';
-import { SearchParams } from 'nuqs';
+import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

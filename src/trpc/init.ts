@@ -1,6 +1,6 @@
 import { withUser } from '@/db';
 import { auth } from '@/lib/auth';
-import { PERMSSION } from '@/lib/configs/permission';
+import { PERMISSION } from '@/lib/configs/permission';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { headers } from 'next/headers';
 import { cache } from 'react';
@@ -81,9 +81,9 @@ export const permissionedProcedure = protectedProcedure.use(
       });
     }
 
-    const userWithRole: typeof user & { role: keyof typeof PERMSSION } = {
+    const userWithRole: typeof user & { role: keyof typeof PERMISSION } = {
       ...user,
-      role: member.role as keyof typeof PERMSSION,
+      role: member.role as keyof typeof PERMISSION,
     };
 
     return next({

@@ -15,14 +15,14 @@ export const useCreateTaskModal = () => {
     });
 
   // 包一层，避免把 Promise 往外漏
-  const open = (staus?: TaskStatus) => {
+  const open = (status?: TaskStatus) => {
     void setIsOpen({
       createTask: true,
-      taskStatus: staus,
+      taskStatus: status,
     });
   };
   const close = () => {
-    void setIsOpen({
+    void setIsOpen({ 
       createTask: false,
       taskStatus: undefined,
     });

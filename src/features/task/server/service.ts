@@ -36,7 +36,6 @@ export const createTask = async (data: CreateTaskData) => {
 };
 
 export const getManyTasksByFilters = async (filters: QueryTaskData) => {
-  console.log('Filters:', filters);
   return await db.query.task.findMany({
     where: (t, { eq, and, ilike, lte }) =>
       and(
@@ -56,7 +55,7 @@ export const getManyTasksByFilters = async (filters: QueryTaskData) => {
   });
 };
 
-export const delteTaskById = async (taskId: string) => {
+export const deleteTaskById = async (taskId: string) => {
   const result = await db.transaction(async (tx) => {
     const deletedTask = await tx
       .delete(task)
