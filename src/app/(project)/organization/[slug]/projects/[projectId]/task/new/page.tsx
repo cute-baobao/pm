@@ -6,13 +6,8 @@ interface CreateTaskPageProps {
 }
 
 export default async function CreateTaskPage({ params }: CreateTaskPageProps) {
-  const { slug, projectId } = await params;
-  const access = await requireOrganizationAccess(slug);
+  const { slug } = await params;
+  await requireOrganizationAccess(slug);
 
-  return (
-    <CreateTaskFormWrapper
-      projectId={projectId}
-      organizationId={access.session.activeOrganizationId!}
-    />
-  );
+  return <CreateTaskFormWrapper />;
 }

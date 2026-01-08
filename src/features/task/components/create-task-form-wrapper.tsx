@@ -1,21 +1,24 @@
 "use client";
 import { Card, CardContent } from '@/components/ui/card';
 import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
-import { useProject } from '@/features/project/hooks/use-project';
+import { useGetProject, useProjectId } from '@/features/project/hooks/use-project';
+import { useSession } from '@/lib/auth-client';
 import { LoaderIcon } from 'lucide-react';
 import { CreateTaskForm } from './create-task-form';
+import { TaskStatus } from '@/db/schemas';
 
 interface CreateTaskFormWrapperProps {
-  projectId: string;
-  organizationId: string;
+  taskStatus?: TaskStatus;
 }
 
 export const CreateTaskFormWrapper = ({
-  projectId,
-  organizationId,
+  taskStatus,
 }: CreateTaskFormWrapperProps) => {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
+  const projectId = useProjectId();
   const { data: projects, isLoading: projectsLoading } =
-    useProject(organizationId);
+    useGetProject(organizationId);
   const { data: members, isLoading: membersLoading } =
     useSuspenseOrganizationMembers(organizationId);
 
@@ -48,7 +51,7 @@ export const CreateTaskFormWrapper = ({
       projectId={projectId}
       projectOptions={projectOptions ?? []}
       memberOptions={memberOptions ?? []}
-      organizationId={organizationId}
+      taskStatus={taskStatus}
     />
   );
 };

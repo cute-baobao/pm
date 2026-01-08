@@ -64,6 +64,8 @@
     "deleteError": "Error deleting organization: {message}",
     "slugConflict": "Slug is already taken",
     "notFound": "Organization not found",
+    "loading": "Loading organizations...",
+    "error": "Error loading organizations...",
     "CreateForm": {
       "title": "Create Organization",
       "joinButton": "Join Workspace",
@@ -112,6 +114,8 @@
     "joinError": "Error joining organization: {message}",
     "exitSuccess": "Successfully exited organization",
     "exitError": "Error exiting organization: {message}",
+    "notFound": "No Members found.",
+    "title": "Members",
     "Roles": {
       "owner": "Owner",
       "admin": "Admin",
@@ -172,6 +176,9 @@
     "createError": "Error creating project: {message}",
     "deleteSuccess": "Project deleted successfully",
     "deleteError": "Error deleting project: {message}",
+    "notFound": "No Project found.",
+    "showAll": "Show All",
+    "title": "Projects",
     "CreateForm": {
       "title": "Create Project",
       "nameLabel": "Project Name",
@@ -199,6 +206,37 @@
     "updateError": "Error updating task: {message}",
     "deleteSuccess": "Task deleted successfully",
     "deleteError": "Error deleting task: {message}",
+    "notFound": "No tasks found.",
+    "title": "Tasks",
+    "showAll": "Show All",
+    "Actions": {
+      "delete": "Delete Task",
+      "edit": "Edit Task",
+      "taskDetails": "Task Details",
+      "openProject": "Open Project",
+      "deleteConfirmTitle": "Delete task",
+      "deleteConfirmMessage": "This action cannot be undone"
+    },
+    "Description": {
+      "label": "Description",
+      "placeholder": "Add a description...",
+      "noDescription": "No description set.",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes"
+    },
+    "Views": {
+      "table": "Table",
+      "kanban": "Kanban",
+      "calendar": "Calendar",
+      "newTask": "New Task"
+    },
+    "Table": {
+      "noResults": "No results.",
+      "previous": "Previous",
+      "next": "Next"
+    },
     "Status": {
       "BACKLOG": "Backlog",
       "TODO": "To Do",

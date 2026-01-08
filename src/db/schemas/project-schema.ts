@@ -49,9 +49,9 @@ export const task = pgTable('task', {
   name: text().notNull(),
   assignedId: text('assigned_id').references(() => user.id, {
     onDelete: 'cascade',
-  }),
+  }).notNull(),
   description: text(),
-  dueDate: timestamp('due_date'),
+  dueDate: timestamp('due_date').notNull(),
   status: taskStatus().notNull().default('TODO'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   position: integer('position').notNull().default(0),

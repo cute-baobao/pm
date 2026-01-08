@@ -64,6 +64,8 @@
     "deleteError": "删除组织失败: {message}",
     "slugConflict": "组织标识符已被占用",
     "notFound": "未找到组织",
+    "loading": "正在加载组织...",
+    "error": "加载组织出错...",
     "CreateForm": {
       "title": "创建组织",
       "joinButton": "加入工作区",
@@ -110,6 +112,8 @@
     "deleteMemberError": "移除成员失败: {message}",
     "joinSuccess": "成功加入组织",
     "joinError": "加入组织失败: {message}",
+    "notFound": "未找到成员。",
+    "title": "成员",
     "Roles": {
       "owner": "所有者",
       "admin": "管理员",
@@ -170,6 +174,9 @@
     "createError": "创建项目失败: {message}",
     "deleteSuccess": "项目删除成功",
     "deleteError": "删除项目失败: {message}",
+    "notFound": "未找到项目。",
+    "showAll": "查看全部",
+    "title": "项目",
     "CreateForm": {
       "title": "创建项目",
       "nameLabel": "项目名称",
@@ -197,6 +204,37 @@
     "updateError": "更新任务失败: {message}",
     "deleteSuccess": "任务删除成功",
     "deleteError": "删除任务失败: {message}",
+    "notFound": "未找到任务。",
+    "title": "任务",
+    "showAll": "查看全部",
+    "Actions": {
+      "delete": "删除任务",
+      "edit": "编辑任务",
+      "taskDetails": "任务详情",
+      "openProject": "打开项目",
+      "deleteConfirmTitle": "删除任务",
+      "deleteConfirmMessage": "此操作无法撤销"
+    },
+    "Description": {
+      "label": "描述",
+      "placeholder": "添加描述...",
+      "noDescription": "未设置描述。",
+      "cancel": "取消",
+      "edit": "编辑",
+      "saving": "正在保存...",
+      "saveChanges": "保存更改"
+    },
+    "Views": {
+      "table": "表格",
+      "kanban": "看板",
+      "calendar": "日历",
+      "newTask": "新建任务"
+    },
+    "Table": {
+      "noResults": "暂无结果。",
+      "previous": "上一页",
+      "next": "下一页"
+    },
     "Status": {
       "BACKLOG": "待处理",
       "TODO": "待办",

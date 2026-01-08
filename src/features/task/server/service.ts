@@ -1,6 +1,7 @@
 import db from '@/db';
 import { task } from '@/db/schemas';
-import { CreateTaskData, QueryTaskData } from '../schema';
+import { eq } from 'drizzle-orm';
+import { CreateTaskData, QueryTaskData, UpdateTaskData } from '../schema';
 
 export const createTask = async (data: CreateTaskData) => {
   const { projectId, status } = data;
@@ -15,7 +16,7 @@ export const createTask = async (data: CreateTaskData) => {
       ? highestPositionTask.position + 1000
       : 1000;
 
-    const [newTask] = await db
+    const [newTask] = await tx
       .insert(task)
       .values({
         name: data.name,
@@ -39,8 +40,8 @@ export const getManyTasksByFilters = async (filters: QueryTaskData) => {
     where: (t, { eq, and, ilike, lte }) =>
       and(
         eq(t.organizationId, filters.organizationId),
-        eq(t.status, filters.status),
         // 使用短路求值：有值则添加条件，否则返回 undefined（会被 and 忽略）
+        filters.status ? eq(t.status, filters.status) : undefined,
         filters.projectId ? eq(t.projectId, filters.projectId) : undefined,
         filters.assignedId ? eq(t.assignedId, filters.assignedId) : undefined,
         filters.search ? ilike(t.name, `%${filters.search}%`) : undefined,
@@ -52,4 +53,56 @@ export const getManyTasksByFilters = async (filters: QueryTaskData) => {
       assignedUser: true,
     },
   });
+};
+
+export const deleteTaskById = async (taskId: string) => {
+  const result = await db.transaction(async (tx) => {
+    const deletedTask = await tx
+      .delete(task)
+      .where(eq(task.id, taskId))
+      .returning();
+
+    return deletedTask[0];
+  });
+
+  return result;
+};
+
+export const updateTask = async (data: UpdateTaskData) => {
+  const res = await db
+    .update(task)
+    .set({ ...data })
+    .where(eq(task.id, data.id))
+    .returning();
+
+  return res[0];
+};
+
+export const bulkUpdateTasks = async (data: UpdateTaskData[]) => {
+  const result = await Promise.all(
+    data.map(async (t) => {
+      const res = await db
+        .update(task)
+        .set({ ...t })
+        .where(eq(task.id, t.id))
+        .returning();
+
+      return res[0];
+    }),
+  );
+
+  return result;
+};
+
+export const getTaskById = async (taskId: string) => {
+  const result = await db.query.task.findFirst({
+    where: eq(task.id, taskId),
+    with: {
+      project: true,
+      organization: true,
+      assignedUser: true,
+    },
+  });
+
+  return result;
 };

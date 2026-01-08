@@ -32,11 +32,9 @@ export default async function WorkspaceMembersPage({
       <div className="mx-auto flex w-full flex-col gap-4 p-4">
         <Suspense>
           <InviteMemberForm
-            organizationId={member.organizationId}
             role={member.role}
           />
           <MemberList
-            organizationId={member.organizationId}
             role={member.role}
           />
         </Suspense>

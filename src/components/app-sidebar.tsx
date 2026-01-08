@@ -3,6 +3,7 @@
 // import { useHasActiveSubscription } from "@/features/subsctiptions/hooks/use-subscription";
 import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
+import { useSession } from '@/lib/auth-client';
 import {
   CircleGaugeIcon,
   FolderOpenDotIcon,
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
   Sidebar,
   SidebarContent,
@@ -27,9 +28,10 @@ import {
 
 export function AppSidebar() {
   const t = useTranslations('Navigation');
-  const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
+  const { data: sessionData } = useSession();
+  const userId = sessionData?.session.userId || '';
 
   const menuItems = [
     {
@@ -44,6 +46,11 @@ export function AppSidebar() {
           title: t('dashboard'),
           icon: CircleGaugeIcon,
           url: '/dashboard',
+        },
+        {
+          title: 'My Tasks',
+          icon: FolderOpenDotIcon,
+          url: '/tasks?assignedId=' + userId,
         },
         {
           title: t('projects'),

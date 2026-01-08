@@ -1,12 +1,29 @@
 import { useTRPC } from '@/trpc/client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { QueryTaskData } from '../schema';
+import { useTaskFilters } from './use-task-filters';
 
-export const useSuspenseTasks = (data: QueryTaskData) => {
+export const useTaskId = () => {
+  const params = useParams();
+  return params.taskId as string;
+};
+
+export const useSuspenseTasks = (organizationId: string) => {
   const trpc = useTRPC();
-  return useQuery(trpc.task.getMany.queryOptions(data));
+  const [params] = useTaskFilters();
+  return useSuspenseQuery({
+    ...trpc.task.getMany.queryOptions({
+      ...params,
+      organizationId,
+    }),
+  });
 };
 
 export const useCreateTask = () => {
@@ -25,6 +42,12 @@ export const useCreateTask = () => {
             projectId: data.projectId,
           }),
         );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data.projectId,
+            assigneeId: data.assignedId,
+          }),
+        );
       },
       onError: (error) => {
         const message = tRoot.has(error.message)
@@ -34,4 +57,113 @@ export const useCreateTask = () => {
       },
     }),
   );
+};
+
+export const useDeleteTask = () => {
+  const trpc = useTRPC();
+  const t = useTranslations('Task');
+  const tRoot = useTranslations();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.task.delete.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(t('deleteSuccess'));
+        queryClient.invalidateQueries(
+          trpc.task.getMany.queryOptions({
+            organizationId: data.deletedTask.organizationId,
+            projectId: data.deletedTask.projectId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data.deletedTask.projectId,
+            assigneeId: data.deletedTask.assignedId,
+          }),
+        );
+      },
+      onError: (error) => {
+        const message = tRoot.has(error.message)
+          ? tRoot(error.message)
+          : error.message;
+        toast.error(t('deleteError', { message }));
+      },
+    }),
+  );
+};
+
+export const useUpdateTask = () => {
+  const trpc = useTRPC();
+  const t = useTranslations('Task');
+  const tRoot = useTranslations();
+  const queryClient = useQueryClient();
+  const [params] = useTaskFilters();
+
+  return useMutation(
+    trpc.task.update.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(t('updateSuccess'));
+        queryClient.invalidateQueries(
+          trpc.task.getMany.queryOptions({
+            ...params,
+            organizationId: data.organizationId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.task.get.queryOptions({ taskId: data.id }),
+        );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data.projectId,
+            assigneeId: data.assignedId,
+          }),
+        );
+      },
+      onError: (error) => {
+        const message = tRoot.has(error.message)
+          ? tRoot(error.message)
+          : error.message;
+        toast.error(t('updateError', { message }));
+      },
+    }),
+  );
+};
+
+export const useBulkUpdateTasks = () => {
+  const trpc = useTRPC();
+  const t = useTranslations('Task');
+  const tRoot = useTranslations();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.task.bulkUpdate.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(t('updateSuccess'));
+        if (data.length === 0) return;
+        queryClient.invalidateQueries(
+          trpc.task.getMany.queryOptions({
+            organizationId: data[0].organizationId,
+            projectId: data[0].projectId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.project.analytics.queryOptions({
+            projectId: data[0].projectId,
+            assigneeId: data[0].assignedId,
+          }),
+        );
+      },
+      onError: (error) => {
+        const message = tRoot.has(error.message)
+          ? tRoot(error.message)
+          : error.message;
+        toast.error(t('updateError', { message }));
+      },
+    }),
+  );
+};
+
+export const useGetTask = (taskId: string) => {
+  const trpc = useTRPC();
+  return useQuery(trpc.task.get.queryOptions({ taskId }));
 };

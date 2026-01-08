@@ -6,9 +6,15 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { GetProjectParams } from '../schema';
+import { AnalyticsParams, GetProjectParams } from '../schema';
 import { useProjectsParams } from './use-project-params';
+
+export const useProjectId = () => {
+  const params = useParams<{ projectId: string }>();
+  return params?.projectId as string;
+};
 
 export const useSuspenseProjects = (organizationId: string) => {
   const trpc = useTRPC();
@@ -24,7 +30,7 @@ export const useSuspenseProject = (params: GetProjectParams) => {
   return useSuspenseQuery(trpc.project.getOne.queryOptions(params));
 };
 
-export const useProject = (organizationId: string) => {
+export const useGetProject = (organizationId: string) => {
   const trpc = useTRPC();
   return useQuery(
     trpc.project.getManyWithNoPagination.queryOptions({ organizationId }),
@@ -102,4 +108,9 @@ export const useUpdateProject = () => {
       },
     }),
   );
+};
+
+export const useSuspenseProjectAnalytics = (params: AnalyticsParams) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.project.analytics.queryOptions(params));
 };

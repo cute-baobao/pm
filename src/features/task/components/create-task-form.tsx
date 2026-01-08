@@ -21,9 +21,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { taskStatusValues } from '@/db/schemas';
+import { TaskStatus, taskStatusValues } from '@/db/schemas';
 import { MemberAvatar } from '@/features/organization-member/components/member-avatar';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
+import { useSession } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -35,19 +36,20 @@ import { type CreateTaskData, createTaskSchema } from '../schema';
 type Options = { name: string; id: string; imageUrl: string | null };
 
 interface CreateTaskFormProps {
-  organizationId: string;
   projectId: string;
   projectOptions?: Options[];
   memberOptions?: Options[];
+  taskStatus?: TaskStatus;
   onCancel?: () => void;
 }
 
 export const CreateTaskForm = ({
   memberOptions,
-  organizationId,
   projectId,
   onCancel,
+  taskStatus,
 }: CreateTaskFormProps) => {
+  const { data: sessionData } = useSession();
   const router = useRouter();
   const slug = useOrganizationSlug();
   const t = useTranslations('Task.CreateForm');
@@ -59,9 +61,10 @@ export const CreateTaskForm = ({
     defaultValues: {
       name: '',
       description: '',
-      organizationId: organizationId,
+      organizationId: sessionData?.session?.activeOrganizationId || '',
       projectId: projectId,
       dueDate: undefined,
+      status: taskStatus,
     },
   });
 
@@ -114,6 +117,7 @@ export const CreateTaskForm = ({
                         <Textarea
                           className="max-h-[500px] overflow-auto"
                           {...field}
+                          value={field.value ?? ''}
                           placeholder={t('descriptionPlaceholder')}
                         />
                       </FormControl>
@@ -152,7 +156,9 @@ export const CreateTaskForm = ({
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder={t('assignedPlaceholder')} />
+                            <SelectValue
+                              placeholder={t('assignedPlaceholder')}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <FormMessage />

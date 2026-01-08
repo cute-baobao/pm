@@ -20,6 +20,7 @@ import { Fragment } from 'react';
 
 import type { OrganizationRole } from '@/db/schemas';
 import { userAtom } from '@/features/auth/store/atom';
+import { useSession } from '@/lib/auth-client';
 import { useAtom } from 'jotai';
 import {
   useDeleteOrganizationMember,
@@ -50,11 +51,12 @@ const roleConfig: Record<
 };
 
 interface MemberListProps {
-  organizationId: string;
   role?: OrganizationRole;
 }
 
-export const MemberList = ({ role, organizationId }: MemberListProps) => {
+export const MemberList = ({ role }: MemberListProps) => {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const [user] = useAtom(userAtom);
   const t = useTranslations('OrganizationMember.MemberList');
   const tRoles = useTranslations('OrganizationMember.Roles');
@@ -92,7 +94,7 @@ export const MemberList = ({ role, organizationId }: MemberListProps) => {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-4xl ">
+    <Card className="mx-auto w-full max-w-4xl">
       <ConfirmDialog />
       <CardHeader className="flex flex-row items-center space-y-0 gap-x-4">
         <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>

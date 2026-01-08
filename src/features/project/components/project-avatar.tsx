@@ -6,12 +6,14 @@ interface ProjectAvatarProps {
   image?: string;
   name: string;
   className?: string;
+  fallbackClassName?: string;
 }
 
 export const ProjectAvatar = ({
   image,
   name,
   className,
+  fallbackClassName,
 }: ProjectAvatarProps) => {
   if (image) {
     return (
@@ -25,7 +27,12 @@ export const ProjectAvatar = ({
 
   return (
     <Avatar className={cn('size-8 rounded-md', className)}>
-      <AvatarFallback className="rounded-md bg-blue-600 text-lg font-medium text-white uppercase">
+      <AvatarFallback
+        className={cn(
+          'rounded-md bg-blue-600 text-lg font-medium text-white uppercase',
+          fallbackClassName,
+        )}
+      >
         {name[0]}
       </AvatarFallback>
     </Avatar>

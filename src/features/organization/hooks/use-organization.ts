@@ -8,6 +8,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { OrganizationAnalyticsParams } from '../schema';
 
 export const useOrganizationSlug = () => {
   const params = useParams();
@@ -18,6 +19,14 @@ export const useSuspenseOrganizations = () => {
   const trpc = useTRPC();
 
   return useSuspenseQuery(trpc.organization.getList.queryOptions());
+};
+
+export const useSuspenseOrganizationAnalytics = (
+  params: OrganizationAnalyticsParams,
+) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(trpc.organization.analytics.queryOptions(params));
 };
 
 export const useSuspenseOrganization = (slug: string) => {

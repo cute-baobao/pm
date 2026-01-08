@@ -1,0 +1,1 @@
+ALTER TABLE "task" ALTER COLUMN "due_date" SET NOT NULL;

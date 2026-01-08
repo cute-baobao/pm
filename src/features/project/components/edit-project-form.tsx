@@ -24,6 +24,7 @@ import { useTranslations } from 'next-intl';
 import { notFound, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useSession } from '@/lib/auth-client';
 import {
   useDeleteProject,
   useSuspenseProject,
@@ -33,7 +34,6 @@ import { UpdateProjectData, updateProjectSchema } from '../schema';
 
 interface EditProjectForm {
   role: OrganizationRole;
-  organizationId: string;
   projectId: string;
   slug: string;
   onCancel?: () => void;
@@ -41,11 +41,12 @@ interface EditProjectForm {
 
 export const EditProjectForm = ({
   role,
-  organizationId,
   projectId,
   slug,
   onCancel,
 }: EditProjectForm) => {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
   const [user] = useAtom(userAtom);
   const router = useRouter();
   const { data: initialValue } = useSuspenseProject({

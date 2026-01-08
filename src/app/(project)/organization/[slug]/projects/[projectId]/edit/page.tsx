@@ -29,7 +29,6 @@ export default async function ProjectEditPage({
       <ErrorBoundary fallback={<ProjectsError />}>
         <Suspense fallback={<ProjectsLoading />}>
           <EditProjectForm
-            organizationId={session.session.activeOrganizationId!}
             projectId={projectId}
             role={'member'}
             slug={slug}

@@ -3,6 +3,8 @@ import {
   createTRPCRouter,
   permissionedProcedure,
   protectedProcedure,
+  memberProcedure,
+  adminOrOwnerProcedure,
 } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
@@ -24,7 +26,7 @@ import {
 } from './service';
 
 export const organizationMemberRouter = createTRPCRouter({
-  invite: permissionedProcedure
+  invite: adminOrOwnerProcedure
     .input(inviteMemberSchema)
     .mutation(async ({ input, ctx }) => {
       if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
@@ -36,7 +38,7 @@ export const organizationMemberRouter = createTRPCRouter({
       const result = await inviteMember(input, ctx.auth.user.id);
       return result;
     }),
-  getMany: permissionedProcedure
+  getMany: memberProcedure
     .input(z.object({ organizationId: z.string() }))
     .query(async ({ input, ctx }) => {
       if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
@@ -50,7 +52,7 @@ export const organizationMemberRouter = createTRPCRouter({
         userId: ctx.auth.user.id,
       });
     }),
-  updateRole: permissionedProcedure
+  updateRole: adminOrOwnerProcedure
     .input(updateMemberRoleSchema)
     .mutation(async ({ ctx, input }) => {
       if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
@@ -63,7 +65,7 @@ export const organizationMemberRouter = createTRPCRouter({
       const result = await updateMemberRole(input);
       return result;
     }),
-  delete: permissionedProcedure
+  delete: adminOrOwnerProcedure
     .input(deleteMemberSchema)
     .mutation(async ({ ctx, input }) => {
       if (
@@ -86,7 +88,7 @@ export const organizationMemberRouter = createTRPCRouter({
       const result = await joinOrganizationViaInvitation(input);
       return { ...result, slug: record.organization.slug };
     }),
-  exitOrganization: protectedProcedure
+  exitOrganization: memberProcedure
     .input(exitOrganizationSchema)
     .mutation(async ({ input, ctx }) => {
       return await exitOrganization(input, ctx.auth.user.id);

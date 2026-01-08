@@ -4,12 +4,19 @@ import {
   Organization,
   organization,
   session,
+  task,
+  taskStatusValues,
   User,
 } from '@/db/schemas';
-import { eq } from 'drizzle-orm';
-import { CreateOrganizationData, UpdateOrganizationData } from '../schema';
+import { and, eq, gte, lte, ne } from 'drizzle-orm';
+import {
+  CreateOrganizationData,
+  OrganizationAnalyticsParams,
+  UpdateOrganizationData,
+} from '../schema';
 
 import { randomUUID } from 'crypto';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 
 export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
   const existingSlug = await db.query.organization.findFirst({
@@ -124,6 +131,134 @@ export const getUserMembers = async (userId: string) => {
     });
   });
   return members;
+};
+
+export const analytics = async (params: OrganizationAnalyticsParams) => {
+  const { organizationId, assigneeId } = params;
+  const now = new Date();
+  const thisMonthStart = startOfMonth(now);
+  const thisMonthEnd = endOfMonth(now);
+  const lastMonthStart = startOfMonth(subMonths(now, 1));
+  const lastMonthEnd = endOfMonth(subMonths(now, 1));
+
+  const thisMonthTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      gte(task.createdAt, thisMonthStart),
+      lte(task.createdAt, thisMonthEnd),
+    ),
+  });
+
+  const lastMonthTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      gte(task.createdAt, lastMonthStart),
+      lte(task.createdAt, lastMonthEnd),
+    ),
+  });
+
+  const taskCount = thisMonthTasks.length;
+  const taskDifference = taskCount - lastMonthTasks.length;
+
+  const thisMonthAssignedTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      eq(task.assignedId, assigneeId),
+      gte(task.createdAt, thisMonthStart),
+      lte(task.createdAt, thisMonthEnd),
+    ),
+  });
+
+  const lastMonthAssignedTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      eq(task.assignedId, assigneeId),
+      gte(task.createdAt, lastMonthStart),
+      lte(task.createdAt, lastMonthEnd),
+    ),
+  });
+
+  const assignedTaskCount = thisMonthAssignedTasks.length;
+  const assignedTaskDifference =
+    assignedTaskCount - lastMonthAssignedTasks.length;
+
+  const thisMonthIncompletedTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      ne(task.status, taskStatusValues[4]),
+      gte(task.createdAt, thisMonthStart),
+      lte(task.createdAt, thisMonthEnd),
+    ),
+  });
+
+  const lastMonthIncompletedTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      ne(task.status, taskStatusValues[4]),
+      gte(task.createdAt, lastMonthStart),
+      lte(task.createdAt, lastMonthEnd),
+    ),
+  });
+
+  const incompletedTaskCount = thisMonthIncompletedTasks.length;
+  const incompletedTaskDifference =
+    incompletedTaskCount - lastMonthIncompletedTasks.length;
+
+  const thisMonthCompleteTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      eq(task.status, taskStatusValues[4]),
+      gte(task.createdAt, thisMonthStart),
+      lte(task.createdAt, thisMonthEnd),
+    ),
+  });
+
+  const lastMonthCompleteTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      eq(task.status, taskStatusValues[4]),
+      gte(task.createdAt, lastMonthStart),
+      lte(task.createdAt, lastMonthEnd),
+    ),
+  });
+
+  const completeTaskCount = thisMonthCompleteTasks.length;
+  const completeTaskDifference =
+    completeTaskCount - lastMonthCompleteTasks.length;
+
+  const thisMonthOverdueTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      ne(task.status, taskStatusValues[4]),
+      lte(task.dueDate, thisMonthEnd),
+      gte(task.dueDate, thisMonthStart),
+    ),
+  });
+
+  const lastMonthOverdueTasks = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      ne(task.status, taskStatusValues[4]),
+      lte(task.dueDate, lastMonthEnd),
+      gte(task.dueDate, lastMonthStart),
+    ),
+  });
+
+  const overdueTaskCount = thisMonthOverdueTasks.length;
+  const overdueTaskDifference = overdueTaskCount - lastMonthOverdueTasks.length;
+
+  return {
+    taskCount,
+    taskDifference,
+    assignedTaskCount,
+    assignedTaskDifference,
+    incompletedTaskCount,
+    incompletedTaskDifference,
+    completeTaskCount,
+    completeTaskDifference,
+    overdueTaskCount,
+    overdueTaskDifference,
+  };
 };
 
 export const inviteToUserOrganization = async () => {};

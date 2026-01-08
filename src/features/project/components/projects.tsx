@@ -13,6 +13,7 @@ import {
 } from '@/components/entity-component';
 import { Project } from '@/db/schemas';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
+import { useSession } from '@/lib/auth-client';
 import { useEntitySearch } from '@/lib/hooks/use-entity-search';
 import { formatDistanceToNow } from 'date-fns';
 import { FolderOpenDotIcon } from 'lucide-react';
@@ -96,13 +97,14 @@ export function ProjectsPagination() {
   );
 }
 
-export function WorkflowsContainer({
-  organizationId,
+export function ProjectsContainer({
   children,
 }: {
-  organizationId: string;
   children: React.ReactNode;
 }) {
+  const { data: sessionData } = useSession();
+  const organizationId = sessionData?.session?.activeOrganizationId || '';
+
   return (
     <ProjectsContext.Provider value={{ organizationId }}>
       <EntityContainer
