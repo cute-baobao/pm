@@ -5,7 +5,7 @@ import { createTaskSchema, queryTaskSchema, updateTaskSchema } from '../schema';
 import {
   bulkUpdateTasks,
   createTask,
-  delteTaskById,
+  deleteTaskById,
   getManyTasksByFilters,
   getTaskById,
   updateTask,
@@ -45,7 +45,7 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      const deletedTask = await delteTaskById(input.taskId);
+      const deletedTask = await deleteTaskById(input.taskId);
       return { deletedTask };
     }),
   update: permissionedProcedure
