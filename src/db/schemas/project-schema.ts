@@ -72,5 +72,43 @@ export const taskRelations = relations(task, ({ one }) => ({
   }),
 }));
 
+export const taskChangeLog = pgTable('task_change_log', {
+  id: uuid('id').primaryKey().defaultRandom().notNull(),
+  taskId: uuid('task_id')
+    .references(() => task.id, {
+      onDelete: 'cascade',
+    })
+    .notNull(),
+  organizationId: uuid('organization_id')
+    .references(() => organization.id, {
+      onDelete: 'cascade',
+    })
+    .notNull(),
+  fieldName: text('field_name').notNull(), // e.g., 'status', 'name', 'assignedId'
+  oldValue: text('old_value'),
+  newValue: text('new_value'),
+  changedBy: text('changed_by')
+    .references(() => user.id, {
+      onDelete: 'set null',
+    }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const taskChangeLogRelations = relations(taskChangeLog, ({ one }) => ({
+  task: one(task, {
+    fields: [taskChangeLog.taskId],
+    references: [task.id],
+  }),
+  organization: one(organization, {
+    fields: [taskChangeLog.organizationId],
+    references: [organization.id],
+  }),
+  changedByUser: one(user, {
+    fields: [taskChangeLog.changedBy],
+    references: [user.id],
+  }),
+}));
+
 export type Project = InferSelectModel<typeof project>;
 export type Task = InferSelectModel<typeof task>;
+export type TaskChangeLog = InferSelectModel<typeof taskChangeLog>;

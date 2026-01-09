@@ -151,7 +151,7 @@ export function TaskList({ data }: TaskListProps) {
             data.map((task) => (
               <li key={task.id}>
                 <Link
-                  href={`/organization/${slug}/projects/${task.projectId}/tasks/${task.id}`}
+                  href={`/organization/${slug}/projects/${task.projectId}/task/${task.id}`}
                 >
                   <Card className="rounded-lg p-0 shadow-none transition hover:opacity-75">
                     <CardContent className="p-4">

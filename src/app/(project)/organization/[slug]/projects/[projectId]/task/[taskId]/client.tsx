@@ -3,6 +3,7 @@
 import { DottedSeparator } from '@/components/dotted-separator';
 import { LoadingView } from '@/components/entity-component';
 import { TaskBreadcrumbs } from '@/features/task/components/task-breadcrumbs';
+import { TaskChangelogTimeline } from '@/features/task/components/task-changelog-timeline';
 import { TaskDescription } from '@/features/task/components/task-description';
 import { TaskOverview } from '@/features/task/components/task-overview';
 import { useGetTask, useTaskId } from '@/features/task/hooks/use-task';
@@ -35,6 +36,7 @@ export function TaskClient() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TaskOverview task={task} />
         <TaskDescription task={task} />
+        <TaskChangelogTimeline />
       </div>
     </div>
   );

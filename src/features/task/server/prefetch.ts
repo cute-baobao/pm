@@ -4,3 +4,7 @@ import { QueryTaskData } from '../schema';
 export const prefetchTasks = (payload: QueryTaskData) => {
   return prefetch(trpc.task.getMany.queryOptions(payload));
 };
+
+export const prefetchTaskChangeLog = (taskId: string) => {
+  return prefetch(trpc.task.getChangeLog.queryOptions({ taskId }));
+};

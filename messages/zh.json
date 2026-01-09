@@ -255,6 +255,35 @@
       "statusPlaceholder": "选择状态",
       "cancelButton": "取消",
       "createButton": "创建任务"
+    },
+    "EditForm": {
+      "title": "编辑任务",
+      "nameLabel": "任务名称",
+      "namePlaceholder": "输入任务名称",
+      "descriptionLabel": "描述（可选）",
+      "descriptionPlaceholder": "输入任务描述（可选）",
+      "dueDateLabel": "截止日期",
+      "assignedLabel": "负责人",
+      "assignedPlaceholder": "选择用户",
+      "statusLabel": "任务状态",
+      "statusPlaceholder": "选择状态",
+      "cancelButton": "取消",
+      "updateButton": "保存更改"
+    },
+    "ChangeLog": {
+      "title": "变更历史",
+      "empty": "暂无变更",
+      "fields": {
+        "name": "任务名称",
+        "status": "状态",
+        "description": "描述",
+        "dueDate": "截止日期",
+        "assignedId": "负责人"
+      },
+      "changedFrom": "从",
+      "changedTo": "变更为",
+      "changedBy": "由",
+      "unknownUser": "未知用户"
     }
   }
 }

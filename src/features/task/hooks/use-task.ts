@@ -15,6 +15,15 @@ export const useTaskId = () => {
   return params.taskId as string;
 };
 
+export const useSuspenseTaskChangeLog = (taskId: string) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(
+    trpc.task.getChangeLog.queryOptions({
+      taskId,
+    }),
+  );
+};
+
 export const useSuspenseTasks = (organizationId: string) => {
   const trpc = useTRPC();
   const [params] = useTaskFilters();
@@ -117,6 +126,9 @@ export const useUpdateTask = () => {
             projectId: data.projectId,
             assigneeId: data.assignedId,
           }),
+        );
+        queryClient.invalidateQueries(
+          trpc.task.getChangeLog.queryOptions({ taskId: data.id }),
         );
       },
       onError: (error) => {

@@ -1,5 +1,6 @@
 import db from '@/db';
 import { task } from '@/db/schemas';
+import { recordTaskChanges } from '@/db/task-changelog-utils';
 import { eq } from 'drizzle-orm';
 import { CreateTaskData, QueryTaskData, UpdateTaskData } from '../schema';
 
@@ -68,26 +69,58 @@ export const deleteTaskById = async (taskId: string) => {
   return result;
 };
 
-export const updateTask = async (data: UpdateTaskData) => {
-  const res = await db
-    .update(task)
-    .set({ ...data })
-    .where(eq(task.id, data.id))
-    .returning();
+export const updateTask = async (data: UpdateTaskData, changedBy: string) => {
+  const res = await db.transaction(async (tx) => {
+    const t = await tx.select().from(task).where(eq(task.id, data.id)).limit(1);
+
+    if (t.length === 0) throw new Error('Task not found');
+    const oldTask = t[0];
+
+    const result = await tx
+      .update(task)
+      .set({ ...data })
+      .where(eq(task.id, data.id))
+      .returning();
+
+    const changeRecords = Object.keys(data)
+      .filter(
+        (key) =>
+          key !== 'id' &&
+          key !== 'organizationId' &&
+          key !== 'position' &&
+          data[key as keyof UpdateTaskData] !== undefined &&
+          // 过滤掉没有实际变化的字段
+          oldTask[key as keyof UpdateTaskData] !==
+            data[key as keyof UpdateTaskData],
+      )
+      .map((key) => ({
+        taskId: data.id,
+        organizationId: oldTask.organizationId,
+        fieldName: key,
+        oldValue: oldTask[key as keyof UpdateTaskData],
+        newValue: data[key as keyof UpdateTaskData]!,
+        changedBy: changedBy,
+      }));
+
+    // 批量插入所有变更记录
+    if (changeRecords.length > 0) {
+      await recordTaskChanges(changeRecords);
+    }
+
+    return result;
+  });
 
   return res[0];
 };
 
-export const bulkUpdateTasks = async (data: UpdateTaskData[]) => {
+export const bulkUpdateTasks = async (
+  data: UpdateTaskData[],
+  changedBy: string,
+) => {
   const result = await Promise.all(
     data.map(async (t) => {
-      const res = await db
-        .update(task)
-        .set({ ...t })
-        .where(eq(task.id, t.id))
-        .returning();
-
-      return res[0];
+      const res = await updateTask(t, changedBy);
+      return res;
     }),
   );
 
@@ -101,6 +134,19 @@ export const getTaskById = async (taskId: string) => {
       project: true,
       organization: true,
       assignedUser: true,
+    },
+  });
+
+  return result;
+};
+
+export const getTaskChangeLog = async (taskId: string) => {
+  const { taskChangeLog } = await import('@/db/schemas');
+  const result = await db.query.taskChangeLog.findMany({
+    where: (t, { eq }) => eq(t.taskId, taskId),
+    orderBy: (t, { desc }) => [desc(t.createdAt)],
+    with: {
+      changedByUser: true,
     },
   });
 

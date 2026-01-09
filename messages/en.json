@@ -257,6 +257,35 @@
       "statusPlaceholder": "Select a status",
       "cancelButton": "Cancel",
       "createButton": "Create Task"
+    },
+    "EditForm": {
+      "title": "Edit Task",
+      "nameLabel": "Task Name",
+      "namePlaceholder": "Enter task name",
+      "descriptionLabel": "Description (Optional)",
+      "descriptionPlaceholder": "Enter task description (optional)",
+      "dueDateLabel": "Due Date",
+      "assignedLabel": "Assigned To",
+      "assignedPlaceholder": "Select a user",
+      "statusLabel": "Task Status",
+      "statusPlaceholder": "Select a status",
+      "cancelButton": "Cancel",
+      "updateButton": "Save Changes"
+    },
+    "ChangeLog": {
+      "title": "Change History",
+      "empty": "No changes yet",
+      "fields": {
+        "name": "Task Name",
+        "status": "Status",
+        "description": "Description",
+        "dueDate": "Due Date",
+        "assignedId": "Assigned To"
+      },
+      "changedFrom": "Changed from",
+      "changedTo": "to",
+      "changedBy": "by",
+      "unknownUser": "Unknown User"
     }
   }
 }

@@ -8,6 +8,7 @@ import {
   deleteTaskById,
   getManyTasksByFilters,
   getTaskById,
+  getTaskChangeLog,
   updateTask,
 } from './service';
 
@@ -50,15 +51,15 @@ export const taskRouter = createTRPCRouter({
     }),
   update: permissionedProcedure
     .input(updateTaskSchema)
-    .mutation(async ({ input }) => {
-      const task = await updateTask(input);
+    .mutation(async ({ input, ctx }) => {
+      const task = await updateTask(input, ctx.auth.session.userId);
 
       return task;
     }),
   bulkUpdate: permissionedProcedure
     .input(z.array(updateTaskSchema))
-    .mutation(async ({ input }) => {
-      const tasks = await bulkUpdateTasks(input);
+    .mutation(async ({ input, ctx }) => {
+      const tasks = await bulkUpdateTasks(input, ctx.auth.session.userId);
       return tasks;
     }),
   get: permissionedProcedure
@@ -70,5 +71,14 @@ export const taskRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const task = await getTaskById(input.taskId);
       return task;
+    }),
+  getChangeLog: permissionedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return await getTaskChangeLog(input.taskId);
     }),
 });
