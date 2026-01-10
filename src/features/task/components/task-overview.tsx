@@ -15,21 +15,22 @@ interface TaskOverviewProps {
 
 export function TaskOverview({ task }: TaskOverviewProps) {
   const tStatus = useTranslations('Task.Status');
+  const t = useTranslations('Task.Overview');
   const { open } = useEditTaskModal();
 
   return (
     <div className="col-span-1 flex flex-col gap-y-4">
       <div className="bg-muted rounded-lg p-4">
         <div className="flex items-center justify-between">
-          <p className="text-lg font-semibold">Overview</p>
+          <p className="text-lg font-semibold">{t('title')}</p>
           <Button onClick={() => open(task.id)} size="sm" variant="secondary">
             <PencilIcon className="mr-2 size-4" />
-            Edit
+            {t('edit')}
           </Button>
         </div>
         <DottedSeparator className="my-4" />
         <div className="flex flex-col gap-y-4">
-          <OverviewProperty label="Assignee">
+          <OverviewProperty label={t('assignee')}>
             <MemberAvatar
               className="size-6"
               name={task.assignedUser.name}
@@ -38,10 +39,10 @@ export function TaskOverview({ task }: TaskOverviewProps) {
             />
             <p className="text-sm font-medium">{task.assignedUser.name}</p>
           </OverviewProperty>
-          <OverviewProperty label="Due Date">
+          <OverviewProperty label={t('dueDate')}>
             <TaskDate value={task.dueDate} className="text-sm font-medium" />
           </OverviewProperty>
-          <OverviewProperty label="Status">
+          <OverviewProperty label={t('status')}>
             <Badge variant={task.status}>{tStatus(task.status)}</Badge>
           </OverviewProperty>
         </div>

@@ -24,7 +24,7 @@ export const taskRouter = createTRPCRouter({
         });
       }
 
-      return await createTask(input);
+      return await createTask(input, ctx.auth.session.userId);
     }),
   getMany: permissionedProcedure
     .input(queryTaskSchema)

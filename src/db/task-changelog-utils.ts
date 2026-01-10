@@ -22,6 +22,7 @@ export async function recordTaskChange(input: TaskChangeLogInput) {
     const newValue = input.newValue
       ? formatChangeLogValue(input.newValue)
       : null;
+    if (oldValue === newValue) return;
     await db.insert(taskChangeLog).values({
       taskId: input.taskId,
       organizationId: input.organizationId,
@@ -42,7 +43,7 @@ export async function recordTaskChange(input: TaskChangeLogInput) {
  */
 export async function recordTaskChanges(inputs: TaskChangeLogInput[]) {
   if (inputs.length === 0) return;
-  
+
   try {
     // 过滤掉 oldValue 和 newValue 相同的记录
     const validChanges = inputs.filter((input) => {
@@ -61,12 +62,8 @@ export async function recordTaskChanges(inputs: TaskChangeLogInput[]) {
       taskId: input.taskId,
       organizationId: input.organizationId,
       fieldName: input.fieldName,
-      oldValue: input.oldValue
-        ? formatChangeLogValue(input.oldValue)
-        : null,
-      newValue: input.newValue
-        ? formatChangeLogValue(input.newValue)
-        : null,
+      oldValue: input.oldValue ? formatChangeLogValue(input.oldValue) : null,
+      newValue: input.newValue ? formatChangeLogValue(input.newValue) : null,
       changedBy: input.changedBy ?? null,
     }));
 

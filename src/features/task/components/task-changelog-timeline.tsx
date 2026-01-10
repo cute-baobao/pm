@@ -1,127 +1,71 @@
 'use client';
 
+import { DottedSeparator } from '@/components/dotted-separator';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Empty } from '@/components/ui/empty';
-import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import {
-  FileText,
-  CheckCircle2,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { MemberAvatar } from '@/features/organization-member/components/member-avatar';
+import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
+import { useOrganizationId } from '@/features/organization/hooks/use-organization';
+import {
+  Activity,
+  ArrowRight,
   Calendar,
-  User,
+  CheckCircle2,
+  FileText,
   FolderOpen,
-  Zap,
+  User,
 } from 'lucide-react';
+import { useFormatter, useTranslations } from 'next-intl';
 import { useSuspenseTaskChangeLog, useTaskId } from '../hooks/use-task';
 
-interface TaskChangelogTimelineProps {
-  taskId: string;
-}
-
-const fieldIconMap: Record<string, React.ReactNode> = {
-  name: <FileText className="h-4 w-4" />,
-  description: <FileText className="h-4 w-4" />,
-  status: <CheckCircle2 className="h-4 w-4" />,
-  dueDate: <Calendar className="h-4 w-4" />,
-  assignedId: <User className="h-4 w-4" />,
-  projectId: <FolderOpen className="h-4 w-4" />,
-};
-
-const fieldLabelMap: Record<string, string> = {
-  name: '名称',
-  description: '描述',
-  status: '状态',
-  dueDate: '截止日期',
-  assignedId: '分配人',
-  projectId: '项目',
-};
-
-const statusMap: Record<string, { label: string; color: string }> = {
-  TODO: { label: '待办', color: 'bg-slate-100 text-slate-800' },
-  IN_PROGRESS: { label: '进行中', color: 'bg-blue-100 text-blue-800' },
-  IN_REVIEW: { label: '审核中', color: 'bg-purple-100 text-purple-800' },
-  DONE: { label: '已完成', color: 'bg-green-100 text-green-800' },
-  BACKLOG: { label: '待办列表', color: 'bg-yellow-100 text-yellow-800' },
-};
-
-const formatValue = (
-  fieldName: string,
-  value: string | null,
-): React.ReactNode => {
-  if (!value || value === '-') return '-';
-
-  if (fieldName === 'status' && statusMap[value]) {
-    return (
-      <Badge variant="outline" className={statusMap[value].color}>
-        {statusMap[value].label}
-      </Badge>
-    );
-  }
-
-  if (fieldName === 'dueDate') {
-    try {
-      const date = new Date(value);
-      return date.toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      });
-    } catch {
-      return value;
-    }
-  }
-
-  return <span className="font-medium">{value}</span>;
-};
-
-const getChangelogMessage = (
-  fieldName: string,
-  oldValue: string | null,
-  newValue: string | null,
-): string => {
-  const fieldLabel = fieldLabelMap[fieldName] || fieldName;
-
-  // 对于某些字段的特殊处理
-  if (fieldName === 'name') {
-    return `更改了${fieldLabel}`;
-  }
-  if (fieldName === 'description') {
-    return `更新了${fieldLabel}`;
-  }
-  if (fieldName === 'status') {
-    return `将状态从 ${oldValue || '无'} 更改为 ${newValue || '无'}`;
-  }
-  if (fieldName === 'dueDate') {
-    return `设置${fieldLabel}为 ${newValue ? formatValue(fieldName, newValue) : '无'}`;
-  }
-  if (fieldName === 'assignedId') {
-    return `将任务分配给了用户`;
-  }
-  if (fieldName === 'projectId') {
-    return `将任务移动到了项目`;
-  }
-
-  return `修改了${fieldLabel}`;
+const fieldIconMap: Record<string, React.ElementType> = {
+  status: CheckCircle2,
+  dueDate: Calendar,
+  assignedId: User,
+  projectId: FolderOpen,
+  name: FileText,
+  description: FileText,
 };
 
 export function TaskChangelogTimeline() {
+  const t = useTranslations('Task.ChangeLog');
+  const tLog = useTranslations('Task.ChangeLog.log');
+  const tStatus = useTranslations('Task.Status');
+  const format = useFormatter();
+
   const taskId = useTaskId();
-  const { data: changelog, isLoading } = useSuspenseTaskChangeLog(taskId);
+  const organizationId = useOrganizationId();
+  const { data: changelog, isLoading: isLoadingLogs } =
+    useSuspenseTaskChangeLog(taskId);
+  const { data: members, isLoading: isLoadingMembers } =
+    useSuspenseOrganizationMembers(organizationId);
+
+  const isLoading = isLoadingLogs || isLoadingMembers;
+
+  // Helper to find member by ID
+  const getMember = (id: string | null) => {
+    if (!id || !members) return null;
+    // The members data structure might vary, adjust if needed
+    // Assuming members is an array of objects with user property or id
+    return members.find((m) => m.userId === id || m.id === id)?.user;
+  };
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="border-none shadow-none">
         <CardHeader>
-          <CardTitle>变更历史</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="h-10 animate-pulse rounded-lg bg-gray-200"
-              />
+              <div key={i} className="bg-muted h-12 animate-pulse rounded-lg" />
             ))}
           </div>
         </CardContent>
@@ -131,75 +75,237 @@ export function TaskChangelogTimeline() {
 
   if (!changelog || changelog.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>变更历史</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Empty title="暂无变更记录" />
-        </CardContent>
+      <Card className="border-none shadow-none">
+        <div className="text-muted-foreground p-6 text-center">
+          <Activity className="mx-auto mb-2 h-8 w-8 opacity-50" />
+          <p>{t('empty')}</p>
+        </div>
       </Card>
     );
   }
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>变更历史</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="divide-y">
-          {changelog.map((log) => (
-            <div
-              key={log.id}
-              className="flex gap-3 py-3 hover:bg-gray-50 px-2 rounded-md transition-colors"
+  const renderValue = (
+    fieldName: string,
+    value: string | null,
+    isOld: boolean = false,
+  ) => {
+    if (!value) {
+      return (
+        <span className="text-muted-foreground text-xs italic">
+          {isOld ? '' : 'None'}
+        </span>
+      );
+    }
+
+    let content: React.ReactNode = value;
+
+    if (fieldName === 'status') {
+      content = (
+        <Badge
+          variant="outline"
+          className={
+            isOld
+              ? 'text-muted-foreground border-dashed bg-transparent px-1.5 font-normal line-through'
+              : 'bg-primary/10 text-primary border-primary/20 px-1.5 font-medium'
+          }
+        >
+          {tStatus(value as any)}
+        </Badge>
+      );
+    } else if (fieldName === 'dueDate') {
+      try {
+        const date = new Date(value);
+        const formatted = format.dateTime(date, { dateStyle: 'medium' });
+        content = (
+          <span
+            className={
+              isOld ? 'text-muted-foreground line-through' : 'text-foreground'
+            }
+          >
+            {formatted}
+          </span>
+        );
+      } catch {
+        content = <span>{value}</span>;
+      }
+    } else if (fieldName === 'assignedId') {
+      const member = getMember(value);
+      if (member) {
+        content = (
+          <div
+            className={`flex items-center gap-1.5 ${
+              isOld ? 'opacity-50 grayscale' : ''
+            }`}
+          >
+            <MemberAvatar
+              name={member.name || 'User'}
+              image={member.image}
+              className="h-5 w-5"
+            />
+            <span
+              className={`text-sm font-medium ${isOld ? 'line-through' : ''}`}
             >
-              {/* 左侧图标 */}
-              <div className="relative flex items-start pt-1">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600">
-                  {fieldIconMap[log.fieldName] || <Zap className="h-4 w-4" />}
+              {member.name}
+            </span>
+          </div>
+        );
+      } else {
+        content = (
+          <span
+            className={`font-mono text-xs ${
+              isOld ? 'text-muted-foreground line-through' : 'text-foreground'
+            }`}
+          >
+            {value.slice(0, 8)}...
+          </span>
+        );
+      }
+    } else if (fieldName === 'projectId') {
+      content = (
+        <span
+          className={`font-mono text-xs ${
+            isOld ? 'text-muted-foreground line-through' : 'text-foreground'
+          }`}
+        >
+          {value.slice(0, 8)}...
+        </span>
+      );
+    } else {
+      // Text fields (name, description)
+      const isLong = value.length > 20;
+
+      if (isLong) {
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className={`max-w-[180px] cursor-help truncate font-medium ${
+                    isOld
+                      ? 'text-muted-foreground line-through'
+                      : 'text-foreground'
+                  }`}
+                >
+                  {value}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs text-pretty">
+                <p>{value}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      } else {
+        content = (
+          <span
+            className={
+              isOld
+                ? 'text-muted-foreground font-medium line-through'
+                : 'text-foreground font-medium'
+            }
+          >
+            {value}
+          </span>
+        );
+      }
+    }
+
+    return content;
+  };
+
+  return (
+    <Card className="w-full gap-y-4 shadow-none">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold">{t('title')}</CardTitle>
+      </CardHeader>
+      <DottedSeparator className="px-6" />
+      <CardContent className="relative space-y-6">
+        {/* Timeline Line */}
+        <div className="bg-border absolute top-5 bottom-5 left-11 w-px" />
+
+        {changelog.map((log) => {
+          const isSystem = !log.changedByUser;
+          const user = log.changedByUser;
+          const Icon = fieldIconMap[log.fieldName] || Activity;
+
+          let actionText = '';
+          switch (log.fieldName) {
+            case 'status':
+              actionText = tLog('status');
+              break;
+            case 'assignedId':
+              actionText = tLog('assignedId');
+              break;
+            case 'dueDate':
+              actionText = tLog('dueDate');
+              break;
+            case 'projectId':
+              actionText = tLog('projectId');
+              break;
+            case 'name':
+              actionText = tLog('name');
+              break;
+            case 'description':
+              actionText = tLog('description');
+              break;
+            default:
+              actionText = tLog('default', { field: log.fieldName });
+          }
+
+          return (
+            <div key={log.id} className="group relative flex gap-4">
+              {/* Icon Node */}
+              <div className="relative z-10 flex shrink-0 items-center justify-center">
+                <div className="bg-background border-muted ring-background group-hover:border-primary/50 flex h-10 w-10 items-center justify-center rounded-full border-2 ring-4 transition-colors">
+                  <Icon className="text-muted-foreground group-hover:text-primary h-5 w-5 transition-colors" />
                 </div>
               </div>
 
-              {/* 右侧内容 */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="font-semibold text-gray-900">
-                    {log.changedByUser?.name || '系统'}
-                  </span>
-                  <span className="text-gray-700">
-                    {getChangelogMessage(
-                      log.fieldName,
-                      log.oldValue,
-                      log.newValue,
+              {/* Content */}
+              <div className="flex-1 space-y-1 pt-1">
+                {/* Header: User & Time */}
+                <div className="text-foreground flex flex-wrap items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2 font-semibold">
+                    {!isSystem && (
+                      <MemberAvatar
+                        name={user?.name || 'User'}
+                        image={user?.image}
+                        className="h-5 w-5 hover:opacity-100"
+                        fallbackClassName="text-[10px]"
+                      />
                     )}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {formatDistanceToNow(new Date(log.createdAt), {
-                      addSuffix: true,
-                      locale: zhCN,
-                    })}
-                  </span>
-                </div>
-
-                {/* 如果有特别的值变化信息，显示为内联标签 */}
-                {log.fieldName === 'status' && (
-                  <div className="mt-1 flex gap-2 items-center text-sm">
-                    <span className="text-gray-500">
-                      <span className="line-through opacity-60">
-                        {formatValue(log.fieldName, log.oldValue)}
-                      </span>
-                    </span>
-                    <span className="text-gray-400">→</span>
-                    <span className="text-green-700">
-                      {formatValue(log.fieldName, log.newValue)}
+                    <span>
+                      {isSystem ? 'System' : user?.name || t('unknownUser')}
                     </span>
                   </div>
-                )}
+                  <span className="text-muted-foreground">{actionText}</span>
+                  <span className="text-muted-foreground text-xs">
+                    {format.relativeTime(new Date(log.createdAt))}
+                  </span>
+                </div>
+
+                {/* Body: Diff Box */}
+                {/* Only show diff box if there are values to show */}
+                <div className="mt-2 text-sm">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {log.oldValue && (
+                      <>
+                        <div className="max-w-[45%] shrink-0">
+                          {renderValue(log.fieldName, log.oldValue, true)}
+                        </div>
+                        <ArrowRight className="text-muted-foreground/50 h-3.5 w-3.5 shrink-0 px-0.5" />
+                      </>
+                    )}
+
+                    <div className="max-w-[45%] shrink-0">
+                      {renderValue(log.fieldName, log.newValue, false)}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </CardContent>
     </Card>
   );

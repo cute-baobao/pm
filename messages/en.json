@@ -217,6 +217,23 @@
       "deleteConfirmTitle": "Delete task",
       "deleteConfirmMessage": "This action cannot be undone"
     },
+    "Overview": {
+      "title": "Overview",
+      "edit": "Edit",
+      "assignee": "Assignee",
+      "dueDate": "Due Date",
+      "status": "Status"
+    },
+    "View": {
+      "loading": "Loading...",
+      "notFound": "Task not found"
+    },
+    "Filters": {
+      "allStatuses": "All statuses",
+      "allProjects": "All projects",
+      "allAssignees": "All assignees",
+      "dueDate": "Due date"
+    },
     "Description": {
       "label": "Description",
       "placeholder": "Add a description...",
@@ -273,19 +290,28 @@
       "updateButton": "Save Changes"
     },
     "ChangeLog": {
-      "title": "Change History",
-      "empty": "No changes yet",
-      "fields": {
-        "name": "Task Name",
-        "status": "Status",
-        "description": "Description",
-        "dueDate": "Due Date",
-        "assignedId": "Assigned To"
-      },
-      "changedFrom": "Changed from",
-      "changedTo": "to",
-      "changedBy": "by",
-      "unknownUser": "Unknown User"
+      "title": "Activity",
+      "empty": "No activity yet",
+      "unknownUser": "Unknown User",
+      "log": {
+        "default": "updated {field}",
+        "name": "changed the title",
+        "description": "changed the description",
+        "created": "created this task",
+        "status": "changed status",
+        "assignedId": "updated assignee",
+        "assignedId_self": "self-assigned this",
+        "assignedId_removed": "removed assignee",
+        "dueDate": "changed due date",
+        "projectId": "moved to another project"
+      }
+    },
+    "Analytics": {
+      "totalTasks": "Total tasks",
+      "assignedTasks": "Assigned tasks",
+      "completedTasks": "Completed tasks",
+      "incompletedTasks": "Incompleted tasks",
+      "overdueTasks": "Overdue tasks"
     }
   }
 }

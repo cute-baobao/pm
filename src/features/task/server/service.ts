@@ -1,10 +1,10 @@
 import db from '@/db';
 import { task } from '@/db/schemas';
-import { recordTaskChanges } from '@/db/task-changelog-utils';
+import { recordTaskChange, recordTaskChanges } from '@/db/task-changelog-utils';
 import { eq } from 'drizzle-orm';
 import { CreateTaskData, QueryTaskData, UpdateTaskData } from '../schema';
 
-export const createTask = async (data: CreateTaskData) => {
+export const createTask = async (data: CreateTaskData, createdBy: string) => {
   const { projectId, status } = data;
   const result = await db.transaction(async (tx) => {
     const highestPositionTask = await tx.query.task.findFirst({
@@ -30,7 +30,18 @@ export const createTask = async (data: CreateTaskData) => {
         position: newPosition,
       })
       .returning();
+
     return newTask;
+  });
+
+  // record log
+  await recordTaskChange({
+    taskId: result.id,
+    organizationId: result.organizationId,
+    fieldName: 'assignedId',
+    oldValue: null,
+    newValue: result.assignedId,
+    changedBy: createdBy,
   });
 
   return result;
@@ -141,10 +152,9 @@ export const getTaskById = async (taskId: string) => {
 };
 
 export const getTaskChangeLog = async (taskId: string) => {
-  const { taskChangeLog } = await import('@/db/schemas');
   const result = await db.query.taskChangeLog.findMany({
     where: (t, { eq }) => eq(t.taskId, taskId),
-    orderBy: (t, { desc }) => [desc(t.createdAt)],
+    orderBy: (t, { asc }) => [asc(t.createdAt)],
     with: {
       changedByUser: true,
     },

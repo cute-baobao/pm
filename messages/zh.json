@@ -215,6 +215,23 @@
       "deleteConfirmTitle": "删除任务",
       "deleteConfirmMessage": "此操作无法撤销"
     },
+    "Overview": {
+      "title": "概览",
+      "edit": "编辑",
+      "assignee": "负责人",
+      "dueDate": "截止日期",
+      "status": "状态"
+    },
+    "View": {
+      "loading": "加载中...",
+      "notFound": "未找到任务"
+    },
+    "Filters": {
+      "allStatuses": "所有状态",
+      "allProjects": "所有项目",
+      "allAssignees": "所有负责人",
+      "dueDate": "截止日期"
+    },
     "Description": {
       "label": "描述",
       "placeholder": "添加描述...",
@@ -271,19 +288,28 @@
       "updateButton": "保存更改"
     },
     "ChangeLog": {
-      "title": "变更历史",
-      "empty": "暂无变更",
-      "fields": {
-        "name": "任务名称",
-        "status": "状态",
-        "description": "描述",
-        "dueDate": "截止日期",
-        "assignedId": "负责人"
-      },
-      "changedFrom": "从",
-      "changedTo": "变更为",
-      "changedBy": "由",
-      "unknownUser": "未知用户"
+      "title": "活动",
+      "empty": "暂无活动",
+      "unknownUser": "未知用户",
+      "log": {
+        "default": "更新了 {field}",
+        "name": "修改了标题",
+        "description": "修改了描述",
+        "created": "创建了此任务",
+        "status": "更新了状态",
+        "assignedId": "更新了负责人",
+        "assignedId_self": "认领了此任务",
+        "assignedId_removed": "移除了负责人",
+        "dueDate": "修改了截止日期",
+        "projectId": "移动到了其他项目"
+      }
+    },
+    "Analytics": {
+      "totalTasks": "总任务数",
+      "assignedTasks": "已分配任务",
+      "completedTasks": "已完成任务",
+      "incompletedTasks": "未完成任务",
+      "overdueTasks": "逾期任务"
     }
   }
 }

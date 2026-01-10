@@ -7,17 +7,20 @@ import { TaskChangelogTimeline } from '@/features/task/components/task-changelog
 import { TaskDescription } from '@/features/task/components/task-description';
 import { TaskOverview } from '@/features/task/components/task-overview';
 import { useGetTask, useTaskId } from '@/features/task/hooks/use-task';
+import { useTranslations } from 'next-intl';
 
 function TaskLoading() {
+  const t = useTranslations('Task.View');
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <LoadingView messageNode="Loading..." />
+      <LoadingView messageNode={t('loading')} />
     </div>
   );
 }
 
 export function TaskClient() {
   const taskId = useTaskId();
+  const t = useTranslations('Task.View');
 
   const { data: task, isLoading } = useGetTask(taskId);
 
@@ -26,7 +29,7 @@ export function TaskClient() {
   }
 
   if (!task) {
-    return <div>Task not found</div>;
+    return <div>{t('notFound')}</div>;
   }
 
   return (

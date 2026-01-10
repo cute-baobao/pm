@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { AnalyticsCard } from './analytics-card';
 import { DottedSeparator } from './dotted-separator';
 import { ScrollArea, ScrollBar } from './ui/scroll-area';
@@ -20,35 +23,37 @@ interface AnalyticsProps {
 }
 
 export function Analytics({ data }: AnalyticsProps) {
+  const t = useTranslations('Task.Analytics');
+
   if (!data) return null;
 
   const cards = [
     {
-      title: 'Total tasks',
+      title: t('totalTasks'),
       value: data.taskCount,
       variant: data.taskDifference >= 0 ? 'up' : 'down',
       increaseValue: Math.abs(data.taskDifference),
     },
     {
-      title: 'Assigned tasks',
+      title: t('assignedTasks'),
       value: data.assignedTaskCount,
       variant: data.assignedTaskDifference >= 0 ? 'up' : 'down',
       increaseValue: Math.abs(data.assignedTaskDifference),
     },
     {
-      title: 'Completed tasks',
+      title: t('completedTasks'),
       value: data.completeTaskCount,
       variant: data.completeTaskDifference >= 0 ? 'up' : 'down',
       increaseValue: Math.abs(data.completeTaskDifference),
     },
     {
-      title: 'Incompleted tasks',
+      title: t('incompletedTasks'),
       value: data.incompletedTaskCount ?? 0,
       variant: (data.incompletedTaskCount ?? 0) >= 0 ? 'up' : 'down',
       increaseValue: Math.abs(data.incompletedTaskDifference ?? 0),
     },
     {
-      title: 'Overdue tasks',
+      title: t('overdueTasks'),
       value: data.overdueTaskCount,
       variant: data.overdueTaskDifference >= 0 ? 'up' : 'down',
       increaseValue: Math.abs(data.overdueTaskDifference),
