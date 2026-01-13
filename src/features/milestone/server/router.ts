@@ -1,0 +1,41 @@
+import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
+import { TRPCError } from '@trpc/server';
+import z from 'zod';
+import { createMilestoneSchema, updateMilestoneSchema } from '../schema';
+import {
+  createMilestone,
+  deleteMilestoneById,
+  getManyMilestones,
+  updateMilestone,
+} from './service';
+
+export const milestoneRouter = createTRPCRouter({
+  create: permissionedProcedure
+    .input(createMilestoneSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { activeOrganizationId } = ctx.auth.session;
+      if (activeOrganizationId !== input.organizationId) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Error.forbidden_no_permission',
+        });
+      }
+
+      return await createMilestone(input);
+    }),
+  update: permissionedProcedure
+    .input(updateMilestoneSchema)
+    .mutation(async ({ ctx, input }) => {
+      return updateMilestone(input);
+    }),
+  getMany: permissionedProcedure
+    .input(z.string().min(1, 'Organization ID is required'))
+    .query(async ({ input }) => {
+      return getManyMilestones(input);
+    }),
+  delete: permissionedProcedure
+    .input(z.string().min(1, 'Milestone ID is required'))
+    .mutation(async ({ input }) => {
+      return deleteMilestoneById(input);
+    }),
+});

@@ -1,7 +1,7 @@
 import db from '@/db';
 import { task } from '@/db/schemas';
 import { recordTaskChange, recordTaskChanges } from '@/db/task-changelog-utils';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { CreateTaskData, QueryTaskData, UpdateTaskData } from '../schema';
 
 export const createTask = async (data: CreateTaskData, createdBy: string) => {
@@ -59,6 +59,14 @@ export const getManyTasksByFilters = async (filters: QueryTaskData) => {
         filters.search ? ilike(t.name, `%${filters.search}%`) : undefined,
         filters.dueDate ? lte(t.dueDate, new Date(filters.dueDate)) : undefined,
       ),
+    orderBy: (t, { desc, asc }) => [
+      // 1. 已完成的在最后 (DONE = 1, 其他 = 0，升序排列)
+      asc(sql`CASE WHEN ${t.status} = 'DONE' THEN 1 ELSE 0 END`),
+      // 2. 逾期的在前面 (逾期 = 0, 未逾期 = 1，升序排列)
+      asc(sql`CASE WHEN ${t.dueDate} < NOW() THEN 0 ELSE 1 END`),
+      // 3. 按创建时间降序
+      desc(t.createdAt),
+    ],
     with: {
       project: true,
       organization: true,

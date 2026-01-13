@@ -36,10 +36,14 @@ export function TaskClient() {
     <div className="flex flex-col">
       <TaskBreadcrumbs project={task.project} task={task} />
       <DottedSeparator className="my-6" />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <TaskOverview task={task} />
-        <TaskDescription task={task} />
-        <TaskChangelogTimeline />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="flex w-full flex-1 flex-col gap-y-4 xl:col-span-2">
+          <TaskOverview task={task} />
+          <TaskDescription task={task} />
+        </div>
+        <div className="w-full xl:col-span-1">
+          <TaskChangelogTimeline />
+        </div>
       </div>
     </div>
   );

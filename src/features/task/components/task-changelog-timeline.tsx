@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { TaskStatus } from '@/db/schemas';
 import { MemberAvatar } from '@/features/organization-member/components/member-avatar';
 import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
 import { useOrganizationId } from '@/features/organization/hooks/use-organization';
@@ -101,16 +102,7 @@ export function TaskChangelogTimeline() {
 
     if (fieldName === 'status') {
       content = (
-        <Badge
-          variant="outline"
-          className={
-            isOld
-              ? 'text-muted-foreground border-dashed bg-transparent px-1.5 font-normal line-through'
-              : 'bg-primary/10 text-primary border-primary/20 px-1.5 font-medium'
-          }
-        >
-          {tStatus(value as any)}
-        </Badge>
+        <Badge variant={value as TaskStatus}>{tStatus(value as any)}</Badge>
       );
     } else if (fieldName === 'dueDate') {
       try {
@@ -280,7 +272,7 @@ export function TaskChangelogTimeline() {
                   </div>
                   <span className="text-muted-foreground">{actionText}</span>
                   <span className="text-muted-foreground text-xs">
-                    {format.relativeTime(new Date(log.createdAt))}
+                    {format.relativeTime(new Date(log.createdAt), new Date())}
                   </span>
                 </div>
 
