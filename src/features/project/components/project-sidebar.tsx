@@ -5,11 +5,9 @@ import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
 import { useSession } from '@/lib/auth-client';
 import {
-  CircleGaugeIcon,
-  FolderOpenDotIcon,
   HomeIcon,
+  MilestoneIcon,
   SettingsIcon,
-  UsersIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -24,9 +22,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from './ui/sidebar';
+} from '@/components/ui/sidebar';
 
-export function AppSidebar() {
+export function ProjectSidebar() {
   const t = useTranslations('Navigation');
   const pathname = usePathname();
   const params = useParams();
@@ -43,28 +41,8 @@ export function AppSidebar() {
           url: '',
         },
         {
-          title: t('dashboard'),
-          icon: CircleGaugeIcon,
-          url: '/dashboard',
-        },
-        {
-          title: 'My Tasks',
-          icon: FolderOpenDotIcon,
-          url: '/tasks?assignedId=' + userId,
-        },
-        {
-          title: t('projects'),
-          icon: FolderOpenDotIcon,
-          url: '/projects',
-        },
-        {
-          title: t('members'),
-          icon: UsersIcon,
-          url: '/members',
-        },
-        {
           title: t('milestones'),
-          icon: UsersIcon,
+          icon: MilestoneIcon,
           url: '/milestones',
         },
       ],
@@ -88,7 +66,7 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => {
-                  const fullUrl = `/organization/${params.slug}${item.url}`;
+                  const fullUrl = `/organization/${params.slug}/projects/${params.projectId}${item.url}`;
                   const isActive =
                     item.url === ''
                       ? pathname === fullUrl
@@ -120,16 +98,19 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip={'settings'}
+              tooltip={t('settings')}
               asChild
               isActive={pathname.startsWith(
-                `/organization/${params.slug}/setting`,
+                `/organization/${params.slug}/projects/${params.projectId}/edit`,
               )}
               className="h-10 gap-x-4 px-4"
             >
-              <Link href={`/organization/${params.slug}/setting`} prefetch>
+              <Link
+                href={`/organization/${params.slug}/projects/${params.projectId}/edit`}
+                prefetch
+              >
                 <SettingsIcon className="size-4" />
-                <span>Setting</span>
+                <span>{t('settings')}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

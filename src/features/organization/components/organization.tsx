@@ -9,9 +9,8 @@ import { MemberAvatar } from '@/features/organization-member/components/member-a
 import { useSuspenseOrganizationMembers } from '@/features/organization-member/hooks/use-organization-member';
 import { ProjectAvatar } from '@/features/project/components/project-avatar';
 import { useSuspenseProjects } from '@/features/project/hooks/use-project';
-import { TaskEnhanced } from '@/features/task/components/kanban-card';
 import { useCreateTaskModal } from '@/features/task/hooks/use-create-task-modal';
-import { useSuspenseTasks } from '@/features/task/hooks/use-task';
+import { useSuspenseTaskPagination } from '@/features/task/hooks/use-task';
 import { useSession } from '@/lib/auth-client';
 import { formatDistanceToNow } from 'date-fns';
 import { CalendarIcon, PlusIcon } from 'lucide-react';
@@ -42,7 +41,7 @@ export function OrganizationView() {
       assigneeId: userId,
     });
   const { data: tasks, isLoading: isTasksLoading } =
-    useSuspenseTasks(organizationId);
+    useSuspenseTaskPagination(organizationId);
 
   const { data: projects, isLoading: isProjectsLoading } =
     useSuspenseProjects(organizationId);
@@ -66,7 +65,7 @@ export function OrganizationView() {
     <div className="flex h-full flex-col space-y-4">
       <Analytics data={analytics} />
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <TaskList data={tasks} />
+        <TaskList data={tasks.items} />
         <ProjectList data={projects.items} />
         <MemberList data={members} />
       </div>
@@ -129,7 +128,7 @@ export function ProjectList({ data }: ProjectListProps) {
 }
 
 interface TaskListProps {
-  data: TaskEnhanced[];
+  data: ReturnType<typeof useSuspenseTaskPagination>['data']['items'];
 }
 
 export function TaskList({ data }: TaskListProps) {

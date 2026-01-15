@@ -1,8 +1,13 @@
 import db from '@/db';
 import { task } from '@/db/schemas';
 import { recordTaskChange, recordTaskChanges } from '@/db/task-changelog-utils';
-import { eq, sql } from 'drizzle-orm';
-import { CreateTaskData, QueryTaskData, UpdateTaskData } from '../schema';
+import { and, eq, ilike, lte, sql } from 'drizzle-orm';
+import {
+  CreateTaskData,
+  QueryTaskData,
+  TaskPaginationData,
+  UpdateTaskData,
+} from '../schema';
 
 export const createTask = async (data: CreateTaskData, createdBy: string) => {
   const { projectId, status } = data;
@@ -73,6 +78,62 @@ export const getManyTasksByFilters = async (filters: QueryTaskData) => {
       assignedUser: true,
     },
   });
+};
+
+export const getManyTasksWithPagination = async (
+  filters: TaskPaginationData,
+) => {
+  const { page, pageSize, ...queryFilters } = filters;
+
+  const whereCondition = and(
+    eq(task.organizationId, queryFilters.organizationId),
+    queryFilters.status ? eq(task.status, queryFilters.status) : undefined,
+    queryFilters.projectId
+      ? eq(task.projectId, queryFilters.projectId)
+      : undefined,
+    queryFilters.assignedId
+      ? eq(task.assignedId, queryFilters.assignedId)
+      : undefined,
+    queryFilters.search
+      ? ilike(task.name, `%${queryFilters.search}%`)
+      : undefined,
+    queryFilters.dueDate
+      ? lte(task.dueDate, new Date(queryFilters.dueDate))
+      : undefined,
+  );
+
+  const [items, totalCount] = await Promise.all([
+    db.query.task.findMany({
+      where: whereCondition,
+      orderBy: (t, { desc, asc }) => [
+        asc(sql`CASE WHEN ${t.status} = 'DONE' THEN 1 ELSE 0 END`),
+        asc(sql`CASE WHEN ${t.dueDate} < NOW() THEN 0 ELSE 1 END`),
+        desc(t.createdAt),
+      ],
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+      with: {
+        project: true,
+        organization: true,
+        assignedUser: true,
+      },
+    }),
+    db.$count(task, whereCondition),
+  ]);
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+  const hasNextPage = page < totalPages;
+  const hasPreviousPage = page > 1;
+
+  return {
+    items,
+    page,
+    pageSize,
+    totalCount,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+  };
 };
 
 export const deleteTaskById = async (taskId: string) => {

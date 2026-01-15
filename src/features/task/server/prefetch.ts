@@ -1,8 +1,12 @@
 import { prefetch, trpc } from '@/trpc/server';
-import { QueryTaskData } from '../schema';
+import { QueryTaskData, TaskPaginationData } from '../schema';
 
 export const prefetchTasks = (payload: QueryTaskData) => {
   return prefetch(trpc.task.getMany.queryOptions(payload));
+};
+
+export const prefetchTaskPagination = (payload: TaskPaginationData) => {
+  return prefetch(trpc.task.getManyWithPagination.queryOptions(payload));
 };
 
 export const prefetchTaskChangeLog = (taskId: string) => {

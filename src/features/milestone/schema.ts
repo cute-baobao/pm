@@ -1,4 +1,5 @@
 import { milestoneStatusValues } from '@/db/schemas';
+import { PAGINATION } from '@/lib/configs/constants';
 import z from 'zod';
 
 export const createMilestoneSchema = z.object({
@@ -27,5 +28,17 @@ export const updateMilestoneSchema = z.object({
   taskIds: z.array(z.string()).optional(),
 });
 
+export const milestonePaginationSchema = z.object({
+  projectId: z.string().min(1, 'Project ID is required'),
+  page: z.number().default(PAGINATION.DEFAULT_PAGE),
+  pageSize: z
+    .number()
+    .min(PAGINATION.MIN_PAGE_SIZE)
+    .max(PAGINATION.MAX_PAGE_SIZE)
+    .default(PAGINATION.DEFAULT_PAGE_SIZE),
+  search: z.string().default(''),
+});
+
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
+export type MilestonePaginationInput = z.infer<typeof milestonePaginationSchema>;

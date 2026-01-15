@@ -48,6 +48,7 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "members": "Members",
+    "milestones": "Milestones",
     "settings": "Settings",
     "signOut": "Sign Out"
   },
@@ -197,6 +198,35 @@
       "loadingMessage": "Loading projects...",
       "errorMessage": "Error loading projects...",
       "emptyMessage": "No projects found, Get started by creating a project"
+    }
+  },
+  "Milestone": {
+    "createSuccess": "Milestone created successfully",
+    "createError": "Error creating milestone: {message}",
+    "deleteSuccess": "Milestone deleted successfully",
+    "deleteError": "Error deleting milestone: {message}",
+    "notFound": "No Milestone found.",
+    "List": {
+      "title": "Milestones",
+      "description": "Create and manage your milestones",
+      "newButtonLabel": "New milestone",
+      "searchPlaceholder": "Search milestones...",
+      "loadingMessage": "Loading milestones...",
+      "errorMessage": "Error loading milestones...",
+      "emptyMessage": "No milestones found, Get started by creating a milestone"
+    },
+    "CreateForm": {
+      "title": "Create Milestone",
+      "nameLabel": "Milestone Name",
+      "namePlaceholder": "Enter milestone name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter milestone description",
+      "targetDateLabel": "Target Date",
+      "targetDatePlaceholder": "Select date",
+      "taskIdsLabel": "Related Tasks",
+      "taskIdsPlaceholder": "Select tasks to associate",
+      "cancelButton": "Cancel",
+      "createButton": "Create Milestone"
     }
   },
   "Task": {

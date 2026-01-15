@@ -48,6 +48,7 @@
     "dashboard": "仪表盘",
     "projects": "项目",
     "members": "成员",
+    "milestones": "里程碑",
     "settings": "设置",
     "signOut": "退出登录"
   },
@@ -195,6 +196,35 @@
       "loadingMessage": "正在加载项目...",
       "errorMessage": "加载项目时出错...",
       "emptyMessage": "未找到项目，开始创建项目"
+    }
+  },
+  "Milestone": {
+    "createSuccess": "里程碑创建成功",
+    "createError": "创建里程碑失败: {message}",
+    "deleteSuccess": "里程碑删除成功",
+    "deleteError": "删除里程碑失败: {message}",
+    "notFound": "未找到里程碑。",
+    "List": {
+      "title": "里程碑",
+      "description": "创建和管理您的里程碑",
+      "newButtonLabel": "新建里程碑",
+      "searchPlaceholder": "搜索里程碑...",
+      "loadingMessage": "正在加载里程碑...",
+      "errorMessage": "加载里程碑时出错...",
+      "emptyMessage": "未找到里程碑，开始创建里程碑"
+    },
+    "CreateForm": {
+      "title": "创建里程碑",
+      "nameLabel": "里程碑名称",
+      "namePlaceholder": "输入里程碑名称",
+      "descriptionLabel": "描述",
+      "descriptionPlaceholder": "输入里程碑描述",
+      "targetDateLabel": "目标日期",
+      "targetDatePlaceholder": "选择日期",
+      "taskIdsLabel": "关联任务",
+      "taskIdsPlaceholder": "选择要关联的任务",
+      "cancelButton": "取消",
+      "createButton": "创建里程碑"
     }
   },
   "Task": {

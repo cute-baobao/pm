@@ -1,12 +1,13 @@
 import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { createTaskSchema, queryTaskSchema, updateTaskSchema } from '../schema';
+import { createTaskSchema, queryTaskSchema, taskPaginationSchema, updateTaskSchema } from '../schema';
 import {
   bulkUpdateTasks,
   createTask,
   deleteTaskById,
   getManyTasksByFilters,
+  getManyTasksWithPagination,
   getTaskById,
   getTaskChangeLog,
   updateTask,
@@ -38,6 +39,19 @@ export const taskRouter = createTRPCRouter({
       }
 
       return await getManyTasksByFilters(input);
+    }),
+  getManyWithPagination: permissionedProcedure
+    .input(taskPaginationSchema)
+    .query(async ({ ctx, input }) => {
+      const { activeOrganizationId } = ctx.auth.session;
+      if (activeOrganizationId !== input.organizationId) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Error.forbidden_no_permission',
+        });
+      }
+
+      return await getManyTasksWithPagination(input);
     }),
   delete: permissionedProcedure
     .input(

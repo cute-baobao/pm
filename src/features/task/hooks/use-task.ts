@@ -35,11 +35,23 @@ export const useSuspenseTasks = (organizationId: string) => {
   });
 };
 
+export const useSuspenseTaskPagination = (organizationId: string) => {
+  const trpc = useTRPC();
+  const [params] = useTaskFilters();
+  return useSuspenseQuery({
+    ...trpc.task.getManyWithPagination.queryOptions({
+      ...params,
+      organizationId,
+    }),
+  });
+};
+
 export const useCreateTask = () => {
   const trpc = useTRPC();
   const t = useTranslations('Task');
   const tRoot = useTranslations();
   const queryClient = useQueryClient();
+  const [params] = useTaskFilters();
 
   return useMutation(
     trpc.task.create.mutationOptions({
@@ -55,6 +67,12 @@ export const useCreateTask = () => {
           trpc.project.analytics.queryOptions({
             projectId: data.projectId,
             assigneeId: data.assignedId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.task.getManyWithPagination.queryOptions({
+            ...params,
+            organizationId: data.organizationId,
           }),
         );
       },
@@ -73,6 +91,7 @@ export const useDeleteTask = () => {
   const t = useTranslations('Task');
   const tRoot = useTranslations();
   const queryClient = useQueryClient();
+  const [params] = useTaskFilters();
 
   return useMutation(
     trpc.task.delete.mutationOptions({
@@ -88,6 +107,12 @@ export const useDeleteTask = () => {
           trpc.project.analytics.queryOptions({
             projectId: data.deletedTask.projectId,
             assigneeId: data.deletedTask.assignedId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.task.getManyWithPagination.queryOptions({
+            ...params,
+            organizationId: data.deletedTask.organizationId,
           }),
         );
       },
@@ -130,6 +155,12 @@ export const useUpdateTask = () => {
         queryClient.invalidateQueries(
           trpc.task.getChangeLog.queryOptions({ taskId: data.id }),
         );
+        queryClient.invalidateQueries(
+          trpc.task.getManyWithPagination.queryOptions({
+            ...params,
+            organizationId: data.organizationId,
+          }),
+        );
       },
       onError: (error) => {
         const message = tRoot.has(error.message)
@@ -146,6 +177,7 @@ export const useBulkUpdateTasks = () => {
   const t = useTranslations('Task');
   const tRoot = useTranslations();
   const queryClient = useQueryClient();
+  const [params] = useTaskFilters();
 
   return useMutation(
     trpc.task.bulkUpdate.mutationOptions({
@@ -162,6 +194,12 @@ export const useBulkUpdateTasks = () => {
           trpc.project.analytics.queryOptions({
             projectId: data[0].projectId,
             assigneeId: data[0].assignedId,
+          }),
+        );
+        queryClient.invalidateQueries(
+          trpc.task.getManyWithPagination.queryOptions({
+            ...params,
+            organizationId: data[0].organizationId,
           }),
         );
       },

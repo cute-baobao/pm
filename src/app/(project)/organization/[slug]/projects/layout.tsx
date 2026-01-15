@@ -1,7 +1,7 @@
 import { AppHeader } from '@/components/app-header';
-import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { CreateOrganizationModal } from '@/features/organization/components/create-organization-modal';
+import { ProjectSidebar } from '@/features/project/components/project-sidebar';
 import { CreateTaskModal } from '@/features/task/components/create-task-modal';
 import { EditTaskModal } from '@/features/task/components/edit-task-modal';
 
@@ -17,7 +17,7 @@ export default async function DashboardLayout({
       <EditTaskModal />
       <CreateTaskModal />
       <SidebarProvider>
-        <AppSidebar />
+        <ProjectSidebar />
         <SidebarInset className="bg-background">
           <AppHeader />
           <main className="mx-auto w-full max-w-screen-2xl flex-1 overflow-auto p-4 md:p-6 md:py-4">

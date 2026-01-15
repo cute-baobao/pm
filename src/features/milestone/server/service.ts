@@ -1,16 +1,65 @@
 import db from '@/db';
-import { milestone, milestoneTask } from '@/db/schemas';
-import { desc, eq } from 'drizzle-orm';
-import { CreateMilestoneInput, UpdateMilestoneInput } from '../schema';
+import { milestone, milestoneTask, task } from '@/db/schemas';
+import { and, desc, eq, ilike } from 'drizzle-orm';
+import {
+  CreateMilestoneInput,
+  MilestonePaginationInput,
+  UpdateMilestoneInput,
+} from '../schema';
 
-export const getManyMilestones = async (projectId: string) => {
-  const milestones = await db
-    .select()
-    .from(milestone)
-    .where(eq(milestone.projectId, projectId))
-    .orderBy(desc(milestone.createdAt));
+export const getManyMilestones = async (input: MilestonePaginationInput) => {
+  const { search, page, pageSize, projectId } = input;
+  const whereCondition = search
+    ? and(
+        eq(milestone.projectId, projectId),
+        ilike(milestone.name, `%${search}%`),
+      )
+    : eq(milestone.projectId, projectId);
+  const [items, totalCount] = await Promise.all([
+    db.query.milestone.findMany({
+      where: whereCondition,
+      orderBy: desc(milestone.createdAt),
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+      with: {
+        tasks: {
+          with: {
+            task: true,
+          },
+        },
+      },
+    }),
+    db.$count(milestone, whereCondition),
+  ]);
 
-  return milestones;
+  const totalPages = Math.ceil(totalCount / pageSize);
+  const hasNextPage = page < totalPages;
+  const hasPreviousPage = page > 1;
+
+  const itemsWithAnalytics = items.map((m) => {
+    const tasks = m.tasks.map((mt) => mt.task);
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((t) => t.status === 'DONE').length;
+    const percentage =
+      totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    return {
+      ...m,
+      totalTasks,
+      completedTasks,
+      percentage,
+    };
+  });
+
+  return {
+    items: itemsWithAnalytics,
+    page,
+    pageSize,
+    totalCount,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+  };
 };
 
 export const createMilestone = async (input: CreateMilestoneInput) => {
@@ -118,4 +167,34 @@ export const deleteMilestoneById = async (milestoneId: string) => {
   }
 
   return deleted;
+};
+
+export const getMilestonesAnalytics = async (projectId: string) => {
+  const milestonesWithTasks = await db.query.milestone.findMany({
+    where: eq(milestone.projectId, projectId),
+    with: {
+      tasks: {
+        with: {
+          task: true,
+        },
+      },
+    },
+    orderBy: desc(milestone.createdAt),
+  });
+
+  return milestonesWithTasks.map((m) => {
+    const tasks = m.tasks.map((mt) => mt.task);
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((t) => t.status === 'DONE').length;
+
+    return {
+      id: m.id,
+      name: m.name,
+      status: m.status,
+      totalTasks,
+      completedTasks,
+      percentage:
+        totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0,
+    };
+  });
 };
