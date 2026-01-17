@@ -1,10 +1,8 @@
-import { hasPermission } from '@/lib/utils/has-permission';
 import {
-  createTRPCRouter,
-  permissionedProcedure,
-  protectedProcedure,
-  memberProcedure,
   adminOrOwnerProcedure,
+  createTRPCRouter,
+  memberProcedure,
+  protectedProcedure,
 } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
@@ -68,10 +66,7 @@ export const organizationMemberRouter = createTRPCRouter({
   delete: adminOrOwnerProcedure
     .input(deleteMemberSchema)
     .mutation(async ({ ctx, input }) => {
-      if (
-      
-        ctx.auth.session.activeOrganizationId !== input.organizationId
-      ) {
+      if (ctx.auth.session.activeOrganizationId !== input.organizationId) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Error.forbidden_no_permission',

@@ -3,8 +3,8 @@
 import { DottedSeparator } from '@/components/dotted-separator';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useTranslations } from 'next-intl';
 import { Loader, PlusIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 import { useBulkUpdateTasks, useSuspenseTasks } from '../hooks/use-task';
 import { UpdateTaskData } from '../schema';
@@ -58,10 +58,12 @@ export function TaskViewSwitcher({
               {t('calendar')}
             </TabsTrigger>
           </TabsList>
-          <Button onClick={onNewTask} className="w-full lg:w-auto" size="sm">
-            <PlusIcon className="mr-2 size-4" />
-            {t('newTask')}
-          </Button>
+          {onNewTask && (
+            <Button onClick={onNewTask} className="w-full lg:w-auto" size="sm">
+              <PlusIcon className="mr-2 size-4" />
+              {t('newTask')}
+            </Button>
+          )}
         </div>
         <DottedSeparator className="my-4" />
         <DataFilters

@@ -46,6 +46,7 @@
   "Navigation": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "myTasks": "My Tasks",
     "projects": "Projects",
     "project": "Project",
     "members": "Members",

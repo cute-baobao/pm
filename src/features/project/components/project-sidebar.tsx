@@ -14,6 +14,7 @@ import {
 import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
+import { protocol } from '@/lib/utils';
 import {
   FolderOpenDotIcon,
   HomeIcon,
@@ -37,7 +38,7 @@ export function ProjectSidebar() {
         {
           title: t('home'),
           icon: HomeIcon,
-          url: `/organization/${slug}`,
+          url: `${protocol}://${window.location.host}/organization/${slug}`,
         },
         {
           title: t('project'),
@@ -70,7 +71,9 @@ export function ProjectSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => {
-                  const fullUrl = `/organization/${params.slug}/projects/${params.projectId}${item.url}`;
+                  const fullUrl = item.url.startsWith('http')
+                    ? item.url
+                    : `/organization/${params.slug}/projects/${params.projectId}${item.url}`;
                   const isActive =
                     item.url === ''
                       ? pathname === fullUrl

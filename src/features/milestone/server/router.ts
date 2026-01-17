@@ -1,4 +1,4 @@
-import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
+import { createTRPCRouter, memberProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
 import {
@@ -18,12 +18,12 @@ import {
 } from './service';
 
 export const milestoneRouter = createTRPCRouter({
-  getAnalytics: permissionedProcedure
+  getAnalytics: memberProcedure
     .input(z.object({ projectId: z.string() }))
     .query(async ({ input }) => {
       return getMilestonesAnalytics(input.projectId);
     }),
-  create: permissionedProcedure
+  create: memberProcedure
     .input(createMilestoneSchema)
     .mutation(async ({ ctx, input }) => {
       const { activeOrganizationId } = ctx.auth.session;
@@ -36,28 +36,28 @@ export const milestoneRouter = createTRPCRouter({
 
       return await createMilestone(input);
     }),
-  update: permissionedProcedure
+  update: memberProcedure
     .input(updateMilestoneSchema)
     .mutation(async ({ ctx, input }) => {
       return updateMilestone(input);
     }),
-  getMany: permissionedProcedure
+  getMany: memberProcedure
     .input(milestonePaginationSchema)
     .query(async ({ input }) => {
       return getManyMilestones(input);
     }),
-  getById: permissionedProcedure
+  getById: memberProcedure
     .input(z.string().min(1, 'Milestone ID is required'))
     .query(async ({ input }) => {
       const milestone = await getMilestone(input);
       return milestone;
     }),
-  delete: permissionedProcedure
+  delete: memberProcedure
     .input(z.string().min(1, 'Milestone ID is required'))
     .mutation(async ({ input }) => {
       return deleteMilestoneById(input);
     }),
-  addTasks: permissionedProcedure
+  addTasks: memberProcedure
     .input(addTasksToMilestoneSchema)
     .mutation(async ({ input }) => {
       return addTasksToMilestone(input);
