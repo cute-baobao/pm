@@ -59,7 +59,6 @@ export default function RegisterForm() {
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    console.log('Submitting form with data:', data);
     await signUp.email({
       email: data.email,
       password: data.password,

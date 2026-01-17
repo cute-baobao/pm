@@ -9,10 +9,14 @@ import { TaskStatus } from '@/db/schemas';
 
 interface CreateTaskFormWrapperProps {
   taskStatus?: TaskStatus;
+  onCancel?: () => void;
+  onSuccess?: (task: any) => void;
 }
 
 export const CreateTaskFormWrapper = ({
   taskStatus,
+  onCancel,
+  onSuccess,
 }: CreateTaskFormWrapperProps) => {
   const { data: sessionData } = useSession();
   const organizationId = sessionData?.session?.activeOrganizationId || '';
@@ -52,6 +56,8 @@ export const CreateTaskFormWrapper = ({
       projectOptions={projectOptions ?? []}
       memberOptions={memberOptions ?? []}
       taskStatus={taskStatus}
+      onCancel={onCancel}
+      onSuccess={onSuccess}
     />
   );
 };

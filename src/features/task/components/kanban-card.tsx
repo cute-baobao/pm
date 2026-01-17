@@ -29,7 +29,7 @@ export function KanbanCard({ task }: KanbanCardProps) {
           fallbackClassName="text-[10px]"
         />
         <div className="size-1 rounded-full bg-neutral-300" />
-        <TaskDate value={task.dueDate} className="text-xs" />
+        <TaskDate status={task.status} value={task.dueDate} className="text-xs" />
       </div>
       <div className="flex items-center gap-x-1.5">
         <ProjectAvatar

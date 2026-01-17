@@ -23,7 +23,7 @@ export function TaskBreadcrumbs({ project, task }: TaskBreadcrumbsProps) {
 
   const [ConfrimDialog, confirm] = useConfirm(
     t('deleteConfirmTitle'),
-    'This action cannot be undone.',
+    t('deleteConfirmMessage'),
     'destructive',
   );
 

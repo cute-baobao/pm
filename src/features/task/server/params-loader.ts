@@ -1,4 +1,6 @@
 import { createLoader } from 'nuqs/server';
-import { taskParams } from '../params';
+import { taskPaginationParams, taskParams } from '../params';
 
 export const taskParamsLoader = createLoader(taskParams);
+
+export const taskPaginationParamsLoader = createLoader(taskPaginationParams);

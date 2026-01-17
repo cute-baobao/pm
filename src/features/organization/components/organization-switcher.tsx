@@ -10,6 +10,8 @@ import {
 import { SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
 import { OrganizationAvatar } from './organization-avatar';
 
+import { useSession } from '@/lib/auth-client';
+import { useQueryClient } from '@tanstack/react-query';
 import { ChevronsUpDown, CirclePlusIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -18,6 +20,7 @@ import {
   useOrganizationSlug,
   useSuspenseOrganizations,
 } from '../hooks/use-organization';
+import { setActiveOrganization } from '../server/service';
 
 export const OrganizationSwitcher = () => {
   const t = useTranslations('Organization.Switcher');
@@ -26,11 +29,17 @@ export const OrganizationSwitcher = () => {
   const slug = useOrganizationSlug();
   const { open } = useCreateOrganizationModal();
   const { isMobile } = useSidebar();
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
 
   const activeOrganization = organizations.find((org) => org.slug === slug);
 
-  const handleOnValueChange = (value: string) => {
-    router.push(`/organization/${value}`);
+  const handleOnValueChange = async (value: { slug: string; id: string }) => {
+    // 设置当前激活的组织 防止报错
+    await setActiveOrganization(session?.session.token || '', value.id);
+    router.push(`/organization/${value.slug}`);
+    // 失效所有查询缓存
+    queryClient.clear();
   };
 
   return (
@@ -67,7 +76,12 @@ export const OrganizationSwitcher = () => {
         {organizations.map((organization) => (
           <DropdownMenuItem
             key={organization.slug}
-            onClick={() => handleOnValueChange(organization.slug)}
+            onClick={() =>
+              handleOnValueChange({
+                slug: organization.slug,
+                id: organization.id,
+              })
+            }
             className="cursor-pointer gap-2 p-2"
           >
             <OrganizationAvatar

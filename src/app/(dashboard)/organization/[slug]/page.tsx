@@ -7,8 +7,8 @@ import {
 import { prefetchOrganizationAnalytics } from '@/features/organization/server/prefetch';
 import { projectsParamsLoader } from '@/features/project/server/params-loader';
 import { prefetchProjects } from '@/features/project/server/prefetch';
-import { taskParamsLoader } from '@/features/task/server/params-loader';
-import { prefetchTasks } from '@/features/task/server/prefetch';
+import { taskPaginationParamsLoader } from '@/features/task/server/params-loader';
+import { prefetchTaskPagination } from '@/features/task/server/prefetch';
 import { requireOrganizationAccess } from '@/lib/utils/auth-action';
 import { HydrateClient } from '@/trpc/server';
 import { SearchParams } from 'nuqs/server';
@@ -30,10 +30,10 @@ export default async function SlugPage({
 
   const organizationId = access.session.activeOrganizationId!;
 
-  const taskSearchParams = await taskParamsLoader(searchParams);
+  const taskSearchParams = await taskPaginationParamsLoader(searchParams);
   const projectsSearchParams = await projectsParamsLoader(searchParams);
 
-  await prefetchTasks({
+  await prefetchTaskPagination({
     ...taskSearchParams,
     organizationId,
   });

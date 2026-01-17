@@ -1,7 +1,7 @@
 import { OrganizationRole } from '@/db/schemas';
-import { PERMSSION } from '../configs/permission';
+import { PERMISSION } from '../configs/permission';
 
 export const hasPermission = (role: OrganizationRole, action: string) => {
-  const permissions = PERMSSION[role];
+  const permissions = PERMISSION[role];
   return (permissions as readonly string[]).includes(action);
 };

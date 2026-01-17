@@ -34,6 +34,12 @@ export const useSuspenseOrganization = (slug: string) => {
   return useSuspenseQuery(trpc.organization.getOne.queryOptions({ slug }));
 };
 
+export const useOrganizationId = () => {
+  const slug = useOrganizationSlug();
+  const { data } = useSuspenseOrganization(slug);
+  return data.id;
+};
+
 export const useCreateOrganization = () => {
   const trpc = useTRPC();
 

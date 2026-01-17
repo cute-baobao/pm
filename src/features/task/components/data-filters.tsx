@@ -23,6 +23,7 @@ export function DataFilters({
   organizationId,
 }: DataFiltersProps) {
   const tStatus = useTranslations('Task.Status');
+  const tFilters = useTranslations('Task.Filters');
   const { data: members } = useSuspenseOrganizationMembers(organizationId);
   const [{ status, assignedId, dueDate, projectId }, setFilters] =
     useTaskFilters();
@@ -79,11 +80,11 @@ export function DataFilters({
         <SelectTrigger className="h-8 w-full lg:w-auto">
           <div className="flex items-center pr-2">
             <ListCheck className="mr-2 size-4 h-4 w-4" />
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder={tFilters('allStatuses')} />
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All statuses</SelectItem>
+          <SelectItem value="all">{tFilters('allStatuses')}</SelectItem>
           {taskStatusValues.map((status) => (
             <SelectItem key={status} value={status}>
               {tStatus(status)}
@@ -100,11 +101,11 @@ export function DataFilters({
           <SelectTrigger className="h-8 w-full lg:w-auto">
             <div className="flex items-center pr-2">
               <FolderIcon className="mr-2 size-4 h-4 w-4" />
-              <SelectValue placeholder="All projects" />
+              <SelectValue placeholder={tFilters('allProjects')} />
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All projects</SelectItem>
+            <SelectItem value="all">{tFilters('allProjects')}</SelectItem>
             {projectOptions?.map((project) => (
               <SelectItem key={project.value} value={project.value}>
                 {project.label}
@@ -121,11 +122,11 @@ export function DataFilters({
         <SelectTrigger className="h-8 w-full lg:w-auto">
           <div className="flex items-center pr-2">
             <UserIcon className="mr-2 size-4 h-4 w-4" />
-            <SelectValue placeholder="All assignees" />
+            <SelectValue placeholder={tFilters('allAssignees')} />
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All assignees</SelectItem>
+          <SelectItem value="all">{tFilters('allAssignees')}</SelectItem>
           {memberOptions.map((member) => (
             <SelectItem key={member.value} value={member.value}>
               {member.label}
@@ -135,7 +136,7 @@ export function DataFilters({
       </Select>
 
       <DatePick
-        placeholder="Due date"
+        placeholder={tFilters('dueDate')}
         className="h-8 w-full lg:w-auto"
         value={dueDate ? new Date(dueDate) : undefined}
         onChange={onDueDateChange}

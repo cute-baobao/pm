@@ -49,7 +49,7 @@ export const EditTaskForm = ({
 }: EditTaskFormProps) => {
   const router = useRouter();
   const slug = useOrganizationSlug();
-  const t = useTranslations('Task.CreateForm');
+  const t = useTranslations('Task.EditForm');
   const tStatus = useTranslations('Task.Status');
   const form = useForm<UpdateTaskData>({
     resolver: zodResolver(updateTaskSchema),
@@ -233,7 +233,7 @@ export const EditTaskForm = ({
                 disabled={!form.formState.isValid || isPending}
                 size="lg"
               >
-                {t('createButton')}
+                {t('updateButton')}
               </Button>
             </div>
           </form>

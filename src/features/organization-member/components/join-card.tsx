@@ -25,7 +25,6 @@ export function JoinCard({ token }: JoinCardProps) {
   const t = useTranslations('OrganizationMember.JoinCard');
 
   const handleJoin = async () => {
-    console.log('handleJoin', { token, user });
     if (!token || !user) {
       return;
     }

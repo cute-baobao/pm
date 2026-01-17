@@ -64,6 +64,20 @@
       "when": 1766671434414,
       "tag": "0008_update-task",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1767964844996,
+      "tag": "0009_add-change-log",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1768224044341,
+      "tag": "0010_add-milestone",
+      "breakpoints": true
     }
   ]
 }

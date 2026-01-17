@@ -7,8 +7,8 @@ import { useSession } from '@/lib/auth-client';
 import {
   CircleGaugeIcon,
   FolderOpenDotIcon,
-  HomeIcon,
   SettingsIcon,
+  SquareCheckBigIcon,
   UsersIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -38,18 +38,13 @@ export function AppSidebar() {
       title: 'Sidebar',
       items: [
         {
-          title: t('home'),
-          icon: HomeIcon,
+          title: t('dashboard'),
+          icon: CircleGaugeIcon,
           url: '',
         },
         {
-          title: t('dashboard'),
-          icon: CircleGaugeIcon,
-          url: '/dashboard',
-        },
-        {
           title: 'My Tasks',
-          icon: FolderOpenDotIcon,
+          icon: SquareCheckBigIcon,
           url: '/tasks?assignedId=' + userId,
         },
         {

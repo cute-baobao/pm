@@ -1,13 +1,21 @@
 import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { createTaskSchema, queryTaskSchema, updateTaskSchema } from '../schema';
+import {
+  createTaskSchema,
+  queryTaskSchema,
+  taskPaginationSchema,
+  updateTaskSchema,
+} from '../schema';
 import {
   bulkUpdateTasks,
   createTask,
   deleteTaskById,
   getManyTasksByFilters,
+  getManyTasksWithPagination,
   getTaskById,
+  getTaskChangeLog,
+  getTaskWithoutMilestoneSelect,
   updateTask,
 } from './service';
 
@@ -23,7 +31,7 @@ export const taskRouter = createTRPCRouter({
         });
       }
 
-      return await createTask(input);
+      return await createTask(input, ctx.auth.session.userId);
     }),
   getMany: permissionedProcedure
     .input(queryTaskSchema)
@@ -38,6 +46,32 @@ export const taskRouter = createTRPCRouter({
 
       return await getManyTasksByFilters(input);
     }),
+  getManyWithPagination: permissionedProcedure
+    .input(taskPaginationSchema)
+    .query(async ({ ctx, input }) => {
+      const { activeOrganizationId } = ctx.auth.session;
+      if (activeOrganizationId !== input.organizationId) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Error.forbidden_no_permission',
+        });
+      }
+
+      return await getManyTasksWithPagination(input);
+    }),
+  getTaskWithoutMilestoneSelect: permissionedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { activeOrganizationId } = ctx.auth.session;
+      return await getTaskWithoutMilestoneSelect(
+        activeOrganizationId!,
+        input.projectId,
+      );
+    }),
   delete: permissionedProcedure
     .input(
       z.object({
@@ -50,15 +84,15 @@ export const taskRouter = createTRPCRouter({
     }),
   update: permissionedProcedure
     .input(updateTaskSchema)
-    .mutation(async ({ input }) => {
-      const task = await updateTask(input);
+    .mutation(async ({ input, ctx }) => {
+      const task = await updateTask(input, ctx.auth.session.userId);
 
       return task;
     }),
   bulkUpdate: permissionedProcedure
     .input(z.array(updateTaskSchema))
-    .mutation(async ({ input }) => {
-      const tasks = await bulkUpdateTasks(input);
+    .mutation(async ({ input, ctx }) => {
+      const tasks = await bulkUpdateTasks(input, ctx.auth.session.userId);
       return tasks;
     }),
   get: permissionedProcedure
@@ -70,5 +104,14 @@ export const taskRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const task = await getTaskById(input.taskId);
       return task;
+    }),
+  getChangeLog: permissionedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return await getTaskChangeLog(input.taskId);
     }),
 });

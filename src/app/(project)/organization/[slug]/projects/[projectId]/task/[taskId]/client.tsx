@@ -3,20 +3,24 @@
 import { DottedSeparator } from '@/components/dotted-separator';
 import { LoadingView } from '@/components/entity-component';
 import { TaskBreadcrumbs } from '@/features/task/components/task-breadcrumbs';
+import { TaskChangelogTimeline } from '@/features/task/components/task-changelog-timeline';
 import { TaskDescription } from '@/features/task/components/task-description';
 import { TaskOverview } from '@/features/task/components/task-overview';
 import { useGetTask, useTaskId } from '@/features/task/hooks/use-task';
+import { useTranslations } from 'next-intl';
 
-function TaskLoading() {
+export function TaskLoading() {
+  const t = useTranslations('Task.View');
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <LoadingView messageNode="Loading..." />
+      <LoadingView messageNode={t('loading')} />
     </div>
   );
 }
 
 export function TaskClient() {
   const taskId = useTaskId();
+  const t = useTranslations('Task.View');
 
   const { data: task, isLoading } = useGetTask(taskId);
 
@@ -25,16 +29,21 @@ export function TaskClient() {
   }
 
   if (!task) {
-    return <div>Task not found</div>;
+    return <div>{t('notFound')}</div>;
   }
 
   return (
     <div className="flex flex-col">
       <TaskBreadcrumbs project={task.project} task={task} />
       <DottedSeparator className="my-6" />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <TaskOverview task={task} />
-        <TaskDescription task={task} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="flex w-full flex-1 flex-col gap-y-4 xl:col-span-2">
+          <TaskOverview task={task} />
+          <TaskDescription task={task} />
+        </div>
+        <div className="w-full xl:col-span-1">
+          <TaskChangelogTimeline />
+        </div>
       </div>
     </div>
   );

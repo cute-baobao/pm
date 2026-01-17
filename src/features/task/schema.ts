@@ -1,4 +1,5 @@
 import { taskStatusValues } from '@/db/schemas';
+import { PAGINATION } from '@/lib/configs/constants';
 import z from 'zod';
 
 export const createTaskSchema = z.object({
@@ -22,6 +23,15 @@ export const queryTaskSchema = z.object({
   dueDate: z.string().nullish(),
 });
 
+export const taskPaginationSchema = queryTaskSchema.extend({
+  page: z.number().default(PAGINATION.DEFAULT_PAGE),
+  pageSize: z
+    .number()
+    .min(PAGINATION.MIN_PAGE_SIZE)
+    .max(PAGINATION.MAX_PAGE_SIZE)
+    .default(PAGINATION.DEFAULT_PAGE_SIZE),
+});
+
 export const updateTaskSchema = createTaskSchema.partial().extend({
   id: z.string().min(1, 'Task ID is required'),
   position: z.number().optional(),
@@ -30,3 +40,4 @@ export const updateTaskSchema = createTaskSchema.partial().extend({
 export type CreateTaskData = z.infer<typeof createTaskSchema>;
 export type QueryTaskData = z.infer<typeof queryTaskSchema>;
 export type UpdateTaskData = z.infer<typeof updateTaskSchema>;
+export type TaskPaginationData = z.infer<typeof taskPaginationSchema>;

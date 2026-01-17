@@ -44,8 +44,8 @@ export function ProjectView({ slug, projectId, userId }: ProjectViewProps) {
 
   return (
     <>
-      <Card className="h-full w-full border-none shadow-none">
-        <CardHeader>
+      <Card className="h-full w-full border-none p-0 shadow-none">
+        <CardHeader className="p-0">
           <div className="flex items-center justify-between">
             <CardTitle>
               <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ export function ProjectView({ slug, projectId, userId }: ProjectViewProps) {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <div className="flex flex-col gap-y-4">
             <Analytics data={analytics} />
             <TaskViewSwitcher
