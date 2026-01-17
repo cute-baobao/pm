@@ -59,10 +59,11 @@ export function TaskChangelogTimeline() {
 
   if (isLoading) {
     return (
-      <Card className="border-none shadow-none">
+      <Card className="gap-y-4 py-4 shadow-none">
         <CardHeader>
           <CardTitle>{t('title')}</CardTitle>
         </CardHeader>
+        <DottedSeparator className="px-6" />
         <CardContent>
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
@@ -76,7 +77,11 @@ export function TaskChangelogTimeline() {
 
   if (!changelog || changelog.length === 0) {
     return (
-      <Card className="border-none shadow-none">
+      <Card className="gap-y-4 py-4 shadow-none">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">{t('title')}</CardTitle>
+        </CardHeader>
+        <DottedSeparator className="px-6" />
         <div className="text-muted-foreground p-6 text-center">
           <Activity className="mx-auto mb-2 h-8 w-8 opacity-50" />
           <p>{t('empty')}</p>
@@ -206,7 +211,7 @@ export function TaskChangelogTimeline() {
   };
 
   return (
-    <Card className="w-full gap-y-4 shadow-none">
+    <Card className="w-full gap-y-4 py-4 shadow-none">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">{t('title')}</CardTitle>
       </CardHeader>

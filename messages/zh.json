@@ -47,6 +47,7 @@
     "home": "首页",
     "dashboard": "仪表盘",
     "projects": "项目",
+    "project": "项目",
     "members": "成员",
     "milestones": "里程碑",
     "settings": "设置",
@@ -96,6 +97,27 @@
       "updateButton": "保存更改",
       "dangerZone": "危险区域",
       "dangerZoneDescription": "删除组织是不可逆的，将删除所有相关数据。",
+      "EditForm": {
+        "title": "编辑里程碑",
+        "nameLabel": "里程碑名称",
+        "namePlaceholder": "请输入里程碑名称",
+        "descriptionLabel": "描述",
+        "descriptionPlaceholder": "请输入里程碑描述",
+        "targetDateLabel": "目标日期",
+        "targetDatePlaceholder": "选择日期",
+        "statusLabel": "状态",
+        "statusPlaceholder": "选择状态",
+        "taskIdsLabel": "关联任务",
+        "taskIdsPlaceholder": "选择任务",
+        "cancelButton": "取消",
+        "updateButton": "保存更改"
+      },
+      "Status": {
+        "PLANNED": "计划中",
+        "IN_PROGRESS": "进行中",
+        "COMPLETED": "已完成",
+        "ON_HOLD": "暂停"
+      },
       "deleteButton": "删除组织",
       "exitTitle": "退出组织",
       "exitDescription": "退出组织将移除您对该组织资源的访问权限。",
@@ -225,6 +247,62 @@
       "taskIdsPlaceholder": "选择要关联的任务",
       "cancelButton": "取消",
       "createButton": "创建里程碑"
+    },
+    "EditForm": {
+      "title": "编辑里程碑",
+      "nameLabel": "里程碑名称",
+      "namePlaceholder": "输入里程碑名称",
+      "descriptionLabel": "描述",
+      "descriptionPlaceholder": "输入里程碑描述",
+      "targetDateLabel": "目标日期",
+      "targetDatePlaceholder": "选择日期",
+      "statusLabel": "状态",
+      "statusPlaceholder": "选择状态",
+      "taskIdsLabel": "关联任务",
+      "taskIdsPlaceholder": "选择任务",
+      "cancelButton": "取消",
+      "updateButton": "保存更改"
+    },
+    "Status": {
+      "PLANNED": "计划中",
+      "IN_PROGRESS": "进行中",
+      "COMPLETED": "已完成",
+      "ON_HOLD": "已暂停"
+    },
+    "TaskSelect": {
+      "searchPlaceholder": "搜索任务...",
+      "noTasksFound": "未找到任务。"
+    },
+    "View": {
+      "loading": "加载中...",
+      "error": "加载里程碑失败",
+      "notFound": "未找到里程碑"
+    },
+    "Detail": {
+      "open": "进行中",
+      "closed": "已关闭",
+      "complete": "已完成",
+      "dueBy": "截止日期 {date}",
+      "noDueDate": "未设置截止日期",
+      "lastUpdated": "最后更新 {date}",
+      "createTask": "新建任务",
+      "edit": "编辑",
+      "close": "关闭里程碑",
+      "reopen": "重新打开",
+      "delete": "删除",
+      "deleteConfirmTitle": "删除里程碑",
+      "deleteConfirmMessage": "此操作无法撤销。",
+      "noOpenTasks": "暂无进行中的任务。",
+      "noClosedTasks": "暂无已关闭的任务。"
+    },
+    "Description": {
+      "label": "描述",
+      "placeholder": "添加描述...",
+      "noDescription": "未设置描述。",
+      "cancel": "取消",
+      "edit": "编辑",
+      "saving": "正在保存...",
+      "saveChanges": "保存更改"
     }
   },
   "Task": {
@@ -250,7 +328,9 @@
       "edit": "编辑",
       "assignee": "负责人",
       "dueDate": "截止日期",
-      "status": "状态"
+      "status": "状态",
+      "milestone": "里程碑",
+      "noMilestone": "未关联里程碑"
     },
     "View": {
       "loading": "加载中...",

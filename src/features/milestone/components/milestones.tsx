@@ -11,12 +11,12 @@ import {
   ErrorView,
   LoadingView,
 } from '@/components/entity-component';
-import { Milestone } from '@/db/schemas';
+import { Progress } from '@/components/ui/progress';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
 import { useSession } from '@/lib/auth-client';
 import { useEntitySearch } from '@/lib/hooks/use-entity-search';
 import { formatDistanceToNow } from 'date-fns';
-import { FolderOpenDotIcon } from 'lucide-react';
+import { MilestoneIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createContext, useContext } from 'react';
@@ -27,6 +27,10 @@ import {
 // import { useMilestonesParams } from '../hooks/us';
 import { useProjectId } from '@/features/project/hooks/use-project';
 import { useMilestoneParams } from '../hooks/use-milestone-params';
+
+type MilestoneWithPercentComplete = ReturnType<
+  typeof useSuspenseMilestones
+>['data']['items'][number];
 
 export const MilestonesContext = createContext<{ organizationId: string }>({
   organizationId: '',
@@ -150,8 +154,13 @@ export function MilestonesEmpty() {
   );
 }
 
-export function MilestoneItem({ data }: { data: Milestone }) {
+export function MilestoneItem({
+  data,
+}: {
+  data: MilestoneWithPercentComplete;
+}) {
   const removeMilestone = useDeleteMilestone();
+  const projectId = useProjectId();
   const slug = useOrganizationSlug();
   const handleRemove = () => {
     removeMilestone.mutate(data.id);
@@ -159,12 +168,22 @@ export function MilestoneItem({ data }: { data: Milestone }) {
 
   return (
     <EntityItem
-      href={`/organization/${slug}/milestones/${data.id}`}
+      href={`/organization/${slug}/projects/${projectId}/milestones/${data.id}`}
       title={data.name}
-      subtitle={<>{formatDistanceToNow(data.createdAt, { addSuffix: true })}</>}
+      subtitle={
+        <div className="flex w-full flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-muted-foreground text-xs">
+              {formatDistanceToNow(data.createdAt, { addSuffix: true })}
+            </span>
+            <span className="text-primary text-xs font-semibold tabular-nums">{data.percentage || 0}%</span>
+          </div>
+          <Progress value={data.percentage || 0} className="h-1.5" />
+        </div>
+      }
       image={
         <div className="flex size-8 items-center justify-center">
-          <FolderOpenDotIcon className="text-muted-foreground size-5" />
+          <MilestoneIcon className="text-muted-foreground size-5" />
         </div>
       }
       onRemove={handleRemove}

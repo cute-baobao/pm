@@ -1,7 +1,8 @@
 import db from '@/db';
-import { milestone, milestoneTask, task } from '@/db/schemas';
+import { milestone, milestoneTask } from '@/db/schemas';
 import { and, desc, eq, ilike } from 'drizzle-orm';
 import {
+  AddTasksToMilestoneInput,
   CreateMilestoneInput,
   MilestonePaginationInput,
   UpdateMilestoneInput,
@@ -59,6 +60,37 @@ export const getManyMilestones = async (input: MilestonePaginationInput) => {
     totalPages,
     hasNextPage,
     hasPreviousPage,
+  };
+};
+
+export const getMilestone = async (milestoneId: string) => {
+  const result = await db.query.milestone.findFirst({
+    where: eq(milestone.id, milestoneId),
+    with: {
+      project: true,
+      tasks: {
+        with: {
+          task: true,
+        },
+      },
+    },
+  });
+
+  if (!result) {
+    throw new Error('Milestone not found');
+  }
+
+  const tasks = result.tasks.map((mt) => mt.task);
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((t) => t.status === 'DONE').length;
+  const percentage =
+    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  return {
+    ...result,
+    totalTasks,
+    completedTasks,
+    percentage,
   };
 };
 
@@ -197,4 +229,33 @@ export const getMilestonesAnalytics = async (projectId: string) => {
         totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0,
     };
   });
+};
+
+export const addTasksToMilestone = async (
+  input: AddTasksToMilestoneInput,
+) => {
+  const m = await db
+    .select()
+    .from(milestone)
+    .where(eq(milestone.id, input.milestoneId))
+    .limit(1);
+
+  if (m.length === 0) {
+    throw new Error('Milestone not found');
+  }
+
+  // Insert task associations (ignore duplicates)
+  await Promise.all(
+    input.taskIds.map((taskId) =>
+      db
+        .insert(milestoneTask)
+        .values({
+          milestoneId: input.milestoneId,
+          taskId,
+        })
+        .onConflictDoNothing(),
+    ),
+  );
+
+  return m[0];
 };

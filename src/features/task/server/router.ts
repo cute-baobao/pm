@@ -1,7 +1,12 @@
 import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { createTaskSchema, queryTaskSchema, taskPaginationSchema, updateTaskSchema } from '../schema';
+import {
+  createTaskSchema,
+  queryTaskSchema,
+  taskPaginationSchema,
+  updateTaskSchema,
+} from '../schema';
 import {
   bulkUpdateTasks,
   createTask,
@@ -10,6 +15,7 @@ import {
   getManyTasksWithPagination,
   getTaskById,
   getTaskChangeLog,
+  getTaskWithoutMilestoneSelect,
   updateTask,
 } from './service';
 
@@ -52,6 +58,19 @@ export const taskRouter = createTRPCRouter({
       }
 
       return await getManyTasksWithPagination(input);
+    }),
+  getTaskWithoutMilestoneSelect: permissionedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { activeOrganizationId } = ctx.auth.session;
+      return await getTaskWithoutMilestoneSelect(
+        activeOrganizationId!,
+        input.projectId,
+      );
     }),
   delete: permissionedProcedure
     .input(

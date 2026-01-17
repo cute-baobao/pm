@@ -9,7 +9,7 @@ import { TaskOverview } from '@/features/task/components/task-overview';
 import { useGetTask, useTaskId } from '@/features/task/hooks/use-task';
 import { useTranslations } from 'next-intl';
 
-function TaskLoading() {
+export function TaskLoading() {
   const t = useTranslations('Task.View');
   return (
     <div className="flex h-full w-full items-center justify-center">

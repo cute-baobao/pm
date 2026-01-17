@@ -1,11 +1,18 @@
 import { createTRPCRouter, permissionedProcedure } from '@/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { createMilestoneSchema, milestonePaginationSchema, updateMilestoneSchema } from '../schema';
 import {
+  addTasksToMilestoneSchema,
+  createMilestoneSchema,
+  milestonePaginationSchema,
+  updateMilestoneSchema,
+} from '../schema';
+import {
+  addTasksToMilestone,
   createMilestone,
   deleteMilestoneById,
   getManyMilestones,
+  getMilestone,
   getMilestonesAnalytics,
   updateMilestone,
 } from './service';
@@ -39,9 +46,20 @@ export const milestoneRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return getManyMilestones(input);
     }),
+  getById: permissionedProcedure
+    .input(z.string().min(1, 'Milestone ID is required'))
+    .query(async ({ input }) => {
+      const milestone = await getMilestone(input);
+      return milestone;
+    }),
   delete: permissionedProcedure
     .input(z.string().min(1, 'Milestone ID is required'))
     .mutation(async ({ input }) => {
       return deleteMilestoneById(input);
+    }),
+  addTasks: permissionedProcedure
+    .input(addTasksToMilestoneSchema)
+    .mutation(async ({ input }) => {
+      return addTasksToMilestone(input);
     }),
 });

@@ -114,7 +114,7 @@ export function ProjectList({ data }: ProjectListProps) {
               </li>
             ))}
           {data.length === 0 && (
-            <li className="text-muted-foreground hidden text-center text-sm first-of-type:block">
+            <li className="text-muted-foreground col-span-2 hidden text-center text-sm first-of-type:block">
               {t('notFound')}
             </li>
           )}

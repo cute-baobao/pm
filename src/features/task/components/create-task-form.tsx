@@ -41,6 +41,7 @@ interface CreateTaskFormProps {
   memberOptions?: Options[];
   taskStatus?: TaskStatus;
   onCancel?: () => void;
+  onSuccess?: (task: any) => void;
 }
 
 export const CreateTaskForm = ({
@@ -48,6 +49,7 @@ export const CreateTaskForm = ({
   projectId,
   onCancel,
   taskStatus,
+  onSuccess,
 }: CreateTaskFormProps) => {
   const { data: sessionData } = useSession();
   const router = useRouter();
@@ -73,7 +75,11 @@ export const CreateTaskForm = ({
   const onSubmit = (data: CreateTaskData) => {
     createTask.mutate(data, {
       onSuccess: (task) => {
-        router.push(`/organization/${slug}/projects/${projectId}`);
+        if (onSuccess) {
+          onSuccess(task);
+        } else {
+          router.push(`/organization/${slug}/projects/${projectId}`);
+        }
       },
     });
   };

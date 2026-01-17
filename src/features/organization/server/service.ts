@@ -1,3 +1,4 @@
+'use server';
 import db, { withUser } from '@/db';
 import {
   member,

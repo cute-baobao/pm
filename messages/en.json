@@ -47,6 +47,7 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "projects": "Projects",
+    "project": "Project",
     "members": "Members",
     "milestones": "Milestones",
     "settings": "Settings",
@@ -227,6 +228,62 @@
       "taskIdsPlaceholder": "Select tasks to associate",
       "cancelButton": "Cancel",
       "createButton": "Create Milestone"
+    },
+    "EditForm": {
+      "title": "Edit Milestone",
+      "nameLabel": "Milestone Name",
+      "namePlaceholder": "Enter milestone name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter milestone description",
+      "targetDateLabel": "Target Date",
+      "targetDatePlaceholder": "Select date",
+      "statusLabel": "Status",
+      "statusPlaceholder": "Select a status",
+      "taskIdsLabel": "Related Tasks",
+      "taskIdsPlaceholder": "Select tasks",
+      "cancelButton": "Cancel",
+      "updateButton": "Save Changes"
+    },
+    "Status": {
+      "PLANNED": "Planned",
+      "IN_PROGRESS": "In progress",
+      "COMPLETED": "Completed",
+      "ON_HOLD": "On hold"
+    },
+    "TaskSelect": {
+      "searchPlaceholder": "Search tasks...",
+      "noTasksFound": "No tasks found."
+    },
+    "View": {
+      "loading": "Loading...",
+      "error": "Error loading milestone",
+      "notFound": "Milestone not found"
+    },
+    "Detail": {
+      "open": "Open",
+      "closed": "Closed",
+      "complete": "complete",
+      "dueBy": "Due by {date}",
+      "noDueDate": "No due date",
+      "lastUpdated": "Last updated {date}",
+      "createTask": "Create Task",
+      "edit": "Edit",
+      "close": "Close milestone",
+      "reopen": "Reopen milestone",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Delete milestone",
+      "deleteConfirmMessage": "This action cannot be undone.",
+      "noOpenTasks": "No open tasks.",
+      "noClosedTasks": "No closed tasks."
+    },
+    "Description": {
+      "label": "Description",
+      "placeholder": "Add a description...",
+      "noDescription": "No description set.",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes"
     }
   },
   "Task": {
@@ -252,7 +309,9 @@
       "edit": "Edit",
       "assignee": "Assignee",
       "dueDate": "Due Date",
-      "status": "Status"
+      "status": "Status",
+      "milestone": "Milestone",
+      "noMilestone": "No milestone associated"
     },
     "View": {
       "loading": "Loading...",

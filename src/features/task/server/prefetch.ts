@@ -12,3 +12,9 @@ export const prefetchTaskPagination = (payload: TaskPaginationData) => {
 export const prefetchTaskChangeLog = (taskId: string) => {
   return prefetch(trpc.task.getChangeLog.queryOptions({ taskId }));
 };
+
+export const prefetchTaskWithoutMilestoneSelect = (projectId: string) => {
+  return prefetch(
+    trpc.task.getTaskWithoutMilestoneSelect.queryOptions({ projectId }),
+  );
+};

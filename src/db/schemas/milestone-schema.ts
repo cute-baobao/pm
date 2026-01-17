@@ -1,4 +1,4 @@
-import { InferSelectModel, relations } from 'drizzle-orm';
+import { InferSelectModel } from 'drizzle-orm';
 import {
   pgEnum,
   pgTable,
@@ -66,34 +66,6 @@ export const milestoneTask = pgTable(
   },
   (table) => [primaryKey({ columns: [table.milestoneId, table.taskId] })],
 );
-
-// Relations
-export const milestoneRelations = relations(milestone, ({ one, many }) => ({
-  project: one(project, {
-    fields: [milestone.projectId],
-    references: [project.id],
-  }),
-  organization: one(organization, {
-    fields: [milestone.organizationId],
-    references: [organization.id],
-  }),
-  creator: one(user, {
-    fields: [milestone.createdBy],
-    references: [user.id],
-  }),
-  tasks: many(milestoneTask),
-}));
-
-export const milestoneTaskRelations = relations(milestoneTask, ({ one }) => ({
-  milestone: one(milestone, {
-    fields: [milestoneTask.milestoneId],
-    references: [milestone.id],
-  }),
-  task: one(task, {
-    fields: [milestoneTask.taskId],
-    references: [task.id],
-  }),
-}));
 
 // Export types
 export type Milestone = InferSelectModel<typeof milestone>;

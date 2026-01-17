@@ -101,7 +101,7 @@ export const columns: ColumnDef<
     },
     cell: ({ row }) => {
       const dueDate = row.original.dueDate;
-      return <TaskDate value={dueDate} />;
+      return <TaskDate status={row.original.status} value={dueDate} />;
     },
   },
   {

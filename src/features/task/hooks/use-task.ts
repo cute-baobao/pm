@@ -46,6 +46,13 @@ export const useSuspenseTaskPagination = (organizationId: string) => {
   });
 };
 
+export const useSuspenseTaskWithoutMilestoneSelect = (projectId: string) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(
+    trpc.task.getTaskWithoutMilestoneSelect.queryOptions({ projectId }),
+  );
+};
+
 export const useCreateTask = () => {
   const trpc = useTRPC();
   const t = useTranslations('Task');

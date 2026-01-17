@@ -1,17 +1,5 @@
 'use client';
 
-// import { useHasActiveSubscription } from "@/features/subsctiptions/hooks/use-subscription";
-import { NavUser } from '@/features/auth/components/nav-user';
-import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
-import { useSession } from '@/lib/auth-client';
-import {
-  HomeIcon,
-  MilestoneIcon,
-  SettingsIcon,
-} from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +11,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { NavUser } from '@/features/auth/components/nav-user';
+import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
+import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
+import { useSession } from '@/lib/auth-client';
+import {
+  FolderOpenDotIcon,
+  HomeIcon,
+  MilestoneIcon,
+  SettingsIcon,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useParams, usePathname } from 'next/navigation';
 
 export function ProjectSidebar() {
   const t = useTranslations('Navigation');
@@ -30,6 +31,7 @@ export function ProjectSidebar() {
   const params = useParams();
   const { data: sessionData } = useSession();
   const userId = sessionData?.session.userId || '';
+  const slug = useOrganizationSlug();
 
   const menuItems = [
     {
@@ -38,6 +40,11 @@ export function ProjectSidebar() {
         {
           title: t('home'),
           icon: HomeIcon,
+          url: `/organization/${slug}`,
+        },
+        {
+          title: t('project'),
+          icon: FolderOpenDotIcon,
           url: '',
         },
         {

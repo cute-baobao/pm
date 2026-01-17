@@ -30,76 +30,79 @@ export function DataKanban({ data, onChange }: DataKanbanProps) {
     [taskStatusValues[4]]: [],
   });
 
-  const onDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) return;
+  const onDragEnd = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) return;
 
-    const { source, destination } = result;
-    const sourceStatus = source.droppableId as TaskStatus;
-    const destStatus = destination.droppableId as TaskStatus;
+      const { source, destination } = result;
+      const sourceStatus = source.droppableId as TaskStatus;
+      const destStatus = destination.droppableId as TaskStatus;
 
-    let updatePayload: UpdateTaskData[] = [];
+      let updatePayload: UpdateTaskData[] = [];
 
-    setTasks((preTasks) => {
-      const newTasks = { ...preTasks };
+      setTasks((preTasks) => {
+        const newTasks = { ...preTasks };
 
-      const sourceColumn = [...newTasks[sourceStatus]];
-      const [movedTask] = sourceColumn.splice(source.index, 1);
+        const sourceColumn = [...newTasks[sourceStatus]];
+        const [movedTask] = sourceColumn.splice(source.index, 1);
 
-      if (!movedTask) {
-        console.error('Moved task not found');
-        return preTasks;
-      }
-
-      const updatedMovedTask =
-        sourceStatus !== destStatus
-          ? { ...movedTask, status: destStatus }
-          : movedTask;
-      newTasks[sourceStatus] = sourceColumn;
-
-      const destColumn = [...newTasks[destStatus]];
-      destColumn.splice(destination.index, 0, updatedMovedTask);
-      newTasks[destStatus] = destColumn;
-
-      updatePayload.push({
-        id: updatedMovedTask.id,
-        status: destStatus,
-        position: Math.min((destination.index + 1) * 1000, 1_000_000),
-      });
-
-      newTasks[destStatus].forEach((task, index) => {
-        if (task && task.id !== updatedMovedTask.id) {
-          const newPosition = Math.min((index + 1) * 1000, 1_000_000);
-          if (task.position !== newPosition) {
-            updatePayload.push({
-              id: task.id,
-              position: newPosition,
-              status: destStatus,
-            });
-          }
+        if (!movedTask) {
+          console.error('Moved task not found');
+          return preTasks;
         }
-      });
 
-      if (sourceStatus !== destStatus) {
-        newTasks[sourceStatus].forEach((task, index) => {
-          if (task) {
+        const updatedMovedTask =
+          sourceStatus !== destStatus
+            ? { ...movedTask, status: destStatus }
+            : movedTask;
+        newTasks[sourceStatus] = sourceColumn;
+
+        const destColumn = [...newTasks[destStatus]];
+        destColumn.splice(destination.index, 0, updatedMovedTask);
+        newTasks[destStatus] = destColumn;
+
+        updatePayload.push({
+          id: updatedMovedTask.id,
+          status: destStatus,
+          position: Math.min((destination.index + 1) * 1000, 1_000_000),
+        });
+
+        newTasks[destStatus].forEach((task, index) => {
+          if (task && task.id !== updatedMovedTask.id) {
             const newPosition = Math.min((index + 1) * 1000, 1_000_000);
             if (task.position !== newPosition) {
               updatePayload.push({
                 id: task.id,
                 position: newPosition,
-                status: sourceStatus,
+                status: destStatus,
               });
             }
           }
         });
-      }
-      return newTasks;
-    });
 
-    if (updatePayload.length > 0) {
-      onChange(updatePayload);
-    }
-  }, [onChange]);
+        if (sourceStatus !== destStatus) {
+          newTasks[sourceStatus].forEach((task, index) => {
+            if (task) {
+              const newPosition = Math.min((index + 1) * 1000, 1_000_000);
+              if (task.position !== newPosition) {
+                updatePayload.push({
+                  id: task.id,
+                  position: newPosition,
+                  status: sourceStatus,
+                });
+              }
+            }
+          });
+        }
+        return newTasks;
+      });
+
+      if (updatePayload.length > 0) {
+        onChange(updatePayload);
+      }
+    },
+    [onChange],
+  );
 
   useEffect(() => {
     const newTasks: TasksState = {
@@ -122,7 +125,7 @@ export function DataKanban({ data, onChange }: DataKanbanProps) {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex overflow-x-auto">
+      <div className="flex w-full flex-1 overflow-x-auto">
         {boards.map((board) => {
           return (
             <div

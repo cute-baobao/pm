@@ -1,4 +1,4 @@
-import { InferSelectModel, relations } from 'drizzle-orm';
+import { InferSelectModel } from 'drizzle-orm';
 import {
   integer,
   pgEnum,
@@ -47,30 +47,17 @@ export const task = pgTable('task', {
     })
     .notNull(),
   name: text().notNull(),
-  assignedId: text('assigned_id').references(() => user.id, {
-    onDelete: 'cascade',
-  }).notNull(),
+  assignedId: text('assigned_id')
+    .references(() => user.id, {
+      onDelete: 'cascade',
+    })
+    .notNull(),
   description: text(),
   dueDate: timestamp('due_date').notNull(),
   status: taskStatus().notNull().default('TODO'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   position: integer('position').notNull().default(0),
 });
-
-export const taskRelations = relations(task, ({ one }) => ({
-  project: one(project, {
-    fields: [task.projectId],
-    references: [project.id],
-  }),
-  organization: one(organization, {
-    fields: [task.organizationId],
-    references: [organization.id],
-  }),
-  assignedUser: one(user, {
-    fields: [task.assignedId],
-    references: [user.id],
-  }),
-}));
 
 export const taskChangeLog = pgTable('task_change_log', {
   id: uuid('id').primaryKey().defaultRandom().notNull(),
@@ -87,27 +74,11 @@ export const taskChangeLog = pgTable('task_change_log', {
   fieldName: text('field_name').notNull(), // e.g., 'status', 'name', 'assignedId'
   oldValue: text('old_value'),
   newValue: text('new_value'),
-  changedBy: text('changed_by')
-    .references(() => user.id, {
-      onDelete: 'set null',
-    }),
+  changedBy: text('changed_by').references(() => user.id, {
+    onDelete: 'set null',
+  }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
-
-export const taskChangeLogRelations = relations(taskChangeLog, ({ one }) => ({
-  task: one(task, {
-    fields: [taskChangeLog.taskId],
-    references: [task.id],
-  }),
-  organization: one(organization, {
-    fields: [taskChangeLog.organizationId],
-    references: [organization.id],
-  }),
-  changedByUser: one(user, {
-    fields: [taskChangeLog.changedBy],
-    references: [user.id],
-  }),
-}));
 
 export type Project = InferSelectModel<typeof project>;
 export type Task = InferSelectModel<typeof task>;

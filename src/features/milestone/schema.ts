@@ -39,6 +39,12 @@ export const milestonePaginationSchema = z.object({
   search: z.string().default(''),
 });
 
+export const addTasksToMilestoneSchema = z.object({
+  milestoneId: z.string().min(1, 'Milestone ID is required'),
+  taskIds: z.array(z.string().min(1)).min(1, 'At least one task is required'),
+});
+
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
 export type MilestonePaginationInput = z.infer<typeof milestonePaginationSchema>;
+export type AddTasksToMilestoneInput = z.infer<typeof addTasksToMilestoneSchema>;

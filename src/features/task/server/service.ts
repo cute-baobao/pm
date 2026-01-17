@@ -1,7 +1,7 @@
 import db from '@/db';
-import { task } from '@/db/schemas';
+import { milestoneTask, task } from '@/db/schemas';
 import { recordTaskChange, recordTaskChanges } from '@/db/task-changelog-utils';
-import { and, eq, ilike, lte, sql } from 'drizzle-orm';
+import { and, eq, ilike, lte, notExists, sql } from 'drizzle-orm';
 import {
   CreateTaskData,
   QueryTaskData,
@@ -214,6 +214,11 @@ export const getTaskById = async (taskId: string) => {
       project: true,
       organization: true,
       assignedUser: true,
+      milestone: {
+        with: {
+          milestone: true,
+        },
+      },
     },
   });
 
@@ -227,6 +232,27 @@ export const getTaskChangeLog = async (taskId: string) => {
     with: {
       changedByUser: true,
     },
+  });
+
+  return result;
+};
+
+export const getTaskWithoutMilestoneSelect = async (
+  organizationId: string,
+  projectId?: string,
+) => {
+  const result = await db.query.task.findMany({
+    where: and(
+      eq(task.organizationId, organizationId),
+      projectId ? eq(task.projectId, projectId) : undefined,
+      notExists(
+        db
+          .select()
+          .from(milestoneTask)
+          .where(eq(milestoneTask.taskId, task.id)),
+      ),
+    ),
+    orderBy: (t, { desc }) => [desc(t.createdAt)],
   });
 
   return result;
