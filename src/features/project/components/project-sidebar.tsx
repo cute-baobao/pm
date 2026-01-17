@@ -14,7 +14,6 @@ import {
 import { NavUser } from '@/features/auth/components/nav-user';
 import { OrganizationSwitcher } from '@/features/organization/components/organization-switcher';
 import { useOrganizationSlug } from '@/features/organization/hooks/use-organization';
-import { useSession } from '@/lib/auth-client';
 import {
   FolderOpenDotIcon,
   HomeIcon,
@@ -29,7 +28,6 @@ export function ProjectSidebar() {
   const t = useTranslations('Navigation');
   const pathname = usePathname();
   const params = useParams();
-  const { data: sessionData } = useSession();
   const slug = useOrganizationSlug();
 
   const menuItems = [

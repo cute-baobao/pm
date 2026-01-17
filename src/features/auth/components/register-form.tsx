@@ -25,7 +25,7 @@ import { Loader2, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -33,6 +33,7 @@ export default function RegisterForm() {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
   const registerForm = useForm<RegisterFormData>({
@@ -51,7 +52,9 @@ export default function RegisterForm() {
       setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        registerForm.setValue('image', reader.result as string);
+        registerForm.setValue('image', reader.result as string, {
+          shouldDirty: true,
+        });
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
@@ -200,7 +203,11 @@ export default function RegisterForm() {
                               type="file"
                               accept="image/*"
                               className="w-full"
-                              {...field}
+                              name={field.name}
+                              ref={(node) => {
+                                field.ref(node);
+                                fileInputRef.current = node;
+                              }}
                               onChange={handleImageChange}
                             />
                           </FormControl>
@@ -214,6 +221,12 @@ export default function RegisterForm() {
                         onClick={() => {
                           setImage(null);
                           setImagePreview(null);
+                          registerForm.setValue('image', '', {
+                            shouldDirty: true,
+                          });
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = '';
+                          }
                         }}
                       />
                     )}
