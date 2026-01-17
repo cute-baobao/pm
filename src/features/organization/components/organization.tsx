@@ -49,8 +49,6 @@ export function OrganizationView() {
   const { data: members, isLoading: isMembersLoading } =
     useSuspenseOrganizationMembers(organizationId);
 
-  console.log('OrganizationView render', analytics);
-
   const isLoading =
     isAnalyticsLoading ||
     isTasksLoading ||

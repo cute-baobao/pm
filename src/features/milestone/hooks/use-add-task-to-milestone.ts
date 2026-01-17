@@ -1,16 +1,14 @@
 'use client';
 
-import { useQueryState, useQueryStates } from 'nuqs';
+import { useQueryState } from 'nuqs';
 
 export const useAddTaskToMilestoneState = () => {
-  const [milestoneId, setMilestoneId] = useQueryState(
-    'addTaskToMilestoneId',
-    { history: 'replace' },
-  );
-  const [newTaskId, setNewTaskId] = useQueryState(
-    'newTaskId',
-    { history: 'replace' },
-  );
+  const [milestoneId, setMilestoneId] = useQueryState('addTaskToMilestoneId', {
+    history: 'replace',
+  });
+  const [newTaskId, setNewTaskId] = useQueryState('newTaskId', {
+    history: 'replace',
+  });
 
   const setMilestoneForTaskAdd = (id: string) => {
     void setMilestoneId(id);

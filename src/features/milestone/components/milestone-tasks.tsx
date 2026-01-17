@@ -9,7 +9,6 @@ import { useOrganizationSlug } from '@/features/organization/hooks/use-organizat
 import { useProjectId } from '@/features/project/hooks/use-project';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { CheckCircle2Icon, CircleIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -40,7 +39,7 @@ function TaskListItem({
     <li className="flex items-start gap-3 border-b px-4 py-3 last:border-b-0">
       <Checkbox aria-label={task.name} className="mt-1" />
       <div className="mt-0.5">
-       <Badge variant={task.status}>{tStatus(task.status)}</Badge>
+        <Badge variant={task.status}>{tStatus(task.status)}</Badge>
       </div>
 
       <div className="min-w-0 flex-1">
@@ -82,7 +81,7 @@ export function MilestoneTasks({
   );
 
   return (
-    <Card className="shadow-none gap-y-4 py-4   ">
+    <Card className="gap-y-4 py-4 shadow-none">
       <CardContent className="p-0">
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <div className="flex items-center justify-between px-4 pt-3">

@@ -19,7 +19,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { MilestoneIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import {
   useDeleteMilestone,
   useSuspenseMilestones,
@@ -37,7 +37,6 @@ export const MilestonesContext = createContext<{ organizationId: string }>({
 });
 
 export function MilestonesList() {
-  const { organizationId } = useContext(MilestonesContext);
   const projectId = useProjectId();
   const Milestones = useSuspenseMilestones(projectId);
   return (
@@ -94,8 +93,8 @@ export function MilestonesSearch() {
 }
 
 export function MilestonesPagination() {
-  const { organizationId } = useContext(MilestonesContext);
-  const Milestones = useSuspenseMilestones(organizationId);
+  const projectId = useProjectId();
+  const Milestones = useSuspenseMilestones(projectId);
   const [params, setParams] = useMilestoneParams();
 
   return (
@@ -176,7 +175,9 @@ export function MilestoneItem({
             <span className="text-muted-foreground text-xs">
               {formatDistanceToNow(data.createdAt, { addSuffix: true })}
             </span>
-            <span className="text-primary text-xs font-semibold tabular-nums">{data.percentage || 0}%</span>
+            <span className="text-primary text-xs font-semibold tabular-nums">
+              {data.percentage || 0}%
+            </span>
           </div>
           <Progress value={data.percentage || 0} className="h-1.5" />
         </div>

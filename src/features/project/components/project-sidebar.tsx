@@ -30,7 +30,6 @@ export function ProjectSidebar() {
   const pathname = usePathname();
   const params = useParams();
   const { data: sessionData } = useSession();
-  const userId = sessionData?.session.userId || '';
   const slug = useOrganizationSlug();
 
   const menuItems = [

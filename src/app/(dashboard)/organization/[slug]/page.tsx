@@ -30,8 +30,6 @@ export default async function SlugPage({
 
   const organizationId = access.session.activeOrganizationId!;
 
-  console.log('organizationId', organizationId);
-
   const taskSearchParams = await taskPaginationParamsLoader(searchParams);
   const projectsSearchParams = await projectsParamsLoader(searchParams);
 
