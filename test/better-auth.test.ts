@@ -10,14 +10,14 @@ describe('Better Auth', () => {
         email: 'bao@mail.com',
         password: 'Zhizhi99.',
       },
-      asResponse: true 
+      asResponse: true,
     });
 
     expect(signinResponse.status).toBe(200);
 
     // 2. 通过传入登录返回的 headers（包含 cookie）来获取 session
     const session = await auth.api.getSession({
-      headers: signinResponse.headers
+      headers: signinResponse.headers,
     });
 
     console.log('Session result:', session);
