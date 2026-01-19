@@ -43,7 +43,7 @@ export function AppSidebar() {
           url: '',
         },
         {
-          title: 'My Tasks',
+          title: t("myTasks"),
           icon: SquareCheckBigIcon,
           url: '/tasks?assignedId=' + userId,
         },

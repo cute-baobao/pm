@@ -23,7 +23,7 @@ import {
 } from './service';
 
 export const organizationRouter = createTRPCRouter({
-  create: memberProcedure
+  create: protectedProcedure
     .input(createOrganizationSchema)
     .mutation(async ({ input, ctx }) => {
       const check = await checkSlugAvailability(input.slug);
@@ -33,7 +33,6 @@ export const organizationRouter = createTRPCRouter({
           code: 'CONFLICT',
         });
       }
-      ctx.auth.user;
       const organization = await createOrganization(input, ctx.auth.user!);
       return organization;
     }),
