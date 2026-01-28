@@ -11,18 +11,33 @@ import {
   isOrganizationOwner,
 } from './shield';
 
-export const createTRPCContext = cache(async () => {
+interface TRPCContextOptionsBase {
+  test?: boolean;
+  header?: Headers;
+}
+
+interface TRPCContextOptionsTest {
+  test: true;
+  header: Headers; // 必填
+}
+
+type TRPCContextOptions = TRPCContextOptionsBase | TRPCContextOptionsTest;
+
+export const createTRPCContext = cache(async (options: TRPCContextOptions) => {
+  const { test = false, header } = options;
   /**
    * @see: https://trpc.io/docs/server/context
    */
-  return { userId: 'user_123' };
+  return { test, header };
 });
+
+type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
 // is common in i18n libraries.
-const t = initTRPC.create({
+const t = initTRPC.context<Context>().create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
@@ -36,9 +51,10 @@ export const baseProcedure = t.procedure;
 // Protected procedure that requires authentication
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: ctx.test ? ctx.header! : await headers(),
   });
   if (!session || !session.user) {
+    console.log('Unauthorized access attempt.');
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'Error.unauthorized',

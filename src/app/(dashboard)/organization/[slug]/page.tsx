@@ -54,7 +54,7 @@ export default async function SlugPage({
     <HydrateClient>
       <ErrorBoundary fallback={<OrganizationError />}>
         <Suspense fallback={<OrganizationLoading />}>
-          <OrganizationView />
+          <OrganizationView organizationId={organizationId} />
         </Suspense>
       </ErrorBoundary>
     </HydrateClient>

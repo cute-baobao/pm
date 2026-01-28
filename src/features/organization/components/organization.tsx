@@ -31,9 +31,12 @@ export function OrganizationError() {
   return <ErrorView message={t('error')} />;
 }
 
-export function OrganizationView() {
+interface OrganizationViewProps {
+  organizationId: string;
+}
+
+export function OrganizationView({ organizationId }: OrganizationViewProps) {
   const { data: session } = useSession();
-  const organizationId = session?.session.activeOrganizationId ?? '';
   const userId = session?.session.userId ?? '';
   const { data: analytics, isLoading: isAnalyticsLoading } =
     useSuspenseOrganizationAnalytics({
@@ -50,6 +53,7 @@ export function OrganizationView() {
     useSuspenseOrganizationMembers(organizationId);
 
   const isLoading =
+    organizationId === '' ||
     isAnalyticsLoading ||
     isTasksLoading ||
     isProjectsLoading ||
