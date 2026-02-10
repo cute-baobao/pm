@@ -231,16 +231,12 @@ export const getMilestonesAnalytics = async (projectId: string) => {
   });
 };
 
-export const addTasksToMilestone = async (
-  input: AddTasksToMilestoneInput,
-) => {
-  const m = await db
-    .select()
-    .from(milestone)
-    .where(eq(milestone.id, input.milestoneId))
-    .limit(1);
+export const addTasksToMilestone = async (input: AddTasksToMilestoneInput) => {
+  const m = await db.query.milestone.findFirst({
+    where: eq(milestone.id, input.milestoneId),
+  });
 
-  if (m.length === 0) {
+  if (!m) {
     throw new Error('Milestone not found');
   }
 
@@ -257,5 +253,5 @@ export const addTasksToMilestone = async (
     ),
   );
 
-  return m[0];
+  return m;
 };

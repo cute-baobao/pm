@@ -36,6 +36,7 @@ export default async function ProjectDetailPage({
 
   await prefetchTasks({
     ...loader,
+    projectId,
     organizationId: session.session.activeOrganizationId!,
   });
 

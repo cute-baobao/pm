@@ -2,6 +2,7 @@ import {
   adminOrOwnerProcedure,
   createTRPCRouter,
   memberProcedure,
+  protectedProcedure,
 } from '@/trpc/init';
 import z from 'zod';
 import {
@@ -22,7 +23,7 @@ import {
 } from './service';
 
 export const projectRouter = createTRPCRouter({
-  create: adminOrOwnerProcedure
+  create: protectedProcedure
     .input(createProjectSchema)
     .mutation(async ({ input }) => {
       const project = await createProject(input);

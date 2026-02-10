@@ -3,6 +3,7 @@
 import { DottedSeparator } from '@/components/dotted-separator';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useProjectId } from '@/features/project/hooks/use-project';
 import { Loader, PlusIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
@@ -25,13 +26,16 @@ export function TaskViewSwitcher({
   onNewTask,
   hideProjectFilter = false,
 }: TaskViewSwitcherProps) {
+  const projectId = useProjectId();
   const [view, setView] = useQueryState('task-view', {
     defaultValue: 'table',
   });
   const t = useTranslations('Task.Views');
 
-  const { data: tasks, isLoading: isTaskLoading } =
-    useSuspenseTasks(organizationId);
+  const { data: tasks, isLoading: isTaskLoading } = useSuspenseTasks({
+    organizationId,
+    projectId,
+  });
 
   const { mutate: bulkUpdateTask } = useBulkUpdateTasks();
 

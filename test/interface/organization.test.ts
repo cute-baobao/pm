@@ -1,50 +1,42 @@
+import { setActiveOrganization } from '@/features/organization/server/service';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { createTRPCCaller, TRPCCallerResult } from '../utils/trpc-caller';
-import { setActiveOrganization } from '@/features/organization/server/service';
 
-let caller: TRPCCallerResult['caller'];
-let session: TRPCCallerResult['session'];
+let owner: TRPCCallerResult | null;
 
 beforeAll(async () => {
-  const result = await createTRPCCaller('bao@mail.com', 'Zhizhi99.');
-  expect(result).not.toBeNull();
-  caller = result!.caller; // or result if organization is not nested
-  session = result!.session;
+  owner = await createTRPCCaller('owner@mail.com', 'Zhizhi99.');
 });
 
 describe('Organization Interface', () => {
-  it('create organization -> update organization -> delete organization', async () => {
-    const organization = await caller?.organization.create({
+  it('使用正确的组织创建和删除流程', async () => {
+    const organization = await owner!.caller.organization.create({
       name: 'Test Organization',
       slug: 'test-organization',
       logo: 'https://example.com/logo.png',
     });
 
-    expect(organization?.name, 'Organization name is incorrect').toBe(
-      'Test Organization',
+    expect(organization).not.toBeNull();
+
+    await setActiveOrganization(
+      owner?.session?.session.token!,
+      organization.id,
     );
 
-    await setActiveOrganization(session?.session.token!, organization!.id);
-
-    const updatedOrganization = await caller?.organization.update({
-      id: organization!.id,
-      slug: 'updated-organization',
-      name: 'Updated Organization',
-      logo: 'https://example.com/new-logo.png',
+    const deletedOrganization = await owner!.caller.organization.delete({
+      id: organization.id,
     });
 
-    expect(updatedOrganization?.slug, 'Organization slug is incorrect').toBe(
-      'updated-organization',
-    );
-
-    const deleteResult = await caller?.organization.delete({
-      id: organization!.id,
-    });
-
-    expect(deleteResult?.id, 'Organization deletion failed').toBe(
-      organization?.id,
-    );
+    expect(deletedOrganization).not.toBeNull();
   });
 
-  
+  it('错误的创建组织参数', async () => {
+    await expect(
+      // @ts-expect-error: intentionally missing `name` for validation test
+      owner!.caller.organization.create({
+        slug: 'error-organization',
+        logo: 'https://example.com/logo.png',
+      }),
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+  });
 });

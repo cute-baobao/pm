@@ -10,6 +10,11 @@ import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useTaskFilters } from './use-task-filters';
 
+interface SuspenseTaskParams {
+  organizationId: string;
+  projectId?: string;
+}
+
 export const useTaskId = () => {
   const params = useParams();
   return params.taskId as string;
@@ -24,12 +29,16 @@ export const useSuspenseTaskChangeLog = (taskId: string) => {
   );
 };
 
-export const useSuspenseTasks = (organizationId: string) => {
+export const useSuspenseTasks = ({
+  organizationId,
+  projectId,
+}: SuspenseTaskParams) => {
   const trpc = useTRPC();
   const [params] = useTaskFilters();
   return useSuspenseQuery({
     ...trpc.task.getMany.queryOptions({
       ...params,
+      projectId: projectId ?? params.projectId,
       organizationId,
     }),
   });
