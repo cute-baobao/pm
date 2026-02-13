@@ -1,12 +1,11 @@
 import { env } from '@/env';
 import { ExtractTablesWithRelations, sql } from 'drizzle-orm';
-import { drizzle, NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { PgTransaction } from 'drizzle-orm/pg-core';
-import ws from 'ws';
 import * as schema from './schemas';
 
 type Transaction = PgTransaction<
-  NeonQueryResultHKT,
+  any,
   typeof schema,
   ExtractTablesWithRelations<typeof schema>
 >;
@@ -15,7 +14,6 @@ const createDrizzleClient = () =>
   drizzle({
     connection: env.DATABASE_URL,
     schema,
-    ws,
   });
 
 // 使用全局对象存储 Drizzle 实例，防止热重载时重复创建
@@ -37,7 +35,7 @@ export async function withUser<T>(
 ) {
   return db.transaction(async (tx) => {
     await tx.execute(
-      sql`SELECT set_config('app.current_user_id', ${userId}, true)`,
+      sql`SELECT set_config('app.current_user_id', ${userId}, true);` as any,
     );
     return callback(tx);
   });
