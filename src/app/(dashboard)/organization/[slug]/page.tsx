@@ -40,7 +40,6 @@ export default async function SlugPage({
 
   await prefetchOrganizationAnalytics({
     organizationId,
-    assigneeId: access.session.userId,
   });
 
   await prefetchProjects({

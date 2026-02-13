@@ -76,8 +76,11 @@ export const organizationRouter = createTRPCRouter({
     }),
   analytics: memberProcedure
     .input(organizationAnalyticsSchema)
-    .query(async ({ input }) => {
-      const res = await analytics(input);
+    .query(async ({ input, ctx }) => {
+      const res = await analytics({
+        organizationId: input.organizationId,
+        assigneeId: ctx.auth.user.id,
+      });
       return res;
     }),
 });

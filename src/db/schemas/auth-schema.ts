@@ -144,6 +144,9 @@ export const member = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (t) => [
+    index('member_user_id_idx').on(t.userId),
+    index('member_org_id_idx').on(t.organizationId),
+    index('member_org_user_idx').on(t.organizationId, t.userId),
     pgPolicy('read_access', {
       for: 'select',
       to: 'public',
@@ -182,16 +185,28 @@ export const invitationStatusValues = invitationStatus.enumValues;
 
 export type InvitationStatus = (typeof invitationStatusValues)[number];
 
-export const invitation = pgTable('invitation', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  organizationId: uuid('organization_id')
-    .notNull()
-    .references(() => organization.id, { onDelete: 'cascade' }),
-  email: text('email').notNull(),
-  role: organizationRole().notNull(),
-  status: invitationStatus().default('pending').notNull(),
-  expiresAt: timestamp('expires_at').notNull(),
-  inviterId: text('inviter_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-});
+export const invitation = pgTable(
+  'invitation',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    email: text('email').notNull(),
+    role: organizationRole().notNull(),
+    status: invitationStatus().default('pending').notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    inviterId: text('inviter_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    index('invitation_org_email_status_expires_idx').on(
+      t.organizationId,
+      t.email,
+      t.status,
+      t.expiresAt,
+    ),
+    index('invitation_org_status_idx').on(t.organizationId, t.status),
+  ],
+);

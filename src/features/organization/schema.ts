@@ -20,7 +20,6 @@ export const updateOrganizationSchema = createOrganizationSchema.extend({
 
 export const organizationAnalyticsSchema = z.object({
   organizationId: z.string().min(1, 'Organization ID is required'),
-  assigneeId: z.string().min(1, 'Assignee ID is required'),
 });
 
 export type UpdateOrganizationData = z.infer<typeof updateOrganizationSchema>;

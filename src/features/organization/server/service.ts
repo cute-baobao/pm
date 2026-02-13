@@ -5,11 +5,10 @@ import {
   Organization,
   organization,
   session,
-  task,
   taskStatusValues,
   User,
 } from '@/db/schemas';
-import { and, eq, gte, lte, ne } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import {
   CreateOrganizationData,
   OrganizationAnalyticsParams,
@@ -134,7 +133,9 @@ export const getUserMembers = async (userId: string) => {
   return members;
 };
 
-export const analytics = async (params: OrganizationAnalyticsParams) => {
+export const analytics = async (
+  params: OrganizationAnalyticsParams & { assigneeId: string },
+) => {
   const { organizationId, assigneeId } = params;
   const now = new Date();
   const thisMonthStart = startOfMonth(now);
@@ -142,111 +143,106 @@ export const analytics = async (params: OrganizationAnalyticsParams) => {
   const lastMonthStart = startOfMonth(subMonths(now, 1));
   const lastMonthEnd = endOfMonth(subMonths(now, 1));
 
-  const thisMonthTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      gte(task.createdAt, thisMonthStart),
-      lte(task.createdAt, thisMonthEnd),
-    ),
-  });
+  const doneStatus = taskStatusValues[4];
 
-  const lastMonthTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      gte(task.createdAt, lastMonthStart),
-      lte(task.createdAt, lastMonthEnd),
-    ),
-  });
+  const result = await db.execute(sql`
+    SELECT
+      COUNT(*) FILTER (
+        WHERE t.created_at >= ${thisMonthStart}
+          AND t.created_at <= ${thisMonthEnd}
+      ) AS task_count,
+      COUNT(*) FILTER (
+        WHERE t.created_at >= ${lastMonthStart}
+          AND t.created_at <= ${lastMonthEnd}
+      ) AS last_month_task_count,
 
-  const taskCount = thisMonthTasks.length;
-  const taskDifference = taskCount - lastMonthTasks.length;
+      COUNT(*) FILTER (
+        WHERE t.assigned_id = ${assigneeId}
+          AND t.created_at >= ${thisMonthStart}
+          AND t.created_at <= ${thisMonthEnd}
+      ) AS assigned_task_count,
+      COUNT(*) FILTER (
+        WHERE t.assigned_id = ${assigneeId}
+          AND t.created_at >= ${lastMonthStart}
+          AND t.created_at <= ${lastMonthEnd}
+      ) AS last_month_assigned_task_count,
 
-  const thisMonthAssignedTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      eq(task.assignedId, assigneeId),
-      gte(task.createdAt, thisMonthStart),
-      lte(task.createdAt, thisMonthEnd),
-    ),
-  });
+      COUNT(*) FILTER (
+        WHERE t.status <> ${doneStatus}
+          AND t.created_at >= ${thisMonthStart}
+          AND t.created_at <= ${thisMonthEnd}
+      ) AS incompleted_task_count,
+      COUNT(*) FILTER (
+        WHERE t.status <> ${doneStatus}
+          AND t.created_at >= ${lastMonthStart}
+          AND t.created_at <= ${lastMonthEnd}
+      ) AS last_month_incompleted_task_count,
 
-  const lastMonthAssignedTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      eq(task.assignedId, assigneeId),
-      gte(task.createdAt, lastMonthStart),
-      lte(task.createdAt, lastMonthEnd),
-    ),
-  });
+      COUNT(*) FILTER (
+        WHERE t.status = ${doneStatus}
+          AND t.created_at >= ${thisMonthStart}
+          AND t.created_at <= ${thisMonthEnd}
+      ) AS complete_task_count,
+      COUNT(*) FILTER (
+        WHERE t.status = ${doneStatus}
+          AND t.created_at >= ${lastMonthStart}
+          AND t.created_at <= ${lastMonthEnd}
+      ) AS last_month_complete_task_count,
 
-  const assignedTaskCount = thisMonthAssignedTasks.length;
-  const assignedTaskDifference =
-    assignedTaskCount - lastMonthAssignedTasks.length;
+      COUNT(*) FILTER (
+        WHERE t.status <> ${doneStatus}
+          AND t.due_date >= ${thisMonthStart}
+          AND t.due_date <= ${thisMonthEnd}
+      ) AS overdue_task_count,
+      COUNT(*) FILTER (
+        WHERE t.status <> ${doneStatus}
+          AND t.due_date >= ${lastMonthStart}
+          AND t.due_date <= ${lastMonthEnd}
+      ) AS last_month_overdue_task_count
+    FROM task t
+    WHERE t.organization_id = ${organizationId}
+  `);
 
-  const thisMonthIncompletedTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      ne(task.status, taskStatusValues[4]),
-      gte(task.createdAt, thisMonthStart),
-      lte(task.createdAt, thisMonthEnd),
-    ),
-  });
+  const row = result.rows[0] as
+    | {
+        task_count: number | string;
+        last_month_task_count: number | string;
+        assigned_task_count: number | string;
+        last_month_assigned_task_count: number | string;
+        incompleted_task_count: number | string;
+        last_month_incompleted_task_count: number | string;
+        complete_task_count: number | string;
+        last_month_complete_task_count: number | string;
+        overdue_task_count: number | string;
+        last_month_overdue_task_count: number | string;
+      }
+    | undefined;
 
-  const lastMonthIncompletedTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      ne(task.status, taskStatusValues[4]),
-      gte(task.createdAt, lastMonthStart),
-      lte(task.createdAt, lastMonthEnd),
-    ),
-  });
+  const taskCount = Number(row?.task_count ?? 0);
+  const lastMonthTaskCount = Number(row?.last_month_task_count ?? 0);
+  const assignedTaskCount = Number(row?.assigned_task_count ?? 0);
+  const lastMonthAssignedTaskCount = Number(
+    row?.last_month_assigned_task_count ?? 0,
+  );
+  const incompletedTaskCount = Number(row?.incompleted_task_count ?? 0);
+  const lastMonthIncompletedTaskCount = Number(
+    row?.last_month_incompleted_task_count ?? 0,
+  );
+  const completeTaskCount = Number(row?.complete_task_count ?? 0);
+  const lastMonthCompleteTaskCount = Number(
+    row?.last_month_complete_task_count ?? 0,
+  );
+  const overdueTaskCount = Number(row?.overdue_task_count ?? 0);
+  const lastMonthOverdueTaskCount = Number(
+    row?.last_month_overdue_task_count ?? 0,
+  );
 
-  const incompletedTaskCount = thisMonthIncompletedTasks.length;
+  const taskDifference = taskCount - lastMonthTaskCount;
+  const assignedTaskDifference = assignedTaskCount - lastMonthAssignedTaskCount;
   const incompletedTaskDifference =
-    incompletedTaskCount - lastMonthIncompletedTasks.length;
-
-  const thisMonthCompleteTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      eq(task.status, taskStatusValues[4]),
-      gte(task.createdAt, thisMonthStart),
-      lte(task.createdAt, thisMonthEnd),
-    ),
-  });
-
-  const lastMonthCompleteTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      eq(task.status, taskStatusValues[4]),
-      gte(task.createdAt, lastMonthStart),
-      lte(task.createdAt, lastMonthEnd),
-    ),
-  });
-
-  const completeTaskCount = thisMonthCompleteTasks.length;
-  const completeTaskDifference =
-    completeTaskCount - lastMonthCompleteTasks.length;
-
-  const thisMonthOverdueTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      ne(task.status, taskStatusValues[4]),
-      lte(task.dueDate, thisMonthEnd),
-      gte(task.dueDate, thisMonthStart),
-    ),
-  });
-
-  const lastMonthOverdueTasks = await db.query.task.findMany({
-    where: and(
-      eq(task.organizationId, organizationId),
-      ne(task.status, taskStatusValues[4]),
-      lte(task.dueDate, lastMonthEnd),
-      gte(task.dueDate, lastMonthStart),
-    ),
-  });
-
-  const overdueTaskCount = thisMonthOverdueTasks.length;
-  const overdueTaskDifference = overdueTaskCount - lastMonthOverdueTasks.length;
+    incompletedTaskCount - lastMonthIncompletedTaskCount;
+  const completeTaskDifference = completeTaskCount - lastMonthCompleteTaskCount;
+  const overdueTaskDifference = overdueTaskCount - lastMonthOverdueTaskCount;
 
   return {
     taskCount,

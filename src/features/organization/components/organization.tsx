@@ -11,7 +11,6 @@ import { ProjectAvatar } from '@/features/project/components/project-avatar';
 import { useSuspenseProjects } from '@/features/project/hooks/use-project';
 import { useCreateTaskModal } from '@/features/task/hooks/use-create-task-modal';
 import { useSuspenseTaskPagination } from '@/features/task/hooks/use-task';
-import { useSession } from '@/lib/auth-client';
 import { formatDistanceToNow } from 'date-fns';
 import { CalendarIcon, PlusIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -36,12 +35,9 @@ interface OrganizationViewProps {
 }
 
 export function OrganizationView({ organizationId }: OrganizationViewProps) {
-  const { data: session } = useSession();
-  const userId = session?.session.userId ?? '';
   const { data: analytics, isLoading: isAnalyticsLoading } =
     useSuspenseOrganizationAnalytics({
       organizationId,
-      assigneeId: userId,
     });
   const { data: tasks, isLoading: isTasksLoading } =
     useSuspenseTaskPagination(organizationId);
