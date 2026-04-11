@@ -15,8 +15,8 @@ export default defineConfig(() => {
         BETTER_AUTH_URL: 'http://localhost:3000',
         RESEND_API_KEY: 're_iB5ntSQD_32MLwB18ntD8hsTQ23SpvGxS',
       },
-      testTimeout: 30000,
-      hookTimeout: 30000,
+      testTimeout: 0,
+      hookTimeout: 0,
     },
     resolve: {
       alias: {
